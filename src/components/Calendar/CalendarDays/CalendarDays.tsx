@@ -73,7 +73,7 @@ const CalendarDays = ({
     createDaysInMonth();
   }, [monthIndex]);
 
-  console.log(monthsData);
+  console.log(monthsData, "2");
 
   return (
     <div className="flex flex-wrap border-t border-l">
