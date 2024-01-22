@@ -31,7 +31,7 @@ const CalendarDays = ({
 
     const firstDayOfMonth = DateTime.fromObject({
       year,
-      month: monthIndex + 1,
+      month: monthIndex,
       day: 1,
     })
       .toFormat("EEE, M/d/yyyy")
@@ -64,7 +64,7 @@ const CalendarDays = ({
       }
     });
 
-    setMonthsData([...newBlankDaysArray, ...results[monthIndex]]);
+    setMonthsData([...newBlankDaysArray, ...results[monthIndex - 1]]);
   };
 
   useEffect(() => {
