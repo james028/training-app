@@ -67,9 +67,10 @@ const CalendarHeader = ({
     const currentDate = DateTime.now();
     const { year, month, day } = currentDate.toObject();
 
+    //obecny miesiąc tu musy vtc
     const date = DateTime.fromObject({
       year,
-      month: monthIndex + 1,
+      month: monthIndex,
       day: 1,
     })
       .toFormat("MMMM/yyyy")

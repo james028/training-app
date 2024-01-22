@@ -6,7 +6,12 @@ import { TYear } from "../../types/app-types";
 import { DateTime } from "luxon";
 
 const Calendar = () => {
-  const [monthIndex, setMonthIndex] = useState(0);
+  const [monthIndex, setMonthIndex] = useState(() => {
+    const currentDate = DateTime.now();
+    const { month } = currentDate.toObject();
+
+    return month;
+  });
 
   const incrementMonth = () => {
     setMonthIndex((prev) => prev + 1);
@@ -17,6 +22,25 @@ const Calendar = () => {
   };
 
   //monthIndex, setMonthIndex jako context api
+
+  console.log(monthIndex, "index");
+
+  const foo = () => {
+    const v = Object.values(calendarData);
+    const k = Object.values(v);
+
+    console.log(Object.values(k), "r");
+    const xx = [];
+
+    // k.forEach((x: any) => {
+    //   console.log(x, "x");
+    //   x.forEach((a) => {
+    //     console.log(a, "a");
+    //   });
+    // });
+  };
+
+  foo();
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
