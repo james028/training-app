@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 
 import { Chart as ChartJS, registerables } from "chart.js";
 import { useTranslation } from "react-i18next";
+import { months } from "../../../utils/utils";
 ChartJS.register(...registerables);
 
 type TSumByMonthsChart = {
@@ -25,22 +26,7 @@ const SumByMonthsChart = ({ data }: TSumByMonthsChart) => {
   };
 
   const chartData = {
-    labels: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-    ].map((month) => t(month)),
+    labels: months,
     datasets: [
       {
         label: t("CountOfTrainingsByMonths"),
