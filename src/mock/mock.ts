@@ -178,24 +178,10 @@ export const calendarData: any = {
     {
       "02x": [
         {
-          "01": [
-            {
-              type: "Rower",
-              bikeType: "crossway",
-              bikeKilometers: 27.53,
-              duration: "01:43",
-            },
-          ],
+          "01": [],
         },
         {
-          "02": [
-            {
-              type: "Rower",
-              bikeType: "crossway",
-              bikeKilometers: 27.53,
-              duration: "01:43",
-            },
-          ],
+          "02": [],
         },
         {
           "03": [],

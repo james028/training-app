@@ -21,7 +21,7 @@ ChartJS.register(
   Legend,
 );
 
-const TrainingByMonthChart = ({ data1 }: { data1: any }) => {
+const TrainingByMonthChart = ({ data }: { data: Record<any, any> }) => {
   const createDatasetsData = () => {
     const backgroundColors = [
       "rgb(255, 99, 132)",
@@ -29,12 +29,16 @@ const TrainingByMonthChart = ({ data1 }: { data1: any }) => {
       "rgb(53, 162, 235)",
     ];
 
-    const firstKey = Object.keys(data1)[0];
+    const firstKey = Object.keys(data)[0];
 
-    return Object.keys(data1[firstKey]).reduce((acc, label, index) => {
-      const newData: { data: any[]; label: string; backgroundColor: string } = {
+    return Object.keys(data[firstKey]).reduce((acc, label, index) => {
+      const newData: {
+        data: number[];
+        label: string;
+        backgroundColor: string;
+      } = {
         label,
-        data: Object.keys(data1).map((key) => data1[key][label]),
+        data: Object.keys(data).map((key) => +data[key][label]),
         backgroundColor: backgroundColors[index],
       };
       // @ts-ignore

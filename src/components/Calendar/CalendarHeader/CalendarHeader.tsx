@@ -69,7 +69,7 @@ const CalendarHeader = ({
   //potem context
   const getCurrentDate = (): Record<string, string | number> => {
     const currentDate = DateTime.now();
-    const { year, month, day } = currentDate.toObject();
+    const { year } = currentDate.toObject();
 
     //obecny miesiąc tu musy vtc
     const date = DateTime.fromObject({

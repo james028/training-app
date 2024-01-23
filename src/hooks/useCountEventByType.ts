@@ -1,6 +1,6 @@
 import { TCalendarData } from "../types/app-types";
 
-export const countNestedEventsByType = (
+export const useCountNestedEventsByType = (
   data: TCalendarData,
 ): { resultsEventArray: any; resultByMonthIndex: any; result: any } => {
   const result: Record<string, number> = {};
