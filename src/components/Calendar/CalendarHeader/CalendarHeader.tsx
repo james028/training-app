@@ -5,6 +5,12 @@ import "./style.css";
 import { TButtons } from "../../../types/app-types";
 import { DateTime } from "luxon";
 
+import styled from "styled-components";
+
+const StyledButton = styled.button<{ disabledClass?: boolean }>`
+  background-color: ${(props) => (props.disabledClass ? "#b7bcca" : null)};
+`;
+
 const CalendarHeader = ({
   incrementMonth,
   decrementMonth,
@@ -31,8 +37,7 @@ const CalendarHeader = ({
           />
         </svg>
       ),
-      disabled: monthIndex === 0,
-      disabledClass: monthIndex === 0 ? "red" : "",
+      disabled: monthIndex === 1,
       border: <div className="border-r inline-flex h-6"></div>,
     },
     {
@@ -54,7 +59,6 @@ const CalendarHeader = ({
         </svg>
       ),
       disabled: monthIndex > 11,
-      disabledClass: monthIndex > 11 ? "red" : "",
       border: null,
     },
   ];
@@ -76,7 +80,6 @@ const CalendarHeader = ({
       .toFormat("MMMM/yyyy")
       .split("/");
 
-    console.log(date[0]);
     return { month: date[0], year: date[1] };
   };
 
@@ -97,25 +100,19 @@ const CalendarHeader = ({
         </div>
         <div className="border rounded-lg px-1" style={{ paddingTop: "2px" }}>
           {buttons.map(
-            ({
-              key,
-              svg,
-              handleChangeMonth,
-              border,
-              disabled,
-              disabledClass,
-            }: TButtons) => {
+            ({ key, svg, handleChangeMonth, border, disabled }: TButtons) => {
               return (
                 <React.Fragment key={`buttons-${key}`}>
-                  <button
+                  <StyledButton
+                    disabledClass={disabled}
                     type="button"
-                    className={`leading-none rounded-lg transition ease-in-out duration-100 inline-flex 
-                  cursor-pointer hover:bg-gray-200 p-1 items-center ${disabledClass}`}
+                    className="leading-none rounded-lg transition ease-in-out duration-100 inline-flex
+                     cursor-pointer hover:bg-gray-200 p-1 items-center"
                     onClick={handleChangeMonth}
                     disabled={disabled}
                   >
                     {svg}
-                  </button>
+                  </StyledButton>
                   {border}
                 </React.Fragment>
               );

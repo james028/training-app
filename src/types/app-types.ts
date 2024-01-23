@@ -3,7 +3,7 @@ export type TCalendarData = {
 };
 
 export type TYear = {
-  [key: string]: TMonth[] | undefined;
+  [key: string]: TMonth[];
 };
 
 export type TMonth = {
@@ -22,6 +22,6 @@ export type TButtons = {
   handleChangeMonth: () => void;
   svg: JSX.Element;
   border: JSX.Element | null;
-  disabled: boolean;
-  disabledClass: any;
+  disabled: any;
+  //disabledClass: any;
 };

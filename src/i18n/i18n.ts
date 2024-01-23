@@ -24,6 +24,8 @@ i18n.use(initReactI18next).init({
         October: "October",
         November: "November",
         December: "December",
+        CountOfTrainingsByMonths:
+          "Number of training sessions in a given month",
       },
     },
     pl: {
@@ -47,6 +49,7 @@ i18n.use(initReactI18next).init({
         October: "Październik",
         November: "Listopad",
         December: "Grudzień",
+        CountOfTrainingsByMonths: "Ilość treningów w danym miesiącu",
       },
     },
     // Dodaj więcej języków, jeśli jest to potrzebne

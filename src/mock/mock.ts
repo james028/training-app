@@ -1,6 +1,6 @@
 import { TCalendarData } from "../types/app-types";
 
-export const calendarData = {
+export const calendarData: any = {
   "2024": [
     {
       "01x": [
@@ -180,14 +180,20 @@ export const calendarData = {
         {
           "01": [
             {
-              type: "pierwszy typ",
+              type: "Rower",
+              bikeType: "crossway",
+              bikeKilometers: 27.53,
+              duration: "01:43",
             },
           ],
         },
         {
           "02": [
             {
-              type: "pierwszy typxxx",
+              type: "Rower",
+              bikeType: "crossway",
+              bikeKilometers: 27.53,
+              duration: "01:43",
             },
           ],
         },
@@ -200,7 +206,11 @@ export const calendarData = {
       ],
     },
     {
-      "03x": [],
+      "03x": [
+        {
+          "01": [],
+        },
+      ],
     },
     {
       "04x": [],

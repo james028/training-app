@@ -1,7 +1,12 @@
 import React from "react";
 import { TDay } from "../../../types/app-types";
 
-const CalendarDay = ({ data, day }: { data: TDay[]; day: any }) => {
+type TCalendarDay = {
+  data: TDay[];
+  day: string;
+};
+
+const CalendarDay = ({ data, day }: TCalendarDay) => {
   const renderEvents = () => {
     if (data?.length > 3) {
       return <div className="flex items-center align-items">+3</div>;

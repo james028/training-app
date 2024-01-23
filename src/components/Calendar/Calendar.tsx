@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
 import { calendarData } from "../../mock/mock";
-import { TYear } from "../../types/app-types";
+import { TCalendarData, TYear } from "../../types/app-types";
 import { DateTime } from "luxon";
 
 const Calendar = () => {
@@ -20,27 +20,6 @@ const Calendar = () => {
   const decrementMonth = () => {
     setMonthIndex((prev) => prev - 1);
   };
-
-  //monthIndex, setMonthIndex jako context api
-
-  console.log(monthIndex, "index");
-
-  const foo = () => {
-    const v = Object.values(calendarData);
-    const k = Object.values(v);
-
-    console.log(Object.values(k), "r");
-    const xx = [];
-
-    // k.forEach((x: any) => {
-    //   console.log(x, "x");
-    //   x.forEach((a) => {
-    //     console.log(a, "a");
-    //   });
-    // });
-  };
-
-  foo();
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
