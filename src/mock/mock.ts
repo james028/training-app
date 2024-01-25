@@ -147,13 +147,27 @@ export const calendarData: any = {
           "22": [],
         },
         {
-          "23": [],
+          "23": [
+            {
+              type: "Rower",
+              bikeType: "crossway",
+              bikeKilometers: 40.16,
+              duration: "02:29",
+            },
+          ],
         },
         {
           "24": [],
         },
         {
-          "25": [],
+          "25": [
+            {
+              type: "Rower",
+              bikeType: "crossway",
+              bikeKilometers: 31.95,
+              duration: "01:43",
+            },
+          ],
         },
         {
           "26": [],

@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+
 import { TDay } from "../../../types/app-types";
+
+import styled from "styled-components";
+import Modal from "../../shared/Modal/Modal";
+import AddTrainingForm from "../../Forms/AddTrainingForm/AddTrainingForm";
 
 type TCalendarDay = {
   data: TDay[];
   day: string;
 };
 
+const StyledContainerDay = styled.div`
+  min-height: 140px;
+  width: 14.28%;
+`;
+
 const CalendarDay = ({ data, day }: TCalendarDay) => {
+  const [openModal, setOpenModal] = useState(false);
+  const [eventData, setEventData] = useState<Record<any, any>>({});
+
   const renderEvents = () => {
     if (data?.length > 3) {
       return <div className="flex items-center align-items">+3</div>;
@@ -15,9 +28,13 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
         return data?.map((event: TDay, index1: any) => {
           return (
             <div
-              //zmienic
+              //zmienic, jak będzie id z danych z TDay z BE
               key={index1}
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
+              onClick={() => {
+                setOpenModal(true);
+                setEventData(event);
+              }}
             >
               <div
                 className="flex items-center justify-between"
@@ -46,18 +63,23 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
   };
 
   return (
-    <div
-      //zmienic
-      style={{ width: "14.28%", height: "140px" }}
-      className="px-4 pt-2 border-r border-b relative cursor-pointer"
-    >
+    <StyledContainerDay className="px-4 pt-2 border-r border-b relative cursor-pointer">
       {day !== "00" ? (
-        <div className="inline-flex w-6 h-6 items-center justify-center cursor-pointer text-center leading-none rounded-full transition ease-in-out duration-100">
-          {Number(day)}
+        <div
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500"
+          onClick={() => setOpenModal(true)}
+        >
+          <span className="text-white">{Number(day)}</span>
         </div>
       ) : null}
       {renderEvents()}
-    </div>
+      <AddTrainingForm
+        openModal={openModal}
+        closeModal={() => setOpenModal(false)}
+        modalTitle={"Dodaj trening"}
+        eventData={eventData}
+      />
+    </StyledContainerDay>
   );
 };
 export default CalendarDay;
