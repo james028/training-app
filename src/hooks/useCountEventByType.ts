@@ -1,4 +1,5 @@
 import { TCalendarData } from "../types/app-types";
+import React, { RefObject, useEffect, useState } from "react";
 
 export const useCountNestedEventsByType = (
   data: TCalendarData,
@@ -49,4 +50,79 @@ export const useCountNestedEventsByType = (
   resultsEventArray.push(resultByMonthIndex);
 
   return { resultsEventArray, resultByMonthIndex, result };
+};
+export const useOnClickOutside = <T extends HTMLElement = HTMLElement>(
+  ref: RefObject<T>,
+  handler: (event: Event) => void,
+) => {
+  useEffect(() => {
+    const listener = (event: Event) => {
+      const el = ref?.current;
+      if (!el || el.contains((event?.target as Node) || null)) {
+        return;
+      }
+
+      handler(event); // Call the handler only if the click is outside of the element passed.
+    };
+
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
+
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]); // Reload only if ref or handler changes
+};
+
+export const useClickEscapeToClose = (
+  ref: any,
+  closeModal: any,
+  openModal: any,
+) => {
+  const [isModalOpen, setModalOpen] = useState(openModal);
+  const handleCloseModal = () => {
+    if (closeModal) {
+      closeModal();
+    }
+  };
+
+  useEffect(() => {
+    setModalOpen(openModal);
+  }, [openModal]);
+
+  useEffect(() => {
+    const modalElement = ref.current;
+
+    if (modalElement) {
+      if (isModalOpen) {
+        modalElement.showModal();
+      } else {
+        modalElement.close();
+      }
+    }
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    const handler = (event: { target: any }) => {
+      if (!ref.current) {
+        return;
+      }
+      if (!ref.current.contains(event.target)) {
+        closeModal();
+      }
+    };
+    document.addEventListener("click", handler, true);
+    return () => {
+      document.removeEventListener("click", handler);
+    };
+  }, []);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key === "Escape") {
+      handleCloseModal();
+    }
+  };
+
+  return { handleKeyDown };
 };

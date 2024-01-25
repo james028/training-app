@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { TDay } from "../../../types/app-types";
 
 import styled from "styled-components";
-import Modal from "../../shared/Modal/Modal";
-import AddTrainingForm from "../../Forms/AddTrainingForm/AddTrainingForm";
+import EditTraining from "../../Forms/EditTraining/EditTraining";
+import AddTraining from "../../Forms/AddTraining/AddTraining";
 
 type TCalendarDay = {
   data: TDay[];
@@ -17,8 +17,18 @@ const StyledContainerDay = styled.div`
 `;
 
 const CalendarDay = ({ data, day }: TCalendarDay) => {
-  const [openModal, setOpenModal] = useState(false);
+  const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
+  const [openModalAddTraining, setOpenModalAddTraining] = useState(false);
   const [eventData, setEventData] = useState<Record<any, any>>({});
+
+  const handleEditTraining = (event: TDay): void => {
+    setOpenModalEditTraining(true);
+    setEventData(event);
+  };
+
+  const handleAddTraining = (): void => {
+    setOpenModalAddTraining(true);
+  };
 
   const renderEvents = () => {
     if (data?.length > 3) {
@@ -31,10 +41,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
               //zmienic, jak będzie id z danych z TDay z BE
               key={index1}
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
-              onClick={() => {
-                setOpenModal(true);
-                setEventData(event);
-              }}
+              onClick={() => handleEditTraining(event)}
             >
               <div
                 className="flex items-center justify-between"
@@ -67,18 +74,29 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
       {day !== "00" ? (
         <div
           className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500"
-          onClick={() => setOpenModal(true)}
+          onClick={handleAddTraining}
         >
           <span className="text-white">{Number(day)}</span>
         </div>
       ) : null}
       {renderEvents()}
-      <AddTrainingForm
-        openModal={openModal}
-        closeModal={() => setOpenModal(false)}
-        modalTitle={"Dodaj trening"}
-        eventData={eventData}
-      />
+      {openModalEditTraining ? (
+        <EditTraining
+          isOpenModal={openModalEditTraining}
+          setOpenModal={setOpenModalEditTraining}
+          closeModal={() => setOpenModalEditTraining(false)}
+          modalTitle={"Trening z dnia: "}
+          eventData={eventData}
+        />
+      ) : null}
+      {openModalAddTraining ? (
+        <AddTraining
+          isOpenModal={openModalAddTraining}
+          setOpenModal={setOpenModalEditTraining}
+          closeModal={() => setOpenModalAddTraining(false)}
+          modalTitle={"Dodaj trening"}
+        />
+      ) : null}
     </StyledContainerDay>
   );
 };
