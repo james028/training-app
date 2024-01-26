@@ -1,26 +1,36 @@
 import React from "react";
 import Modal from "../../shared/Modal/Modal";
 import EditTrainingForm from "../EditTrainingForm/EditTrainingForm";
+import SubmitButtons from "../SubmitButtons/SubmitButtons";
 
 const AddTrainingForm = ({ closeModal }: any) => {
   return (
     <>
-      <div className="flex items-center justify-end border-t border-solid border-blueGray-200 rounded-b">
-        <button
-          className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-          type="button"
-          onClick={closeModal}
-        >
-          Close
-        </button>
-        <button
-          className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-          type="button"
-          onClick={() => null}
-        >
-          Save Changes
-        </button>
+      <div className="md:p-8 mb-2">
+        <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+          <div className="md:col-span-5">
+            <label htmlFor="full_name">Typ treningu</label>
+            <input
+              type="text"
+              name="full_name"
+              id="full_name"
+              className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+              value=""
+            />
+          </div>
+          <div className="md:col-span-5">
+            <label htmlFor="full_name">Długość treningu</label>
+            <input
+              type="text"
+              name="full_name"
+              id="full_name"
+              className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+              value=""
+            />
+          </div>
+        </div>
       </div>
+      <SubmitButtons closeModal={closeModal} />
     </>
   );
 };
