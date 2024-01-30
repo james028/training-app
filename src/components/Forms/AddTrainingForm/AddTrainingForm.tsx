@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import FormInput from "../../shared/FormInput/FormInput";
 
 export type RegistrationFormFields = {
-  type: string;
+  trainingType: string;
   bikeType?: string;
   bikeKilometers?: string;
   duration: string;
@@ -23,18 +23,35 @@ const AddTrainingForm = ({ closeModal }: any) => {
   return (
     <>
       <form onSubmit={onSubmit}>
-        <FormInput<RegistrationFormFields>
-          // @ts-ignore
-          id="type"
-          type="text"
-          name="type"
-          label="Type"
-          placeholder="Type"
-          className="mb-2"
-          register={register}
-          rules={{ required: "You must enter your first name." }}
-          errors={errors}
-        />
+        <div className="shadow rounded-lg bg-white overflow-hidden w-full block p-8">
+          <div className="mb-4">
+            <FormInput<RegistrationFormFields>
+              id="trainingType"
+              // @ts-ignore
+              type="text"
+              name="trainingType"
+              label="Typ treningu"
+              placeholder="trainingType"
+              className="mb-2"
+              register={register}
+              rules={{ required: "You must enter your first name." }}
+              errors={errors}
+            />
+            <FormInput<RegistrationFormFields>
+              id="trainingType"
+              // @ts-ignore
+              type="text"
+              name="trainingType"
+              label="trainingType"
+              placeholder="trainingType"
+              className="mb-2"
+              register={register}
+              rules={{ required: "You must enter your first name." }}
+              errors={errors}
+            />
+          </div>
+        </div>
+
         <SubmitButtons closeModal={closeModal} />
         <button type={"submit"}>Add</button>
       </form>

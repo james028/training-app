@@ -17,6 +17,8 @@ export type FormInputProps<TFormValues extends FieldValues> = {
   register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
+  label: string;
+  id: any;
 };
 // & Omit<InputProps, "name">;
 export const FormInput = <TFormValues extends Record<string, unknown>>({
@@ -32,13 +34,8 @@ export const FormInput = <TFormValues extends Record<string, unknown>>({
   //const hasError = !!(errors && errorMessages);
 
   return (
-    <div
-      // className={classNames("", className)}
-      aria-live="polite"
-    >
+    <div className={className} aria-live="polite">
       <Input
-        id={""}
-        label={""}
         name={name}
         //aria-invalid={hasError}
         // className={classNames({

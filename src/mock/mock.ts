@@ -173,16 +173,50 @@ export const calendarData: any = {
           "26": [],
         },
         {
-          "27": [],
+          "27": [
+            {
+              type: "Rower",
+              bikeType: "crossway",
+              bikeKilometers: 12.04,
+              duration: "00:50:06",
+            },
+            {
+              type: "Airbike",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:30:00",
+            },
+          ],
         },
         {
-          "28": [],
+          "28": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 81.09,
+              duration: "03:33:03",
+            },
+          ],
         },
         {
-          "29": [],
+          "29": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 40.7,
+              duration: "01:52:12",
+            },
+          ],
         },
         {
-          "30": [],
+          "30": [
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
         },
         {
           "31": [],
@@ -202,6 +236,18 @@ export const calendarData: any = {
         },
         {
           "04": [],
+        },
+        {
+          "05": [],
+        },
+        {
+          "06": [],
+        },
+        {
+          "07": [],
+        },
+        {
+          "08": [],
         },
       ],
     },
