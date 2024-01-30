@@ -42,7 +42,7 @@ const AddTrainingForm = ({ closeModal }: any) => {
               // @ts-ignore
               type="text"
               name="trainingType"
-              label="trainingType"
+              label="Długość treningu"
               placeholder="trainingType"
               className="mb-2"
               register={register}
