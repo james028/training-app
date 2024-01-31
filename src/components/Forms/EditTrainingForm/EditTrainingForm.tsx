@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import SubmitButtons from "../SubmitButtons/SubmitButtons";
-import EditFormInput from "../../shared/EditFormInput/EditFormInput";
+import EditLabelInput from "../../shared/EditLabelInput/EditLabelInput";
 import FormInput from "../../shared/FormInput/FormInput";
 import { RegistrationFormFields } from "../AddTrainingForm/AddTrainingForm";
 
@@ -10,7 +10,7 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
   return (
     <div className="shadow rounded-lg bg-white overflow-hidden w-full block p-8">
       <div className="mb-4">
-        <EditFormInput
+        <EditLabelInput
           label={"Typ treningu"}
           isEdit={isEdit}
           childrenInput={

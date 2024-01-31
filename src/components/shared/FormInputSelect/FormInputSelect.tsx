@@ -1,4 +1,5 @@
 import React from "react";
+import { Select } from "./Select/Select";
 import {
   DeepMap,
   FieldError,
@@ -8,10 +9,7 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 
-import { ErrorMessage } from "@hookform/error-message";
-import { Input } from "./Input/Input";
-
-export type FormInputProps<TFormValues extends FieldValues> = {
+export type FormInputSelectProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
   rules?: RegisterOptions;
   register?: UseFormRegister<TFormValues>;
@@ -19,23 +17,23 @@ export type FormInputProps<TFormValues extends FieldValues> = {
   className: string;
   label: string;
   id: any;
+  options: any[];
 };
-// & Omit<InputProps, "name">;
-export const FormInput = <TFormValues extends Record<string, unknown>>({
+export const FormInputSelect = <TFormValues extends Record<string, unknown>>({
   name,
   register,
   rules,
   errors,
   className,
+  options,
   ...props
-}: FormInputProps<TFormValues>): JSX.Element => {
+}: FormInputSelectProps<TFormValues>): JSX.Element => {
   // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
   //const errorMessages = get(errors, name);
   //const hasError = !!(errors && errorMessages);
-
   return (
     <div className={className} aria-live="polite">
-      <Input
+      <Select
         placeholder={""}
         name={name}
         //aria-invalid={hasError}
@@ -43,8 +41,10 @@ export const FormInput = <TFormValues extends Record<string, unknown>>({
         //   "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600":
         //     hasError,
         // })}
-        {...(register && register(name, rules))}
+        options={options}
         {...props}
+        register={register}
+        rules={rules}
       />
       {/*{errors && <small className="error">{error.message}</small>}*/}
       {/*{errors && <div className="error">This field is required</div>}*/}
@@ -60,4 +60,6 @@ export const FormInput = <TFormValues extends Record<string, unknown>>({
   );
 };
 
-export default FormInput;
+// {...(register && register(name, rules))}
+
+export default FormInputSelect;

@@ -1,7 +1,7 @@
 import React, { FC, forwardRef } from "react";
 
 export type InputSize = "medium" | "large";
-export type InputType = "text" | "email";
+export type InputType = "text" | "select" | "number";
 
 export type InputProps = {
   id: string;
@@ -19,7 +19,7 @@ export const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
       id,
       name,
       label,
-      type = "text",
+      type,
       size = "medium",
       className = "",
       placeholder,
