@@ -36,6 +36,7 @@ export const FormInput = <TFormValues extends Record<string, unknown>>({
   return (
     <div className={className} aria-live="polite">
       <Input
+        placeholder={""}
         name={name}
         //aria-invalid={hasError}
         // className={classNames({
