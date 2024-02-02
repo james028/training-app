@@ -21,7 +21,7 @@ export type FormInputProps<TFormValues extends FieldValues> = {
   id: any;
 };
 // & Omit<InputProps, "name">;
-export const FormInput = <TFormValues extends Record<string, unknown>>({
+const FormInput = <TFormValues extends Record<string, unknown>>({
   name,
   register,
   rules,

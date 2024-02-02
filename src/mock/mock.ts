@@ -226,7 +226,14 @@ export const calendarData: any = {
     {
       "02x": [
         {
-          "01": [],
+          "01": [
+            {
+              type: "Sauna",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
         },
         {
           "02": [],

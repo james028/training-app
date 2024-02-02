@@ -1,5 +1,4 @@
 import React from "react";
-import { Select } from "./Select/Select";
 import {
   DeepMap,
   FieldError,
@@ -8,6 +7,7 @@ import {
   RegisterOptions,
   UseFormRegister,
 } from "react-hook-form";
+import Select from "./Select/Select";
 
 export type FormInputSelectProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
@@ -19,7 +19,7 @@ export type FormInputSelectProps<TFormValues extends FieldValues> = {
   id: any;
   options: any[];
 };
-export const FormInputSelect = <TFormValues extends Record<string, unknown>>({
+const FormInputSelect = <TFormValues extends Record<string, unknown>>({
   name,
   register,
   rules,

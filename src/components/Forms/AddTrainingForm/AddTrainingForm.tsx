@@ -24,8 +24,10 @@ const AddTrainingForm = ({ closeModal }: any) => {
     },
   });
 
-  const onSubmit = handleSubmit((data: any) => {
+  const onSubmit = handleSubmit((data: RegistrationFormFields) => {
     console.log("submitting...", data);
+
+    //tutaj funkcja na be na async/await
     closeModal();
   });
 
@@ -89,7 +91,6 @@ const AddTrainingForm = ({ closeModal }: any) => {
           </div>
         </div>
         <SubmitButtons closeModal={closeModal} />
-        {/*<button type="submit">Add</button>*/}
       </form>
     </>
   );

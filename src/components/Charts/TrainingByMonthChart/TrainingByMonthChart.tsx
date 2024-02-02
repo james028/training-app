@@ -21,31 +21,47 @@ ChartJS.register(
   Legend,
 );
 
-const TrainingByMonthChart = ({ data }: { data: Record<any, any> }) => {
+const TrainingByMonthChart = ({
+  data,
+  trainingTypes,
+}: {
+  data: Record<any, any>;
+  trainingTypes: any;
+}) => {
+  console.log(trainingTypes, "trainingTypes");
+
+  //tu dokończyć
   const createDatasetsData = () => {
     const backgroundColors = [
       "rgb(255, 99, 132)",
       "rgb(75, 192, 192)",
       "rgb(53, 162, 235)",
+      "rgb(53, 262, 135)",
     ];
 
     const firstKey = Object.keys(data)[0];
+    console.log(firstKey, "Object.keys(data) key");
 
-    return Object.keys(data[firstKey]).reduce((acc, label, index) => {
+    return [...Object.keys(trainingTypes)].reduce((acc: any, label, index) => {
       const newData: {
         data: number[];
-        label: string;
+        label: any;
         backgroundColor: string;
       } = {
         label,
+
+        //tutaj zrobić poprawnie
         data: Object.keys(data).map((key) => +data[key][label]),
         backgroundColor: backgroundColors[index],
       };
+
       // @ts-ignore
       acc.push(newData);
       return acc;
     }, []);
   };
+
+  console.log(createDatasetsData());
 
   const options = {
     plugins: {
@@ -65,7 +81,7 @@ const TrainingByMonthChart = ({ data }: { data: Record<any, any> }) => {
     },
   };
 
-  console.log(createDatasetsData());
+  console.log(createDatasetsData(), "3");
 
   const chartData = {
     labels: months,

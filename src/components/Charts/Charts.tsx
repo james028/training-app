@@ -14,6 +14,8 @@ const Charts = () => {
   const { resultsEventArray, resultByMonthIndex, result } =
     useCountNestedEventsByType(calendarData);
 
+  console.log(result, "result");
+
   return (
     <>
       <div className="grid grid-cols-2 grid-rows-1 gap-10 pb-20">
@@ -24,7 +26,10 @@ const Charts = () => {
           <SumAllTrainingsChart data={result} />
         </div>
         <div>
-          <TrainingByMonthChart data={resultByMonthIndex} />
+          <TrainingByMonthChart
+            data={resultByMonthIndex}
+            trainingTypes={result}
+          />
         </div>
         <div>
           <SumAllTypesBikeChart data={bikeTypeResults} />
