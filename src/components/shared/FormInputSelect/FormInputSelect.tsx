@@ -42,9 +42,9 @@ const FormInputSelect = <TFormValues extends Record<string, unknown>>({
         //     hasError,
         // })}
         options={options}
-        {...props}
         register={register}
         rules={rules}
+        {...props}
       />
       {/*{errors && <small className="error">{error.message}</small>}*/}
       {/*{errors && <div className="error">This field is required</div>}*/}

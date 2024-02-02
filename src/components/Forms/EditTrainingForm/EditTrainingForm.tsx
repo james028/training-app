@@ -8,11 +8,15 @@ import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration"
 
 export type RegistrationFormFields = {
   trainingType: string;
-  //zmienic
-  duration: Record<string, any>;
+  duration: {
+    hour: string;
+    minutes: string;
+    seconds: string;
+  };
   bikeType?: string;
   bikeKilometers?: number;
 };
+
 const EditTrainingForm = ({ eventData, closeModal }: any) => {
   const [isEdit, setIsEdit] = useState(false);
 
@@ -24,13 +28,13 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
   } = useForm<RegistrationFormFields>({
     defaultValues: {
       trainingType: "",
-      // duration: {
-      //   hour: "",
-      //   minutes: "",
-      //   seconds: "",
-      // },
-      bikeType: "",
+      duration: {
+        hour: "",
+        minutes: "",
+        seconds: "",
+      },
       bikeKilometers: 0,
+      bikeType: "",
     },
   });
 
@@ -38,6 +42,17 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
     console.log("submitting... edit", data);
 
     //tutaj funkcja na be na async/await
+    let newData: any = { ...data };
+
+    //wspoldzielona
+    newData = {
+      ...data,
+      duration: Object.values(data.duration)
+        .map((duration) => duration.toString().padStart(2, "0"))
+        .join(":"),
+    };
+
+    console.log(newData);
     closeModal();
   });
 
@@ -50,7 +65,7 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
             isEdit={isEdit}
             childrenInput={
               <FormInput<any>
-                id="trainingType1"
+                id="trainingType"
                 // @ts-ignore
                 type="text"
                 name="trainingType"
@@ -64,25 +79,24 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
             }
             eventDataField={eventData?.type}
           />
-          {/*<EditLabelInput*/}
-          {/*  label={"Długość treningu"}*/}
-          {/*  isEdit={isEdit}*/}
-          {/*  childrenInput={*/}
-          {/*    <FormInput<any>*/}
-          {/*      id="duration"*/}
-          {/*      // @ts-ignore*/}
-          {/*      type="text"*/}
-          {/*      name="duration"*/}
-          {/*      label="Długość treningu"*/}
-          {/*      placeholder="Długość treningu"*/}
-          {/*      className="mb-2"*/}
-          {/*      register={register}*/}
-          {/*      errors={errors}*/}
-          {/*      rules={{ required: "You must enter your first name." }}*/}
-          {/*    />*/}
-          {/*  }*/}
-          {/*  eventDataField={eventData?.duration}*/}
-          {/*/>*/}
+          <EditLabelInput
+            label={"Długość treningu"}
+            isEdit={isEdit}
+            childrenInput={
+              <FormInputDuration<any>
+                id="duration"
+                // @ts-ignore
+                type="number"
+                name="duration"
+                label="Długość treningu"
+                className="mb-2"
+                register={register}
+                errors={errors}
+                rules={{ required: "You must enter your Długość treningu." }}
+              />
+            }
+            eventDataField={eventData?.duration}
+          />
           <EditLabelInput
             label={"Rodzaj roweru"}
             isEdit={isEdit}
@@ -104,22 +118,23 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
             eventDataField={eventData?.bikeType}
           />
           <EditLabelInput
-            label={"duration"}
+            label={"Liczba kilometrów"}
             isEdit={isEdit}
             childrenInput={
-              <FormInputDuration<any>
-                id="duration"
+              <FormInput<any>
+                id="bikeKilometers"
                 // @ts-ignore
                 type="text"
-                name="duration"
-                label="duration"
-                placeholder="Ilość kilometrów"
+                name="bikeKilometers"
+                label="Liczba kilometrów"
+                placeholder="Liczba kilometrów"
                 className="mb-2"
                 register={register}
                 errors={errors}
-                rules={{ required: "You must enter your first name." }}
-                options={[]}
-                control={control}
+                rules={{
+                  valueAsNumber: true,
+                  required: "You must enter your first name.",
+                }}
               />
             }
             eventDataField={eventData?.bikeKilometers}

@@ -3,10 +3,15 @@ import SubmitButtons from "../SubmitButtons/SubmitButtons";
 import { useForm } from "react-hook-form";
 import FormInput from "../../shared/FormInput/FormInput";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
+import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 
 export type RegistrationFormFields = {
   trainingType: string;
-  duration: string;
+  duration: {
+    hour: string;
+    minutes: string;
+    seconds: string;
+  };
   bikeType?: string;
   bikeKilometers?: number;
 };
@@ -18,7 +23,11 @@ const AddTrainingForm = ({ closeModal }: any) => {
   } = useForm<RegistrationFormFields>({
     defaultValues: {
       trainingType: "",
-      duration: "",
+      duration: {
+        hour: "",
+        minutes: "",
+        seconds: "",
+      },
       bikeType: "",
       bikeKilometers: 0,
     },
@@ -28,6 +37,18 @@ const AddTrainingForm = ({ closeModal }: any) => {
     console.log("submitting...", data);
 
     //tutaj funkcja na be na async/await
+
+    //tu lepiej
+    let newData: any = { ...data };
+
+    newData = {
+      ...data,
+      duration: Object.values(data.duration)
+        .map((duration) => duration.toString().padStart(2, "0"))
+        .join(":"),
+    };
+
+    console.log(newData);
     closeModal();
   });
 
@@ -46,19 +67,19 @@ const AddTrainingForm = ({ closeModal }: any) => {
               className="mb-2"
               register={register}
               rules={{ required: "You must enter your first name." }}
+              // @ts-ignore
               errors={errors}
             />
-            <FormInput<RegistrationFormFields>
+            <FormInputDuration<any>
               id="duration"
               // @ts-ignore
-              type="text"
+              type="number"
               name="duration"
               label="Długość treningu"
-              placeholder="Długość treningu"
               className="mb-2"
               register={register}
-              rules={{ required: "You must enter your Długość treningu." }}
               errors={errors}
+              rules={{ required: "You must enter your Długość treningu." }}
             />
             <FormInputSelect<RegistrationFormFields>
               id="bikeType"
@@ -70,6 +91,7 @@ const AddTrainingForm = ({ closeModal }: any) => {
               className="mb-2"
               register={register}
               rules={{ required: "You must enter your first name." }}
+              // @ts-ignore
               errors={errors}
               options={["one", "two"]}
             />
@@ -86,6 +108,7 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 valueAsNumber: true,
                 required: "You must enter your Ilość kilometrów.",
               }}
+              // @ts-ignore
               errors={errors}
             />
           </div>

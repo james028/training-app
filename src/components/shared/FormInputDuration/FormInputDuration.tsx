@@ -1,5 +1,4 @@
 import React from "react";
-import { Controller } from "react-hook-form";
 import {
   DeepMap,
   FieldError,
@@ -8,17 +7,19 @@ import {
   RegisterOptions,
   UseFormRegister,
 } from "react-hook-form";
+import Duration from "./Duration/Duration";
+import { InputType } from "../FormInput/Input/Input";
 
-export type ddprops<TFormValues extends FieldValues> = {
+export type FormInputDurationProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
   rules?: RegisterOptions;
   register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
   label: string;
+  type: InputType;
+  //tu  z tym id
   id: any;
-  options: any[];
-  control: any;
 };
 const FormInputDuration = <TFormValues extends Record<string, unknown>>({
   name,
@@ -26,96 +27,41 @@ const FormInputDuration = <TFormValues extends Record<string, unknown>>({
   rules,
   errors,
   className,
-  options,
-  control,
+  label,
+  type,
   ...props
-}: ddprops<TFormValues>): JSX.Element => {
-  console.log(props, "props");
-  // @ts-ignore
+}: FormInputDurationProps<TFormValues>): JSX.Element => {
+  // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
+  //const errorMessages = get(errors, name);
+  //const hasError = !!(errors && errorMessages);
 
   return (
     <div className={className} aria-live="polite">
-      {/*<Duration*/}
-      {/*    placeholder={""}*/}
-      {/*    name={name}*/}
-      {/*    //aria-invalid={hasError}*/}
-      {/*    // className={classNames({*/}
-      {/*    //   "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600":*/}
-      {/*    //     hasError,*/}
-      {/*    // })}*/}
-      {/*    options={options}*/}
-      {/*    {...props}*/}
-      {/*    register={register}*/}
-      {/*    rules={rules}*/}
-      {/*/>*/}
-      {/*<Controller*/}
-      {/*  name="duration.hour"*/}
-      {/*  control={control}*/}
-      {/*  render={({ field: { onChange, onBlur, value, ref } }) => (*/}
-      {/*    <input*/}
-      {/*      onBlur={onBlur}*/}
-      {/*      onChange={onChange}*/}
-      {/*      value={value}*/}
-      {/*      type="number"*/}
-      {/*      //variant="filled"*/}
-      {/*      placeholder="username"*/}
-      {/*      ref={ref}*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*/>*/}
-      {/*<Controller*/}
-      {/*  name="duration.minutes"*/}
-      {/*  control={control}*/}
-      {/*  render={({ field: { onChange, onBlur, value, ref } }) => (*/}
-      {/*    <>*/}
-      {/*      <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">*/}
-      {/*        <abbr title="hours">hr</abbr>*/}
-      {/*      </label>*/}
-      {/*      <input*/}
-      {/*        //onBlur={onBlur}*/}
-      {/*        onChange={onChange}*/}
-      {/*        value={value}*/}
-      {/*        type="text"*/}
-      {/*        //variant="filled"*/}
-      {/*        //placeholder="username"*/}
-      {/*        ref={ref}*/}
-      {/*      />*/}
-      {/*    </>*/}
-      {/*  )}*/}
-      {/*/>*/}
       <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
-        <abbr title="hours">hr</abbr>
+        {label}
       </label>
-      <input
-        // @ts-ignore
-        //id={props.id}
-        //ref={ref}
-        name={`${name}.hour`}
-        // @ts-ignore
-        {...(register && register(`${name}.hour`, rules))}
-        //type={type}
-        //aria-label={label}
-        //placeholder={placeholder}
-        className="bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+      <Duration
+        type={type}
+        name={name}
+        //aria-invalid={hasError}
+        // className={classNames({
+        //   "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600":
+        //     hasError,
+        // })}
+        register={register}
+        rules={rules}
         {...props}
       />
-      <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
-        <abbr title="hours">min</abbr>
-      </label>
-      <input
-        // @ts-ignore
-
-        //id={id}
-        //ref={ref}
-        name={`${name}.minutes`}
-        // @ts-ignore
-        {...(register && register(`${name}.minutes`, rules))}
-        //type={type}
-        //aria-label={label}
-        //placeholder={placeholder}
-        className="bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-        {...props}
-      />
+      {/*{errors && <small className="error">{error.message}</small>}*/}
+      {/*{errors && <div className="error">This field is required</div>}*/}
+      {/*<ErrorMessage*/}
+      {/*  errors={errors}*/}
+      {/*  // eslint-disable-next-line @typescript-eslint/no-explicit-any*/}
+      {/*  name={name as any}*/}
+      {/*  render={({ message }) => (*/}
+      {/*    <FormErrorMessage className="mt-1">{message}</FormErrorMessage>*/}
+      {/*  )}*/}
+      {/*/>*/}
     </div>
   );
 };
