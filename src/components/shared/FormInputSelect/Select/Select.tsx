@@ -13,10 +13,7 @@ export type SelectProps = {
   rules: any;
 };
 
-export const Select: FC<SelectProps> = forwardRef<
-  HTMLInputElement,
-  SelectProps
->(
+const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
   (
     {
       id,
@@ -73,3 +70,5 @@ export const Select: FC<SelectProps> = forwardRef<
     );
   },
 );
+
+export default Select;
