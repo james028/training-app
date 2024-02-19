@@ -47,7 +47,7 @@ const CalendarDays = ({
       .fill({})
       .map((day) => {
         return {
-          ["00"]: {},
+          "00": {},
         };
       });
   };

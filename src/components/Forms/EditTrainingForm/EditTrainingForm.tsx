@@ -26,7 +26,6 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<RegistrationFormFields>({
     defaultValues: {
