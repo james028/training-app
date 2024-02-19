@@ -27,4 +27,6 @@ const SubmitButtons = ({
   );
 };
 
+///tutaj disabled jesli formularz na show a nie edit
+
 export default SubmitButtons;

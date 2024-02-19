@@ -29,6 +29,7 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
     },
     ref,
   ) => {
+    console.log(className, "clasName");
     return (
       <>
         <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
@@ -36,7 +37,8 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
         </label>
         <div className="relative">
           <select
-            className="bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+            className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight 
+            focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
             id={id}
             name={name}
             aria-label={label}

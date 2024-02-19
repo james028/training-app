@@ -59,7 +59,7 @@ const FormInputDuration = <TFormValues extends Record<string, unknown>>({
       {/*  // eslint-disable-next-line @typescript-eslint/no-explicit-any*/}
       {/*  name={name as any}*/}
       {/*  render={({ message }) => (*/}
-      {/*    <FormErrorMessage className="mt-1">{message}</FormErrorMessage>*/}
+      {/*    <FormErrorMessage.tsx className="mt-1">{message}</FormErrorMessage.tsx>*/}
       {/*  )}*/}
       {/*/>*/}
     </div>

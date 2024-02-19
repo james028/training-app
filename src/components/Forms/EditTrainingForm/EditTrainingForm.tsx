@@ -78,8 +78,8 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                 placeholder="Typ treningu"
                 className="mb-2"
                 register={register}
-                errors={errors}
-                rules={{ required: "You must enter your first name." }}
+                //errors={errors}
+                //rules={{ required: "You must enter your first name.1111" }}
                 options={["Siłownia", "Rower"]}
               />
             }
@@ -97,8 +97,8 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                 label="Długość treningu"
                 className="mb-2"
                 register={register}
-                errors={errors}
-                rules={{ required: "You must enter your Długość treningu." }}
+                // errors={errors}
+                // rules={{ required: "You must enter your Długość treningu." }}
               />
             }
             eventDataField={eventData?.duration}
@@ -130,7 +130,7 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
               <FormInput<any>
                 id="bikeKilometers"
                 // @ts-ignore
-                type="text"
+                type="number"
                 name="bikeKilometers"
                 label="Liczba kilometrów"
                 placeholder="Liczba kilometrów"
@@ -158,11 +158,11 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                 placeholder=""
                 className="mb-2"
                 register={register}
-                errors={errors}
-                rules={{
-                  valueAsNumber: true,
-                  required: "You must enter your tytuł tgreningu",
-                }}
+                // errors={errors}
+                // rules={{
+                //   valueAsNumber: true,
+                //   required: "You must enter your tytuł tgreningu",
+                // }}
               />
             }
             eventDataField={eventData?.trainingTitle}

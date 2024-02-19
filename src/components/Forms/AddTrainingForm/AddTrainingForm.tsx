@@ -59,7 +59,6 @@ const AddTrainingForm = ({ closeModal }: any) => {
           <div className="mb-4">
             <FormInput<RegistrationFormFields>
               id="trainingType"
-              // @ts-ignore
               type="text"
               name="trainingType"
               label="Typ treningu"
