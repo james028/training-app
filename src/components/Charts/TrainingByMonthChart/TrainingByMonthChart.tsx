@@ -44,13 +44,20 @@ const TrainingByMonthChart = ({
 
     return [...Object.keys(trainingTypes)].reduce((acc: any, label, index) => {
       const newData: {
-        data: number[];
+        data: (number | null)[];
         label: any;
         backgroundColor: string;
       } = {
         label,
 
         //tutaj zrobić poprawnie
+        // data: Object.keys(data).map((key) => {
+        //   if (data[key][label]) {
+        //     return +data[key][label];
+        //   } else {
+        //     return null;
+        //   }
+        // }),
         data: Object.keys(data).map((key) => +data[key][label]),
         backgroundColor: backgroundColors[index],
       };
@@ -81,7 +88,7 @@ const TrainingByMonthChart = ({
     },
   };
 
-  console.log(createDatasetsData(), "3");
+  console.log(createDatasetsData(), "333");
 
   const chartData = {
     labels: months,

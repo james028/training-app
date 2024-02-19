@@ -236,16 +236,44 @@ export const calendarData: any = {
           ],
         },
         {
-          "02": [],
+          "02": [
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:50:00",
+            },
+          ],
         },
         {
-          "03": [],
+          "03": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 44.96,
+              duration: "01:54:33",
+            },
+          ],
         },
         {
-          "04": [],
+          "04": [
+            {
+              type: "Sauna",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
         },
         {
-          "05": [],
+          "05": [
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:50:00",
+            },
+          ],
         },
         {
           "06": [],
@@ -254,7 +282,103 @@ export const calendarData: any = {
           "07": [],
         },
         {
-          "08": [],
+          "08": [
+            {
+              type: "Sauna",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
+        },
+        {
+          "09": [
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
+        },
+        {
+          "10": [],
+        },
+        {
+          "11": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 47.35,
+              duration: "02:05:13",
+            },
+          ],
+        },
+        {
+          "12": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 100,
+              duration: "04:20:52",
+            },
+          ],
+        },
+        {
+          "13": [],
+        },
+        {
+          "14": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 37.73,
+              duration: "01:34:55",
+            },
+          ],
+        },
+        {
+          "15": [
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
+        },
+        {
+          "16": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 130.49,
+              duration: "05:19:31",
+            },
+          ],
+        },
+        {
+          "17": [
+            {
+              type: "Sauna",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
+        },
+        {
+          "18": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 44.47,
+              duration: "01:54:37",
+            },
+          ],
+        },
+        {
+          "19": [],
         },
       ],
     },
