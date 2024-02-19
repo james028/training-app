@@ -4,25 +4,25 @@ export type InputSize = "medium" | "large";
 export type InputType = "text" | "select" | "number";
 
 export type InputProps = {
-  id: string;
+  //id: string;
   name: string;
   label: string;
-  type?: InputType;
+  //type?: InputType;
   size?: InputSize;
   className?: string;
-  placeholder: string;
+  //placeholder: string;
 };
 
 export const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      id,
+      //id,
       name,
       label,
-      type,
+      //type,
       size = "medium",
       className = "",
-      placeholder,
+      //placeholder,
       ...props
     },
     ref,
@@ -33,13 +33,14 @@ export const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
           {label}
         </label>
         <input
-          id={id}
+          //id={id}
           ref={ref}
           name={name}
-          type={type}
+          //type={type}
           aria-label={label}
-          placeholder={placeholder}
-          className="bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+          //placeholder={placeholder}
+          className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 
+          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
           {...props}
         />
       </>

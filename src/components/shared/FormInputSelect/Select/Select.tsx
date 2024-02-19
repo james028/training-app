@@ -1,13 +1,9 @@
 import React, { FC, forwardRef } from "react";
-import { InputType } from "../../FormInput/Input/Input";
 
 export type SelectProps = {
-  id: string;
   name: string;
   label: string;
-  type?: InputType;
   className?: string;
-  placeholder: string;
   options: any[];
   register: any;
   rules: any;
@@ -15,21 +11,9 @@ export type SelectProps = {
 
 const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
   (
-    {
-      id,
-      name,
-      label,
-      type = "select",
-      className = "",
-      placeholder,
-      options,
-      register,
-      rules,
-      ...props
-    },
+    { name, label, className = "", options, register, rules, ...props },
     ref,
   ) => {
-    console.log(className, "clasName");
     return (
       <>
         <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
@@ -39,7 +23,7 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
           <select
             className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight 
             focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-            id={id}
+            //id={id}
             name={name}
             aria-label={label}
             //aria-invalid={!!(errors && errorMessages)}
@@ -48,13 +32,11 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
           >
             <option value="">Choose</option>;
             {options?.length &&
-              options?.map((category: any) => {
+              options?.map((category) => {
                 return (
-                  <>
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  </>
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 );
               })}
           </select>

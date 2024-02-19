@@ -21,6 +21,7 @@ export type FormInputSelectProps<TFormValues extends FieldValues> = {
   label: string;
   id: string;
   //otypować
+  //type: string;
   options: any[];
 };
 
@@ -40,17 +41,15 @@ const FormInputSelect = <TFormValues extends Record<string, unknown>>({
   return (
     <div className={className} aria-live="polite">
       <Select
-        placeholder={""}
         name={name}
-        aria-invalid={hasError}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        options={options}
         register={register}
         rules={rules}
+        options={options}
         {...props}
       />
       <ErrorMessage

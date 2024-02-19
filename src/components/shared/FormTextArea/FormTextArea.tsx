@@ -7,44 +7,37 @@ import {
   RegisterOptions,
   UseFormRegister,
 } from "react-hook-form";
-import Duration from "./Duration/Duration";
-import { InputType } from "../FormInput/Input/Input";
-import { get } from "../../../utils/utils";
+import { ErrorMessage } from "@hookform/error-message";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
+import { get } from "../../../utils/utils";
+import TextArea from "./TextArea/TextArea";
 
-export type FormInputDurationProps<TFormValues extends FieldValues> = {
+export type FormTextAreaProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
   rules?: RegisterOptions;
   register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
   label: string;
-  type: InputType;
   id: string;
+  rows?: number;
 };
-const FormInputDuration = <TFormValues extends Record<string, unknown>>({
+
+const FormTextArea = <TFormValues extends Record<string, unknown>>({
   name,
   register,
   rules,
   errors,
   className,
-  label,
   ...props
-}: FormInputDurationProps<TFormValues>): JSX.Element => {
+}: FormTextAreaProps<TFormValues>): JSX.Element => {
   // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
   const errorMessages = get(errors, name);
   const hasError = !!(errors && errorMessages);
-  const durationMessage = Object.values(errors?.[name] ?? {})[0] as Record<
-    string,
-    string
-  >;
 
   return (
     <div className={className} aria-live="polite">
-      <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
-        {label}
-      </label>
-      <Duration
+      <TextArea
         name={name}
         className={`${
           hasError
@@ -55,11 +48,15 @@ const FormInputDuration = <TFormValues extends Record<string, unknown>>({
         rules={rules}
         {...props}
       />
-      <FormErrorMessage className="mt-1">
-        {durationMessage?.message}
-      </FormErrorMessage>
+      <ErrorMessage
+        errors={errors ?? {}}
+        name={name as any}
+        render={({ message }) => (
+          <FormErrorMessage className="mt-1">{message}</FormErrorMessage>
+        )}
+      />
     </div>
   );
 };
 
-export default FormInputDuration;
+export default FormTextArea;
