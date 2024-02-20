@@ -30,7 +30,7 @@ export type FormTextAreaProps<TFormValues extends FieldValues> = {
 const FormTextArea = <TFormValues extends Record<string, unknown>>({
   name,
   //setValue,
-  register,
+  //register,
   rules,
   errors,
   className,
@@ -42,6 +42,8 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
 
   console.log(hasError);
 
+  //has error obsluzyc gdy sie usunie defaultValue
+
   return (
     <div className={className} aria-live="polite">
       <TextArea
@@ -52,7 +54,7 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
             : ""
         }`}
         //setValue={setValue}
-        register={register}
+        //register={register}
         rules={rules}
         {...props}
       />

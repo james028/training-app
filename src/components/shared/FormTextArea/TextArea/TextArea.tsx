@@ -7,7 +7,7 @@ export type TextAreaProps = {
   label: string;
   className?: string;
   //setValue: any;
-  register: any;
+  //register: any;
   rules: any;
 };
 
@@ -16,13 +16,13 @@ const TextArea: FC<TextAreaProps> = ({
   label,
   className = "",
   //setValue,
-  register,
+  //register,
   rules,
   ...props
 }) => {
   console.log(props, "props");
   const {
-    //register,
+    register,
     setValue,
     //formState: { errors }
   } = useFormContext();

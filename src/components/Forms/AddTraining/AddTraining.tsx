@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../shared/Modal/Modal";
 import AddTrainingForm from "../AddTrainingForm/AddTrainingForm";
 
-const EditTraining = ({
+const AddTraining = ({
   isOpenModal,
   setOpenModal,
   closeModal,
@@ -15,6 +15,7 @@ const EditTraining = ({
   modalTitle: string;
   eventData?: Record<any, any>;
 }) => {
+  //eventData w dół dla testu
   return (
     <>
       {isOpenModal ? (
@@ -30,4 +31,4 @@ const EditTraining = ({
   );
 };
 
-export default EditTraining;
+export default AddTraining;
