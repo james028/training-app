@@ -5,6 +5,7 @@ import {
   FieldValues,
   Path,
   RegisterOptions,
+  set,
   UseFormRegister,
 } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -20,11 +21,15 @@ export type FormTextAreaProps<TFormValues extends FieldValues> = {
   className: string;
   label: string;
   id: string;
-  rows?: number;
+  //rows?: number;
+  //cols?: number;
+  defaultValue: any;
+  //setValue: any;
 };
 
 const FormTextArea = <TFormValues extends Record<string, unknown>>({
   name,
+  //setValue,
   register,
   rules,
   errors,
@@ -35,6 +40,8 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
   const errorMessages = get(errors, name);
   const hasError = !!(errors && errorMessages);
 
+  console.log(hasError);
+
   return (
     <div className={className} aria-live="polite">
       <TextArea
@@ -44,6 +51,7 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
+        //setValue={setValue}
         register={register}
         rules={rules}
         {...props}

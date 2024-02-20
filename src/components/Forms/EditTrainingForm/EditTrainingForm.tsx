@@ -157,11 +157,12 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                 placeholder=""
                 className="mb-2"
                 register={register}
-                // errors={errors}
-                // rules={{
-                //   valueAsNumber: true,
-                //   required: "You must enter your tytuł tgreningu",
-                // }}
+                errors={errors}
+                rules={{
+                  valueAsNumber: true,
+                  required: "You must enter your tytuł tgreningu",
+                }}
+                defaultValue={"edit title"}
               />
             }
             eventDataField={eventData?.trainingTitle}

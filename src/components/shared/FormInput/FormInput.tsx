@@ -21,12 +21,15 @@ export type FormInputProps<TFormValues extends FieldValues> = {
   className: string;
   label: string;
   id: string;
+  defaultValue: any;
 };
 
 const FormInput = <TFormValues extends Record<string, unknown>>({
+  id,
   name,
   register,
   rules,
+  defaultValue,
   errors,
   className,
   ...props
@@ -40,14 +43,17 @@ const FormInput = <TFormValues extends Record<string, unknown>>({
   return (
     <div className={className} aria-live="polite">
       <Input
+        id={id}
         name={name}
+        register={register}
+        rules={rules}
+        defaultValue={defaultValue}
         aria-invalid={hasError}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        {...(register && register(name, rules))}
         {...props}
       />
       <ErrorMessage

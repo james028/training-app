@@ -378,7 +378,14 @@ export const calendarData: any = {
           ],
         },
         {
-          "19": [],
+          "19": [
+            {
+              type: "Airbike",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:30:00",
+            },
+          ],
         },
       ],
     },
