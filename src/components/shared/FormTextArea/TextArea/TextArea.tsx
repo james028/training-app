@@ -27,8 +27,8 @@ const TextArea: FC<TextAreaProps> = ({
     //formState: { errors }
   } = useFormContext();
 
-  // @ts-ignore
-  const { defaultValue, id } = props;
+  //zmienić
+  const { defaultValue, id } = props as any;
 
   useEffect(() => {
     if (defaultValue) {

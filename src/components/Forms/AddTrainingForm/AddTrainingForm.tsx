@@ -117,14 +117,14 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 type="text"
                 name="trainingTitle"
                 label="Tytuł treningu"
-                placeholder=""
+                //placeholder=""
                 className="mb-2"
-                register={form.register}
+                //register={form.register}
                 errors={form.formState.errors}
                 rules={{
                   required: "You must enter your tytuł tgreningu",
                 }}
-                defaultValue={"test nprmal input"}
+                defaultValue={"aa"}
               />
               <FormTextArea<any>
                 id="trainingDescription"
@@ -137,8 +137,8 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 //rows={5}
                 //cols={1}
                 //setValue={setValue}
-                register={form.register}
-                // errors={errors}
+                //register={form.register}
+                errors={form.formState.errors}
                 rules={{
                   required: "You must enter test area",
                   maxLength: {

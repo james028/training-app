@@ -1,38 +1,56 @@
-import React, { FC, forwardRef } from "react";
+import React, { FC, forwardRef, useEffect } from "react";
+import { useFormContext } from "react-hook-form";
 
 export type InputSize = "medium" | "large";
 export type InputType = "text" | "select" | "number";
 
 export type InputProps = {
-  id: string;
+  //id: string;
   name: string;
   label: string;
   //type?: InputType;
   size?: InputSize;
   className?: string;
-  register: any;
+  //register: any;
   rules: any;
-  defaultValue: any;
+  //defaultValue: any;
   //placeholder: string;
 };
 
 export const Input: FC<InputProps> = (
   {
-    id,
+    //id,
     name,
     label,
     //type,
     size = "medium",
     className = "",
     //placeholder,
-    register,
+    //register,
     rules,
-    defaultValue,
+    //defaultValue,
     ...props
   },
   //ref,
 ) => {
   console.log(props, " w input");
+
+  const {
+    register,
+    setValue,
+    //formState: { errors }
+  } = useFormContext();
+
+  //zmienić
+  const { defaultValue, id } = props as any;
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(id, defaultValue, { shouldDirty: true });
+    }
+  }, [defaultValue, setValue, id]);
+
+  console.log(props, " w inp");
   return (
     <>
       <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
@@ -47,8 +65,8 @@ export const Input: FC<InputProps> = (
         //placeholder={placeholder}
         className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 
           text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-        {...(register && register(name, rules))}
-        value={defaultValue}
+        //value={value}
+        {...register(name, rules)}
         {...props}
       />
     </>
