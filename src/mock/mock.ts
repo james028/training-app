@@ -428,6 +428,26 @@ export const calendarData: any = {
             },
           ],
         },
+        {
+          "24": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 120.01,
+              duration: "04:50:25",
+            },
+          ],
+        },
+        {
+          "25": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 100.0,
+              duration: "04:17:13",
+            },
+          ],
+        },
       ],
     },
     {
