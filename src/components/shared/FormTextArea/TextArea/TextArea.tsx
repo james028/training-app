@@ -3,24 +3,23 @@ import { useForm, useFormContext } from "react-hook-form";
 import { RegistrationFormFields } from "../../../Forms/AddTrainingForm/AddTrainingForm";
 
 export type TextAreaProps = {
+  id: string;
   name: string;
   label: string;
   className?: string;
-  //setValue: any;
-  //register: any;
   rules: any;
+  value: any;
 };
 
 const TextArea: FC<TextAreaProps> = ({
+  id,
   name,
   label,
   className = "",
-  //setValue,
-  //register,
   rules,
+  value,
   ...props
 }) => {
-  console.log(props, "props");
   const {
     register,
     setValue,
@@ -28,13 +27,13 @@ const TextArea: FC<TextAreaProps> = ({
   } = useFormContext();
 
   //zmienić
-  const { defaultValue, id } = props as any;
+  //const { defaultValue } = props as any;
 
   useEffect(() => {
-    if (defaultValue) {
-      setValue(id, defaultValue, { shouldDirty: true });
+    if (value) {
+      setValue(id, value, { shouldDirty: true });
     }
-  }, [defaultValue, setValue, id]);
+  }, [value, setValue, id]);
 
   return (
     <>
@@ -43,11 +42,11 @@ const TextArea: FC<TextAreaProps> = ({
       </label>
       <div className="relative">
         <textarea
+          id={id}
           className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight 
             focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-          //name={name}
           aria-label={label}
-          defaultValue={defaultValue}
+          //defaultValue={defaultValue}
           {...register(name, rules)}
           {...props}
         />

@@ -69,87 +69,85 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
       <form onSubmit={onSubmit}>
         <div className="shadow rounded-lg bg-white overflow-hidden w-full block p-8">
           <div className="mb-4">
-            {/*<EditLabelInput*/}
-            {/*  label={"Typ treningu"}*/}
-            {/*  isEdit={isEdit}*/}
-            {/*  childrenInput={*/}
-            {/*    <FormInputSelect<any>*/}
-            {/*      id="trainingType"*/}
-            {/*      // @ts-ignore*/}
-            {/*      type="text"*/}
-            {/*      name="trainingType"*/}
-            {/*      label="Typ treningu"*/}
-            {/*      placeholder="Typ treningu"*/}
-            {/*      className="mb-2"*/}
-            {/*      register={register}*/}
-            {/*      errors={errors}*/}
-            {/*      rules={{ required: "Pole jest wymagane" }}*/}
-            {/*      options={["Siłownia", "Rower"]}*/}
-            {/*      defaultValue={eventData?.type}*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  eventDataField={eventData?.type}*/}
-            {/*/>*/}
-            {/*<EditLabelInput*/}
-            {/*  label={"Długość treningu"}*/}
-            {/*  isEdit={isEdit}*/}
-            {/*  childrenInput={*/}
-            {/*    <FormInputDuration<any>*/}
-            {/*      id="duration"*/}
-            {/*      // @ts-ignore*/}
-            {/*      type="number"*/}
-            {/*      name="duration"*/}
-            {/*      label="Długość treningu"*/}
-            {/*      className="mb-2"*/}
-            {/*      register={register}*/}
-            {/*      errors={errors}*/}
-            {/*      rules={{ required: "Pole jest wymagane" }}*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  eventDataField={eventData?.duration}*/}
-            {/*/>*/}
-            {/*<EditLabelInput*/}
-            {/*  label={"Rodzaj roweru"}*/}
-            {/*  isEdit={isEdit}*/}
-            {/*  childrenInput={*/}
-            {/*    <FormInputSelect<any>*/}
-            {/*      id="bikeType"*/}
-            {/*      // @ts-ignore*/}
-            {/*      type="select"*/}
-            {/*      name="bikeType"*/}
-            {/*      label="Rodzaj roweru"*/}
-            {/*      placeholder="Rodzaj roweru"*/}
-            {/*      className="mb-2"*/}
-            {/*      register={register}*/}
-            {/*      errors={errors}*/}
-            {/*      rules={{ required: "You must enter your first name." }}*/}
-            {/*      options={["one", "two"]}*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  eventDataField={eventData?.bikeType}*/}
-            {/*/>*/}
-            {/*<EditLabelInput*/}
-            {/*  label={"Liczba kilometrów"}*/}
-            {/*  isEdit={isEdit}*/}
-            {/*  childrenInput={*/}
-            {/*    <FormInput<any>*/}
-            {/*      id="bikeKilometers"*/}
-            {/*      // @ts-ignore*/}
-            {/*      type="number"*/}
-            {/*      name="bikeKilometers"*/}
-            {/*      label="Liczba kilometrów"*/}
-            {/*      placeholder="Liczba kilometrów"*/}
-            {/*      className="mb-2"*/}
-            {/*      register={register}*/}
-            {/*      errors={errors}*/}
-            {/*      rules={{*/}
-            {/*        valueAsNumber: true,*/}
-            {/*        required: "You must enter your first name.",*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  eventDataField={eventData?.bikeKilometers}*/}
-            {/*/>*/}
+            <EditLabelInput
+              label={"Typ treningu"}
+              isEdit={isEdit}
+              childrenInput={
+                <FormInputSelect<any>
+                  id="trainingType"
+                  // @ts-ignore
+                  type="text"
+                  name="trainingType"
+                  label="Typ treningu"
+                  placeholder="Typ treningu"
+                  className="mb-2"
+                  errors={errors}
+                  rules={{ required: "Pole jest wymagane" }}
+                  options={["Siłownia", "Rower"]}
+                  defaultValue={eventData?.type}
+                />
+              }
+              eventDataField={eventData?.type}
+            />
+            <EditLabelInput
+              label={"Długość treningu"}
+              isEdit={isEdit}
+              childrenInput={
+                <FormInputDuration<any>
+                  id="duration"
+                  // @ts-ignore
+                  type="number"
+                  name="duration"
+                  label="Długość treningu"
+                  className="mb-2"
+                  errors={errors}
+                  rules={{ required: "Pole jest wymagane" }}
+                  //defaultValue={eventData?.duration}
+                />
+              }
+              eventDataField={eventData?.duration}
+            />
+            <EditLabelInput
+              label={"Rodzaj roweru"}
+              isEdit={isEdit}
+              childrenInput={
+                <FormInputSelect<any>
+                  id="bikeType"
+                  // @ts-ignore
+                  type="select"
+                  name="bikeType"
+                  label="Rodzaj roweru"
+                  placeholder="Rodzaj roweru"
+                  className="mb-2"
+                  errors={errors}
+                  rules={{ required: "Pole jest wymagane" }}
+                  options={["one", "two", "race80"]}
+                  defaultValue={eventData?.bikeType}
+                />
+              }
+              eventDataField={eventData?.bikeType}
+            />
+            <EditLabelInput
+              label={"Liczba kilometrów"}
+              isEdit={isEdit}
+              childrenInput={
+                <FormInput<any>
+                  id="bikeKilometers"
+                  // @ts-ignore
+                  type="number"
+                  name="bikeKilometers"
+                  label="Liczba kilometrów"
+                  className="mb-2"
+                  errors={errors}
+                  rules={{
+                    valueAsNumber: true,
+                    required: "Pole jest wymagane",
+                  }}
+                  defaultValue={eventData?.bikeKilometers}
+                />
+              }
+              eventDataField={eventData?.bikeKilometers}
+            />
             <EditLabelInput
               label={"Tytuł treningu"}
               isEdit={isEdit}
@@ -161,7 +159,7 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                   name="trainingTitle"
                   label="Tytuł treningu"
                   className="mb-2"
-                  errors={form.formState.errors}
+                  errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
                   defaultValue={eventData?.trainingTitle}
                 />
@@ -180,7 +178,6 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
             {/*      label="Opis treningu"*/}
             {/*      //placeholder=""*/}
             {/*      className="mb-2"*/}
-            {/*      //register={register}*/}
             {/*      errors={errors}*/}
             {/*      rules={{*/}
             {/*        required: "Pole jest wymagane",*/}

@@ -13,22 +13,21 @@ import { get } from "../../../utils/utils";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 
 export type FormInputDurationProps<TFormValues extends FieldValues> = {
+  id: string;
   name: Path<TFormValues>;
+  label: string;
   rules?: RegisterOptions;
-  register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
-  label: string;
   type: InputType;
-  id: string;
 };
 const FormInputDuration = <TFormValues extends Record<string, unknown>>({
+  id,
   name,
-  register,
+  label,
   rules,
   errors,
   className,
-  label,
   ...props
 }: FormInputDurationProps<TFormValues>): JSX.Element => {
   // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
@@ -45,13 +44,13 @@ const FormInputDuration = <TFormValues extends Record<string, unknown>>({
         {label}
       </label>
       <Duration
+        id={id}
         name={name}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        register={register}
         rules={rules}
         {...props}
       />

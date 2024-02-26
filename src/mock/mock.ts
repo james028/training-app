@@ -401,8 +401,8 @@ export const calendarData: any = {
             {
               type: "Rower",
               bikeType: "race80",
-              bikeKilometers: 43.58,
-              duration: "01:56:36",
+              bikeKilometers: 50.34,
+              duration: "02:13:16",
             },
           ],
         },
@@ -411,8 +411,8 @@ export const calendarData: any = {
             {
               type: "Rower",
               bikeType: "race80",
-              bikeKilometers: null,
-              duration: "00:30:00",
+              bikeKilometers: 43.58,
+              duration: "01:56:36",
               trainingTitle: "Title test 1",
               trainingDescription: "description test",
             },

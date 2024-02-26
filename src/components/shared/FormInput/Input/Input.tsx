@@ -5,40 +5,22 @@ export type InputSize = "medium" | "large";
 export type InputType = "text" | "select" | "number";
 
 export type InputProps = {
-  //id: string;
+  id: string;
   name: string;
   label: string;
-  //type?: InputType;
   size?: InputSize;
   className?: string;
-  //register: any;
   rules: any;
-  //defaultValue: any;
-  //placeholder: string;
 };
 
-export const Input: FC<InputProps> = (
-  {
-    //id,
-    name,
-    label,
-    //type,
-    size = "medium",
-    className = "",
-    //placeholder,
-    //register,
-    rules,
-    //defaultValue,
-    ...props
-  },
+const Input: FC<InputProps> = (
+  { id, name, label, size = "medium", className = "", rules, ...props },
   //ref,
 ) => {
-  console.log(props, " w input");
-
   const { register, setValue } = useFormContext();
 
   //zmienić typowanie
-  const { defaultValue, id } = props as any;
+  const { defaultValue } = props as any;
 
   useEffect(() => {
     if (defaultValue) {
@@ -54,16 +36,14 @@ export const Input: FC<InputProps> = (
       <input
         id={id}
         //ref={ref}
-        //name={name}
-        //type={type}
         aria-label={label}
-        //placeholder={placeholder}
         className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 
           text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-        value={defaultValue}
-        {...register(name, rules)}
+        {...(register && register(name, rules))}
         {...props}
       />
     </>
   );
 };
+
+export default Input;

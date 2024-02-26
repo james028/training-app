@@ -1,19 +1,28 @@
-import React, { FC, forwardRef } from "react";
+import React, { FC, forwardRef, useEffect } from "react";
+import { useFormContext } from "react-hook-form";
 
 export type SelectProps = {
+  id: string;
   name: string;
   label: string;
   className?: string;
   options: any[];
-  register: any;
   rules: any;
 };
 
 const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
-  (
-    { name, label, className = "", options, register, rules, ...props },
-    ref,
-  ) => {
+  ({ id, name, label, className = "", options, rules, ...props }, ref) => {
+    const { register, setValue } = useFormContext();
+
+    //zmienić typowanie
+    const { defaultValue } = props as any;
+
+    useEffect(() => {
+      if (defaultValue) {
+        setValue(id, defaultValue, { shouldDirty: true });
+      }
+    }, [defaultValue, setValue, id]);
+
     return (
       <>
         <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
@@ -23,8 +32,7 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
           <select
             className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight 
             focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-            //id={id}
-            name={name}
+            id={id}
             aria-label={label}
             //aria-invalid={!!(errors && errorMessages)}
             {...(register && register(name, rules))}

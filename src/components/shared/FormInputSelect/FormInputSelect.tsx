@@ -13,21 +13,19 @@ import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 import { get } from "../../../utils/utils";
 
 export type FormInputSelectProps<TFormValues extends FieldValues> = {
+  id: string;
+  label: string;
   name: Path<TFormValues>;
   rules?: RegisterOptions;
-  register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
-  label: string;
-  id: string;
-  //otypować
-  //type: string;
   options: any[];
 };
 
 const FormInputSelect = <TFormValues extends Record<string, unknown>>({
+  id,
+  label,
   name,
-  register,
   rules,
   errors,
   className,
@@ -41,13 +39,14 @@ const FormInputSelect = <TFormValues extends Record<string, unknown>>({
   return (
     <div className={className} aria-live="polite">
       <Select
+        id={id}
+        label={label}
         name={name}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        register={register}
         rules={rules}
         options={options}
         {...props}

@@ -14,27 +14,23 @@ import { get } from "../../../utils/utils";
 import TextArea from "./TextArea/TextArea";
 
 export type FormTextAreaProps<TFormValues extends FieldValues> = {
+  id: string;
+  label: string;
   name: Path<TFormValues>;
   rules?: RegisterOptions;
-  register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
-  label: string;
-  id: string;
-  //rows?: number;
-  //cols?: number;
-  defaultValue: any;
-  //setValue: any;
+  defaultValue?: string;
 };
 
 const FormTextArea = <TFormValues extends Record<string, unknown>>({
+  id,
   label,
   name,
-  //setValue,
-  //register,
   rules,
   errors,
   className,
+  defaultValue,
   ...props
 }: FormTextAreaProps<TFormValues>): JSX.Element => {
   // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
@@ -48,16 +44,16 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
   return (
     <div className={className} aria-live="polite">
       <TextArea
+        id={id}
         label={label}
         name={name}
+        rules={rules}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        //setValue={setValue}
-        //register={register}
-        rules={rules}
+        value={defaultValue}
         {...props}
       />
       <ErrorMessage

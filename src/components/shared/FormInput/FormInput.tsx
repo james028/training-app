@@ -5,13 +5,12 @@ import {
   FieldValues,
   Path,
   RegisterOptions,
-  UseFormRegister,
 } from "react-hook-form";
 
 import { ErrorMessage } from "@hookform/error-message";
-import { Input } from "./Input/Input";
 import { get } from "../../../utils/utils";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
+import Input from "./Input/Input";
 
 export type FormInputProps<TFormValues extends FieldValues> = {
   id: string;
@@ -35,11 +34,10 @@ const FormInput = <TFormValues extends Record<string, unknown>>({
   const errorMessages = get(errors, name);
   const hasError = !!(errors && errorMessages);
 
-  console.log(hasError, "has");
-
   return (
     <div className={className} aria-live="polite">
       <Input
+        id={id}
         label={label}
         name={name}
         rules={rules}

@@ -1,10 +1,11 @@
-import React, { FC, forwardRef } from "react";
+import React, { FC, forwardRef, useEffect } from "react";
 import styled from "styled-components";
+import { useFormContext } from "react-hook-form";
 
 export type DurationProps = {
+  id: string;
   name: string;
   className?: string;
-  register: any;
   rules: any;
 };
 
@@ -19,8 +20,10 @@ const StyledDurationLabel = styled.label`
 `;
 
 const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
-  ({ name, className = "", register, rules, ...props }, ref) => {
+  ({ id, name, className = "", rules, ...props }, ref) => {
     // dać do folderu const.ts
+    const { register, setValue } = useFormContext();
+
     const durationArrayData = [
       {
         title: "hr",
@@ -36,6 +39,17 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
       },
     ];
 
+    //zmienić typowanie
+    const { defaultValue } = props as any;
+
+    useEffect(() => {
+      if (defaultValue) {
+        setValue(id, defaultValue, { shouldDirty: true });
+      }
+    }, [defaultValue, setValue, id]);
+
+    //zrobić tak aby w tym inoucie bylo max 2 znaki
+
     return (
       <div className="flex">
         {durationArrayData.map(({ title, fieldName }) => {
@@ -45,7 +59,6 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
                 <abbr title="hours">{title}</abbr>
               </StyledDurationLabel>
               <input
-                name={`name.${fieldName}`}
                 aria-label={fieldName}
                 className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full 
                 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
