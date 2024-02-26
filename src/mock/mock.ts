@@ -385,6 +385,47 @@ export const calendarData: any = {
               bikeKilometers: null,
               duration: "00:30:00",
             },
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00:00",
+            },
+          ],
+        },
+        {
+          "20": [],
+        },
+        {
+          "21": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: 43.58,
+              duration: "01:56:36",
+            },
+          ],
+        },
+        {
+          "22": [
+            {
+              type: "Rower",
+              bikeType: "race80",
+              bikeKilometers: null,
+              duration: "00:30:00",
+              trainingTitle: "Title test 1",
+              trainingDescription: "description test",
+            },
+          ],
+        },
+        {
+          "23": [
+            {
+              type: "Airbike",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:30:00",
+            },
           ],
         },
       ],

@@ -35,13 +35,9 @@ export const Input: FC<InputProps> = (
 ) => {
   console.log(props, " w input");
 
-  const {
-    register,
-    setValue,
-    //formState: { errors }
-  } = useFormContext();
+  const { register, setValue } = useFormContext();
 
-  //zmienić
+  //zmienić typowanie
   const { defaultValue, id } = props as any;
 
   useEffect(() => {
@@ -50,7 +46,6 @@ export const Input: FC<InputProps> = (
     }
   }, [defaultValue, setValue, id]);
 
-  console.log(props, " w inp");
   return (
     <>
       <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
@@ -65,7 +60,7 @@ export const Input: FC<InputProps> = (
         //placeholder={placeholder}
         className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 
           text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-        //value={value}
+        value={defaultValue}
         {...register(name, rules)}
         {...props}
       />

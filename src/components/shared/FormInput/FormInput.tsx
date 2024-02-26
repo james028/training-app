@@ -14,22 +14,19 @@ import { get } from "../../../utils/utils";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 
 export type FormInputProps<TFormValues extends FieldValues> = {
+  id: string;
+  label: string;
   name: Path<TFormValues>;
   rules?: RegisterOptions;
-  //register?: UseFormRegister<TFormValues>;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
-  className: string;
-  label: string;
-  id: string;
-  defaultValue?: any;
+  className?: string;
 };
 
 const FormInput = <TFormValues extends Record<string, unknown>>({
-  //id,
+  id,
+  label,
   name,
-  //register,
   rules,
-  //defaultValue,
   errors,
   className,
   ...props
@@ -38,16 +35,14 @@ const FormInput = <TFormValues extends Record<string, unknown>>({
   const errorMessages = get(errors, name);
   const hasError = !!(errors && errorMessages);
 
-  console.log(errors);
+  console.log(hasError, "has");
 
   return (
     <div className={className} aria-live="polite">
       <Input
-        //id={id}
+        label={label}
         name={name}
-        //register={register}
         rules={rules}
-        //defaultValue={defaultValue}
         aria-invalid={hasError}
         className={`${
           hasError
@@ -58,6 +53,7 @@ const FormInput = <TFormValues extends Record<string, unknown>>({
       />
       <ErrorMessage
         errors={errors ?? {}}
+        // zmienic to any
         name={name as any}
         render={({ message }) => (
           <FormErrorMessage className="mt-1">{message}</FormErrorMessage>

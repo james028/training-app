@@ -119,35 +119,32 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 label="Tytuł treningu"
                 //placeholder=""
                 className="mb-2"
-                //register={form.register}
                 errors={form.formState.errors}
-                rules={{
-                  required: "You must enter your tytuł tgreningu",
-                }}
+                rules={{ required: "Pole jest wymagane" }}
                 defaultValue={"aa"}
               />
-              <FormTextArea<any>
-                id="trainingDescription"
-                // @ts-ignore
-                //type="text"
-                name="trainingDescription"
-                label="Opis treningu"
-                //placeholder="Opis treningu"
-                className="mb-2"
-                //rows={5}
-                //cols={1}
-                //setValue={setValue}
-                //register={form.register}
-                errors={form.formState.errors}
-                rules={{
-                  required: "You must enter test area",
-                  maxLength: {
-                    value: 100,
-                    message: "Description cannot be longer than 100 characters",
-                  },
-                }}
-                defaultValue={"e"}
-              />
+              {/*<FormTextArea<any>*/}
+              {/*  id="trainingDescription"*/}
+              {/*  // @ts-ignore*/}
+              {/*  //type="text"*/}
+              {/*  name="trainingDescription"*/}
+              {/*  label="Opis treningu"*/}
+              {/*  //placeholder="Opis treningu"*/}
+              {/*  className="mb-2"*/}
+              {/*  //rows={5}*/}
+              {/*  //cols={1}*/}
+              {/*  //setValue={setValue}*/}
+              {/*  //register={form.register}*/}
+              {/*  errors={form.formState.errors}*/}
+              {/*  rules={{*/}
+              {/*    required: "You must enter test area",*/}
+              {/*    maxLength: {*/}
+              {/*      value: 100,*/}
+              {/*      message: "Description cannot be longer than 100 characters",*/}
+              {/*    },*/}
+              {/*  }}*/}
+              {/*  defaultValue={"e"}*/}
+              {/*/>*/}
             </div>
           </div>
           <SubmitButtons closeModal={closeModal} />
