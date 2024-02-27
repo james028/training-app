@@ -20,7 +20,6 @@ export type FormTextAreaProps<TFormValues extends FieldValues> = {
   rules?: RegisterOptions;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
-  defaultValue?: string;
 };
 
 const FormTextArea = <TFormValues extends Record<string, unknown>>({
@@ -30,7 +29,6 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
   rules,
   errors,
   className,
-  defaultValue,
   ...props
 }: FormTextAreaProps<TFormValues>): JSX.Element => {
   // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
@@ -53,7 +51,6 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        value={defaultValue}
         {...props}
       />
       <ErrorMessage

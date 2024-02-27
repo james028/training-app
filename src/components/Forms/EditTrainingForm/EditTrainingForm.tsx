@@ -102,7 +102,8 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
-                  //defaultValue={eventData?.duration}
+                  // @ts-ignore
+                  defaultValue={eventData?.duration}
                 />
               }
               eventDataField={eventData?.duration}
@@ -166,33 +167,32 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
               }
               eventDataField={eventData?.trainingTitle}
             />
-            {/*<EditLabelInput*/}
-            {/*  label={"Opis treningu"}*/}
-            {/*  isEdit={isEdit}*/}
-            {/*  childrenInput={*/}
-            {/*    <FormTextArea<any>*/}
-            {/*      id="trainingDescription"*/}
-            {/*      // @ts-ignore*/}
-            {/*      //type="text"*/}
-            {/*      name="trainingTitle"*/}
-            {/*      label="Opis treningu"*/}
-            {/*      //placeholder=""*/}
-            {/*      className="mb-2"*/}
-            {/*      errors={errors}*/}
-            {/*      rules={{*/}
-            {/*        required: "Pole jest wymagane",*/}
-            {/*        maxLength: {*/}
-            {/*          value: 100,*/}
-            {/*          //zmienic tlumaczenie*/}
-            {/*          message:*/}
-            {/*            "Description cannot be longer than 100 characters",*/}
-            {/*        },*/}
-            {/*      }}*/}
-            {/*      defaultValue={eventData?.trainingDescription}*/}
-            {/*    />*/}
-            {/*  }*/}
-            {/*  eventDataField={eventData?.trainingDescription}*/}
-            {/*/>*/}
+            <EditLabelInput
+              label={"Opis treningu"}
+              isEdit={isEdit}
+              childrenInput={
+                <FormTextArea<any>
+                  id="trainingDescription"
+                  name="trainingDescription"
+                  label="Opis treningu"
+                  //placeholder=""
+                  className="mb-2"
+                  errors={errors}
+                  rules={{
+                    required: "Pole jest wymagane",
+                    maxLength: {
+                      value: 100,
+                      //zmienic tlumaczenie
+                      message:
+                        "Description cannot be longer than 100 characters",
+                    },
+                  }}
+                  // @ts-ignore
+                  defaultValue={eventData?.trainingDescription}
+                />
+              }
+              eventDataField={eventData?.trainingDescription}
+            />
           </div>
           <EditButtons
             isEdit={isEdit}

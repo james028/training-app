@@ -1,6 +1,5 @@
 import React, { FC, forwardRef, useEffect } from "react";
-import { useForm, useFormContext } from "react-hook-form";
-import { RegistrationFormFields } from "../../../Forms/AddTrainingForm/AddTrainingForm";
+import { useFormContext } from "react-hook-form";
 
 export type TextAreaProps = {
   id: string;
@@ -8,7 +7,6 @@ export type TextAreaProps = {
   label: string;
   className?: string;
   rules: any;
-  value: any;
 };
 
 const TextArea: FC<TextAreaProps> = ({
@@ -17,41 +15,33 @@ const TextArea: FC<TextAreaProps> = ({
   label,
   className = "",
   rules,
-  value,
   ...props
 }) => {
-  const {
-    register,
-    setValue,
-    //formState: { errors }
-  } = useFormContext();
+  const { register, setValue } = useFormContext();
 
   //zmienić
-  //const { defaultValue } = props as any;
+  const { defaultValue } = props as any;
 
   useEffect(() => {
-    if (value) {
-      setValue(id, value, { shouldDirty: true });
+    if (defaultValue) {
+      setValue(id, defaultValue, { shouldDirty: true });
     }
-  }, [value, setValue, id]);
+  }, [defaultValue, setValue, id]);
 
   return (
-    <>
+    <div className="relative">
       <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
         {label}
       </label>
-      <div className="relative">
-        <textarea
-          id={id}
-          className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight 
+      <textarea
+        id={id}
+        aria-label={label}
+        className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 text-gray-700 leading-tight 
             focus:outline-none focus:bg-white focus:border-blue-500 ${className}`}
-          aria-label={label}
-          //defaultValue={defaultValue}
-          {...register(name, rules)}
-          {...props}
-        />
-      </div>
-    </>
+        {...(register && register(name, rules))}
+        {...props}
+      />
+    </div>
   );
 };
 
