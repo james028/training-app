@@ -23,10 +23,10 @@ export type FormTextAreaProps<TFormValues extends FieldValues> = {
 };
 
 const FormTextArea = <TFormValues extends Record<string, unknown>>({
-  id,
-  label,
+  //id,
+  //label,
   name,
-  rules,
+  //rules,
   errors,
   className,
   ...props
@@ -42,10 +42,10 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
   return (
     <div className={className} aria-live="polite">
       <TextArea
-        id={id}
-        label={label}
+        //id={id}
+        //label={label}
         name={name}
-        rules={rules}
+        //rules={rules}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"

@@ -2,25 +2,25 @@ import React, { FC, forwardRef, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 export type TextAreaProps = {
-  id: string;
+  //id: string;
   name: string;
-  label: string;
+  //label: string;
   className?: string;
-  rules: any;
+  //rules: any;
 };
 
 const TextArea: FC<TextAreaProps> = ({
-  id,
+  //id,
   name,
-  label,
+  //label,
   className = "",
-  rules,
+  //rules,
   ...props
 }) => {
   const { register, setValue } = useFormContext();
 
   //zmienić
-  const { defaultValue } = props as any;
+  const { id, label, rules, defaultValue } = props as any;
 
   useEffect(() => {
     if (defaultValue) {
@@ -28,6 +28,7 @@ const TextArea: FC<TextAreaProps> = ({
     }
   }, [defaultValue, setValue, id]);
 
+  console.log(label);
   return (
     <div className="relative">
       <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
