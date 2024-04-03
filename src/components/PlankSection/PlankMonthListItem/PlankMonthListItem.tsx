@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import { monthObject } from "../../../utils/utils";
+import { DateTime } from "luxon";
 
 const PlankSectionListItemContainer = styled.div`
   flex: 0 0 33%;
@@ -16,12 +17,6 @@ type PlankMonthListItem = {
   item: string;
 };
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
-  const displayMonthNames = (monthIndex: string): string => {
-    return (
-      monthObject[monthIndex as unknown as keyof typeof monthObject] ?? "-"
-    );
-  };
-
   function foo(values: string[], index: number) {
     return values
       .map((e: string) =>
@@ -66,22 +61,48 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     //return result.split(":").reverse()[2] === "00" ? result.slice(3) : result;
   }
 
-  /* examples */
-  const seconds = ["00:03", "00:9"];
-  const mins = ["01:20", "1:23"];
-  const hours = ["00:03:59", "02:05:02"];
-  const mix = ["00:04:58", "10:00"];
+  const displayMonthNames = (monthIndex: string): string => {
+    return (
+      monthObject[monthIndex as unknown as keyof typeof monthObject] ?? "-"
+    );
+  };
+  const displaySumMinutes = (data: any, itemIndex: any): string => {
+    const durations = data[itemIndex].map(
+      (item: Record<string, string>) => item.duration,
+    );
+
+    return durations.length ? sumMinutes(durations) : "-";
+  };
+
+  const checkIfMonthIsExist = (monthIndex: string): boolean => {
+    const currentDate = DateTime.now();
+    const { year, month } = currentDate.toObject();
+
+    const dateToCheck = DateTime.local(year, month);
+    const referenceDate = DateTime.local(year, Number(monthIndex));
+
+    const { month: checkMonth } = dateToCheck;
+    const { month: referenceMonth } = referenceDate;
+
+    return referenceMonth <= checkMonth;
+  };
 
   return (
     <PlankSectionListItemContainer>
-      <div className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+      <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">
         {displayMonthNames(item)}
       </div>
       <PlankSectionListItem>
-        <div className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
+        <div
+          className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
+          style={{ flex: "0 0 20%" }}
+        >
           Dzień
         </div>
-        <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+        <div
+          className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
+          style={{ flex: "0 0 40%" }}
+        >
           Długość treningu
         </div>
       </PlankSectionListItem>
@@ -90,25 +111,43 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
         return (
           //zmienić
           <PlankSectionListItem key={index}>
-            <div className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
+            <div
+              className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
+              style={{ flex: "0 0 20%" }}
+            >
               {String(t.day).length === 1 ? `0${t.day}` : t.day}
             </div>
-            <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+            <div
+              className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
+              style={{ flex: "0 0 40%" }}
+            >
               {t.duration}
             </div>
             <div className="c" onClick={() => null}>
-              Edytuj
+              Ed
+            </div>
+            <div className="c" onClick={() => null}>
+              Us
             </div>
           </PlankSectionListItem>
         );
       })}
-      <div className="r">
-        <div>Liczba treningów: {itemData[item].length}</div>
-        <div>
-          Suma czasu :{" "}
-          {itemData[item].map((it) => it.duration).length
-            ? sumMinutes(itemData[item].map((e) => e.duration))
-            : "-"}
+      <div>
+        <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+          Liczba treningów:{" "}
+          <span className="font-bold">
+            {checkIfMonthIsExist(item)
+              ? itemData[item]?.length
+              : "Ten miesiąc jeszcze nie istnieje"}
+          </span>
+        </div>
+        <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+          Suma czasu:{" "}
+          <span className="font-bold">
+            {checkIfMonthIsExist(item)
+              ? displaySumMinutes(itemData, item)
+              : "Ten miesiąc jeszcze nie istnieje"}
+          </span>
         </div>
       </div>
     </PlankSectionListItemContainer>
