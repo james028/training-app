@@ -92,64 +92,101 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
       <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">
         {displayMonthNames(item)}
       </div>
-      <PlankSectionListItem>
-        <div
-          className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
-          style={{ flex: "0 0 20%" }}
-        >
-          Dzień
-        </div>
-        <div
-          className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-          style={{ flex: "0 0 40%" }}
-        >
-          Długość treningu
-        </div>
-      </PlankSectionListItem>
-      {itemData[item].length === 0 ? <div>-</div> : null}
-      {itemData[item].map((t, index) => {
-        return (
-          //zmienić
-          <PlankSectionListItem key={index}>
+      {checkIfMonthIsExist(item) ? (
+        <>
+          <PlankSectionListItem>
             <div
               className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
               style={{ flex: "0 0 20%" }}
             >
-              {String(t.day).length === 1 ? `0${t.day}` : t.day}
+              Dzień
             </div>
             <div
               className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
               style={{ flex: "0 0 40%" }}
             >
-              {t.duration}
-            </div>
-            <div className="c" onClick={() => null}>
-              Ed
-            </div>
-            <div className="c" onClick={() => null}>
-              Us
+              Długość treningu
             </div>
           </PlankSectionListItem>
-        );
-      })}
-      <div>
+          {itemData[item].length === 0 ? <div>-</div> : null}
+          {itemData[item].map((t, index) => {
+            return (
+              //zmienić
+              <PlankSectionListItem key={index}>
+                <div
+                  className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
+                  style={{ flex: "0 0 20%" }}
+                >
+                  {String(t.day).length === 1 ? `0${t.day}` : t.day}
+                </div>
+                <div
+                  className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
+                  style={{ flex: "0 0 40%" }}
+                >
+                  {t.duration}
+                </div>
+                <div className="c" onClick={() => null}>
+                  <svg
+                    className="w-6 h-6 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 -2 22 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
+                    />
+                  </svg>
+                </div>
+                <div className="c" onClick={() => null}>
+                  <svg
+                    className="w-6 h-6 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+                    />
+                  </svg>
+                </div>
+              </PlankSectionListItem>
+            );
+          })}
+          <div>
+            <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+              Liczba treningów:{" "}
+              <span className="font-bold">{itemData[item]?.length}</span>
+            </div>
+            <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+              Suma czasu:{" "}
+              <span className="font-bold">
+                {displaySumMinutes(itemData, item)}
+              </span>
+              {itemData[item]?.length ? (
+                <span className="ml-1">h:min:s</span>
+              ) : null}
+            </div>
+          </div>
+        </>
+      ) : (
         <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-          Liczba treningów:{" "}
-          <span className="font-bold">
-            {checkIfMonthIsExist(item)
-              ? itemData[item]?.length
-              : "Ten miesiąc jeszcze nie istnieje"}
-          </span>
+          Ten miesiąc jeszcze nie istnieje
         </div>
-        <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-          Suma czasu:{" "}
-          <span className="font-bold">
-            {checkIfMonthIsExist(item)
-              ? displaySumMinutes(itemData, item)
-              : "Ten miesiąc jeszcze nie istnieje"}
-          </span>
-        </div>
-      </div>
+      )}
     </PlankSectionListItemContainer>
   );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { DateTime } from "luxon";
 import PlankMonthList from "./PlankMonthList/PlankMonthList";
+import AddEditPlankTraining from "./AddEditPlankTraining/AddEditPlankTraining";
 
 const PlankSection = () => {
   // console.log(sumMinutes(seconds)); //'00:12'
@@ -12,6 +13,7 @@ const PlankSection = () => {
   return (
     <div>
       Plank Section
+      <AddEditPlankTraining />
       <PlankMonthList />
     </div>
   );

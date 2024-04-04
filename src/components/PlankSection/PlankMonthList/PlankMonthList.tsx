@@ -12,7 +12,7 @@ const PlankSectionContainer = styled.div`
 
 const PlankMonthList = () => {
   return (
-    <div>
+    <>
       {data.map((itemData: any, index: number) => {
         return (
           <PlankSectionContainer key={index}>
@@ -28,7 +28,7 @@ const PlankMonthList = () => {
           </PlankSectionContainer>
         );
       })}
-    </div>
+    </>
   );
 };
 
