@@ -16,15 +16,19 @@ type PlankMonthListItem = {
   itemData: Record<string, any[]>;
   item: string;
 };
+
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
-  function foo(values: string[], index: number) {
-    return values
+  function foo(values: string[], index: number): number {
+    const x = values
       .map((e: string) =>
         e.split(":").reverse()[index]
           ? Number(e.split(":").reverse()[index])
           : 0,
       )
       .reduce((a: any, b: any) => a + b);
+
+    console.log(x, "x");
+    return x;
   }
 
   const validate = (time: number) => {

@@ -5,6 +5,7 @@ import { RegistrationFormFields } from "../../Forms/EditTrainingForm/EditTrainin
 import { FormProvider, useForm } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import { DateTime } from "luxon";
+import FormInputRadio from "../../shared/FormInputRadio/FormInputRadio";
 
 const AddEditPlankTraining = () => {
   const [toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining] =
@@ -21,17 +22,17 @@ const AddEditPlankTraining = () => {
         minutes: "",
         seconds: "",
       },
+      isDifferentExercises: false,
     },
   });
   const {
     handleSubmit,
-    register,
-    getValues,
     watch,
     formState: { errors },
   } = form;
 
   const onSubmit = handleSubmit((data: RegistrationFormFields) => {
+    //zmienic zeby nie wysylalo czerwiec tylko index, czyli no fubkcja na stowrzenie z tab z ob z month
     console.log("submitting... edit plak", data);
   });
 
@@ -102,6 +103,19 @@ const AddEditPlankTraining = () => {
                 // @ts-ignore
                 defaultValue={""}
               />
+              <FormInputRadio
+                id="isDifferentExercises"
+                // @ts-ignore
+                type="radio"
+                name="isDifferentExercises"
+                label="Czy plank był róznorodny, ze zmienionymi ćwiczeniami?"
+                className="mb-2"
+                errors={{}}
+                rules={{}}
+                // @ts-ignore
+                //defaultValue={""}
+                leftSideLabel={true}
+              />
               <button
                 className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
                 type="submit"
@@ -117,3 +131,5 @@ const AddEditPlankTraining = () => {
 };
 
 export default AddEditPlankTraining;
+
+//templatka radio do zrobienia, przemysleć
