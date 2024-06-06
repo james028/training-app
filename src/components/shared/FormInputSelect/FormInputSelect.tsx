@@ -19,7 +19,7 @@ export type FormInputSelectProps<TFormValues extends FieldValues> = {
   rules?: RegisterOptions;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
-  options: any[];
+  options: any[] | null;
 };
 
 const FormInputSelect = <TFormValues extends Record<string, unknown>>({

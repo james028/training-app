@@ -10,16 +10,29 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { get } from "../../../utils/utils";
+import styled from "styled-components";
+import RadioInputs from "./RadioInputs/RadioInputs";
 
 export type FormRadioInputProps<TFormValues extends FieldValues> = {
   id: string;
   label: string;
   name: Path<TFormValues>;
   rules?: RegisterOptions;
-  errors?: Partial<DeepMap<TFormValues, FieldError>>;
+  //zmienic
+  errors?: any;
   className?: string;
   leftSideLabel?: boolean;
 };
+
+const StyledRadioOrCheckboxButtonContainer = styled.div<{
+  leftSideLabel?: boolean;
+}>`
+  display: flex;
+  justify-content: ${(props) =>
+    props.leftSideLabel ? "flex-end" : "flex-start"};
+  flex-direction: ${(props) =>
+    props.leftSideLabel ? "row-reverse" : "reverse"};
+`;
 
 const FormInputRadio = <TFormValues extends Record<string, unknown>>({
   id,
@@ -35,35 +48,23 @@ const FormInputRadio = <TFormValues extends Record<string, unknown>>({
   const errorMessages = get(errors, name);
   const hasError = !!(errors && errorMessages);
 
-  //nizej
-  const { register, setValue } = useFormContext();
-
-  //zmienić typowanie
-  const { defaultValue } = props as any;
-
-  React.useEffect(() => {
-    if (defaultValue) {
-      setValue(id, defaultValue, { shouldDirty: true });
-    }
-  }, [defaultValue, setValue, id]);
-
-  console.log(id, "idx");
-
   return (
     <div className={className} aria-live="polite">
-      <input
-        id="link-radio"
-        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-        aria-label={label}
-        {...(register && register(name, rules))}
+      {/*<StyledRadioOrCheckboxButtonContainer leftSideLabel={leftSideLabel}>*/}
+      <RadioInputs
+        id={id}
+        name={name}
+        label={label}
+        rules={rules}
+        aria-invalid={hasError}
+        className={`${
+          hasError
+            ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
+            : ""
+        }`}
         {...props}
       />
-      <label
-        htmlFor="link-radio"
-        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-      >
-        {label}
-      </label>
+      {/*</StyledRadioOrCheckboxButtonContainer>*/}
       <ErrorMessage
         errors={errors ?? {}}
         // zmienic to any

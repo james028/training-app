@@ -17,12 +17,14 @@ export const data = [
         duration: "00:07:02",
         month: "1",
         day: 19,
+        isDifferentExercises: true,
         _id: "6602d89e3339f1f956d48702",
       },
       {
         duration: "00:11:02",
         month: "1",
         day: 22,
+        isDifferentExercises: true,
         _id: "6602d89e3339f1f956d48702",
       },
       {

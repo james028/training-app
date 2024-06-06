@@ -6,7 +6,7 @@ export type SelectProps = {
   name: string;
   label: string;
   className?: string;
-  options: any[];
+  options: any[] | null;
   rules: any;
 };
 

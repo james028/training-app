@@ -107,13 +107,20 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
             </div>
             <div
               className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-              style={{ flex: "0 0 40%" }}
+              style={{ flex: "0 0 32%" }}
             >
               Długość treningu
+            </div>
+            <div
+              className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
+              style={{ flex: "0 0 8%" }}
+            >
+              R ćw.
             </div>
           </PlankSectionListItem>
           {itemData[item].length === 0 ? <div>-</div> : null}
           {itemData[item].map((t, index) => {
+            console.log(t, "t");
             return (
               //zmienić
               <PlankSectionListItem key={index}>
@@ -125,17 +132,41 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 </div>
                 <div
                   className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-                  style={{ flex: "0 0 40%" }}
+                  style={{ flex: "0 0 32%" }}
                 >
                   {t.duration}
                 </div>
+                <div
+                  className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
+                  style={{ flex: "0 0 8%" }}
+                >
+                  {t.isDifferentExercises ? (
+                    <svg
+                      className="w-6 h-6 text-emerald-600 dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    "-"
+                  )}
+                </div>
                 <div className="c" onClick={() => null}>
                   <svg
-                    className="w-6 h-6 text-gray-800 dark:text-white"
+                    className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="20"
+                    height="20"
                     fill="none"
                     viewBox="0 -2 22 24"
                   >
@@ -150,11 +181,11 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 </div>
                 <div className="c" onClick={() => null}>
                   <svg
-                    className="w-6 h-6 text-gray-800 dark:text-white"
+                    className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="20"
+                    height="20"
                     fill="none"
                     viewBox="0 0 24 24"
                   >

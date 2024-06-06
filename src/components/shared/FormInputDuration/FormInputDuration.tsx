@@ -54,6 +54,7 @@ const FormInputDuration = <TFormValues extends Record<string, unknown>>({
         rules={rules}
         {...props}
       />
+      {/*to nie działa*/}
       <FormErrorMessage className="mt-1">
         {durationMessage?.message}
       </FormErrorMessage>

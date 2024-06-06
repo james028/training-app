@@ -22,7 +22,7 @@ const AddEditPlankTraining = () => {
         minutes: "",
         seconds: "",
       },
-      isDifferentExercises: false,
+      isDifferentExercises: "",
     },
   });
   const {
@@ -55,9 +55,11 @@ const AddEditPlankTraining = () => {
     const { month: monthValue } = watch();
     const days = monthDays[monthValue.toLowerCase()];
 
-    return Array(days)
-      .fill(0)
-      .map((_, number) => number + 1);
+    return monthValue
+      ? Array(days)
+          .fill(0)
+          .map((_, number) => number + 1)
+      : null;
   };
 
   return (
@@ -78,8 +80,8 @@ const AddEditPlankTraining = () => {
                 name="month"
                 label="Miesiąc"
                 className="mb-2"
-                errors={{}}
-                rules={{}}
+                errors={errors}
+                rules={{ required: "Pole jest wymagane" }}
                 options={months}
               />
               <FormInputSelect<any>
@@ -87,8 +89,8 @@ const AddEditPlankTraining = () => {
                 name="day"
                 label="Dzień"
                 className="mb-2"
-                errors={{}}
-                rules={{}}
+                errors={errors}
+                rules={{ required: "Pole jest wymagane" }}
                 options={getDaysByMonth()}
               />
               <FormInputDuration<any>
@@ -110,8 +112,8 @@ const AddEditPlankTraining = () => {
                 name="isDifferentExercises"
                 label="Czy plank był róznorodny, ze zmienionymi ćwiczeniami?"
                 className="mb-2"
-                errors={{}}
-                rules={{}}
+                errors={errors}
+                rules={{ required: "Pole jest wymagane" }}
                 // @ts-ignore
                 //defaultValue={""}
                 leftSideLabel={true}
