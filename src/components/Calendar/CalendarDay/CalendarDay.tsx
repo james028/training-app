@@ -2,19 +2,14 @@ import React, { useState } from "react";
 
 import { TDay } from "../../../types/app-types";
 
-import styled from "styled-components";
 import EditTraining from "../../Forms/EditTraining/EditTraining";
 import AddTraining from "../../Forms/AddTraining/AddTraining";
+import { StyledContainerDay } from "./style";
 
 type TCalendarDay = {
   data: TDay[];
   day: string;
 };
-
-const StyledContainerDay = styled.div`
-  min-height: 140px;
-  width: 14.28%;
-`;
 
 const CalendarDay = ({ data, day }: TCalendarDay) => {
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
@@ -43,10 +38,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >
-              <div
-                className="flex items-center justify-between"
-                onClick={() => null}
-              >
+              <div className="flex items-center justify-between">
                 <span>{event.type}</span>
                 <svg
                   className="h-6 w-6 text-gray-500 inline-flex leading-none"

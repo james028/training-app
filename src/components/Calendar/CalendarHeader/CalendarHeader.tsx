@@ -1,15 +1,9 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import "./style.css";
 import { TButtons } from "../../../types/app-types";
 import { DateTime } from "luxon";
-
-import styled from "styled-components";
-
-const StyledButton = styled.button<{ disabledClass?: boolean }>`
-  background-color: ${(props) => (props.disabledClass ? "#b7bcca" : null)};
-`;
+import { StyledButton, StyledDayWidth } from "./style";
 
 const CalendarHeader = ({
   incrementMonth,
@@ -63,7 +57,7 @@ const CalendarHeader = ({
     },
   ];
 
-  //zrobic z context api
+  //zrobic z context api //hmm
   const days: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   //potem context
@@ -98,7 +92,7 @@ const CalendarHeader = ({
           </span>
           <span className="ml-1 text-lg text-gray-600 font-normal">{year}</span>
         </div>
-        <div className="border rounded-lg px-1" style={{ paddingTop: "2px" }}>
+        <div className="border rounded-lg px-1">
           {buttons.map(
             ({ key, svg, handleChangeMonth, border, disabled }: TButtons) => {
               return (
@@ -123,11 +117,11 @@ const CalendarHeader = ({
       <div className="flex flex-wrap">
         {days.map((day: string) => {
           return (
-            <div key={day} className="px-2 py-2 dayWidth">
+            <StyledDayWidth key={day} className="px-2 py-2">
               <div className="text-gray-600 text-sm uppercase tracking-wide font-bold text-center">
                 {t(day)}
               </div>
-            </div>
+            </StyledDayWidth>
           );
         })}
       </div>

@@ -1,16 +1,8 @@
 import React from "react";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 import { ErrorMessage } from "@hookform/error-message";
-import {
-  DeepMap,
-  FieldError,
-  FieldValues,
-  Path,
-  RegisterOptions,
-  useFormContext,
-} from "react-hook-form";
+import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 import { get } from "../../../utils/utils";
-import styled from "styled-components";
 import RadioInputs from "./RadioInputs/RadioInputs";
 
 export type FormRadioInputProps<TFormValues extends FieldValues> = {
@@ -23,16 +15,6 @@ export type FormRadioInputProps<TFormValues extends FieldValues> = {
   className?: string;
   leftSideLabel?: boolean;
 };
-
-const StyledRadioOrCheckboxButtonContainer = styled.div<{
-  leftSideLabel?: boolean;
-}>`
-  display: flex;
-  justify-content: ${(props) =>
-    props.leftSideLabel ? "flex-end" : "flex-start"};
-  flex-direction: ${(props) =>
-    props.leftSideLabel ? "row-reverse" : "reverse"};
-`;
 
 const FormInputRadio = <TFormValues extends Record<string, unknown>>({
   id,

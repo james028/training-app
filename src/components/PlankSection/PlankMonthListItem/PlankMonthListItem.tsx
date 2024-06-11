@@ -1,16 +1,14 @@
 import React from "react";
-import styled from "styled-components";
 
 import { monthObject } from "../../../utils/utils";
 import { DateTime } from "luxon";
-
-const PlankSectionListItemContainer = styled.div`
-  flex: 0 0 33%;
-`;
-
-const PlankSectionListItem = styled.div`
-  display: flex;
-`;
+import {
+  StyledPlankSectionListItem,
+  StyledPlankSectionListItemContainer,
+  StyledColumnWidth20,
+  StyledColumnWidth32,
+  StyledColumnWidth8,
+} from "./style";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;
@@ -92,54 +90,35 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   };
 
   return (
-    <PlankSectionListItemContainer>
+    <StyledPlankSectionListItemContainer>
       <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">
         {displayMonthNames(item)}
       </div>
       {checkIfMonthIsExist(item) ? (
         <>
-          <PlankSectionListItem>
-            <div
-              className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
-              style={{ flex: "0 0 20%" }}
-            >
+          <StyledPlankSectionListItem>
+            <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Dzień
-            </div>
-            <div
-              className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-              style={{ flex: "0 0 32%" }}
-            >
+            </StyledColumnWidth20>
+            <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Długość treningu
-            </div>
-            <div
-              className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-              style={{ flex: "0 0 8%" }}
-            >
+            </StyledColumnWidth32>
+            <StyledColumnWidth8 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               R ćw.
-            </div>
-          </PlankSectionListItem>
+            </StyledColumnWidth8>
+          </StyledPlankSectionListItem>
           {itemData[item].length === 0 ? <div>-</div> : null}
           {itemData[item].map((t, index) => {
-            console.log(t, "t");
             return (
               //zmienić
-              <PlankSectionListItem key={index}>
-                <div
-                  className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400"
-                  style={{ flex: "0 0 20%" }}
-                >
+              <StyledPlankSectionListItem key={index}>
+                <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {String(t.day).length === 1 ? `0${t.day}` : t.day}
-                </div>
-                <div
-                  className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-                  style={{ flex: "0 0 32%" }}
-                >
+                </StyledColumnWidth20>
+                <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {t.duration}
-                </div>
-                <div
-                  className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400"
-                  style={{ flex: "0 0 8%" }}
-                >
+                </StyledColumnWidth32>
+                <StyledColumnWidth8 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {t.isDifferentExercises ? (
                     <svg
                       className="w-6 h-6 text-emerald-600 dark:text-white"
@@ -159,7 +138,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                   ) : (
                     "-"
                   )}
-                </div>
+                </StyledColumnWidth8>
                 <div className="c" onClick={() => null}>
                   <svg
                     className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
@@ -198,7 +177,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     />
                   </svg>
                 </div>
-              </PlankSectionListItem>
+              </StyledPlankSectionListItem>
             );
           })}
           <div>
@@ -222,7 +201,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           Ten miesiąc jeszcze nie istnieje
         </div>
       )}
-    </PlankSectionListItemContainer>
+    </StyledPlankSectionListItemContainer>
   );
 };
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
 import { calendarData } from "../../mock/mock";
-import { TCalendarData, TYear } from "../../types/app-types";
 import { DateTime } from "luxon";
 
 const Calendar = () => {

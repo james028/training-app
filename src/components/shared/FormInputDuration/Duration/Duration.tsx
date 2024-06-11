@@ -1,6 +1,6 @@
 import React, { FC, forwardRef, useEffect } from "react";
-import styled from "styled-components";
 import { useFormContext } from "react-hook-form";
+import { StyledDurationContainer, StyledDurationLabel } from "./style";
 
 export type DurationProps = {
   id: string;
@@ -8,16 +8,6 @@ export type DurationProps = {
   className?: string;
   rules: any;
 };
-
-const StyledDurationContainer = styled.div`
-  flex: 0 0 33%;
-`;
-
-const StyledDurationLabel = styled.label`
-  position: absolute;
-  top: 10px;
-  right: 20px;
-`;
 
 const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
   ({ id, name, className = "", rules, ...props }, ref) => {
