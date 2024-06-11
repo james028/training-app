@@ -32,6 +32,8 @@ app.use(cors());
 
 UsersRouter.routesConfig(app);
 
+console.log("tesddt")
+
 server.listen(port, () => {
     console.log(runningMessage, "runningMessage");
 });
