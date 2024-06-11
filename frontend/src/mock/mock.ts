@@ -1,7 +1,5 @@
 import { TCalendarData } from "../types/app-types";
 
-
-console.log("ss")
 export const calendarData: any = {
   "2024": [
     {
