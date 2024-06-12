@@ -11,10 +11,8 @@ import SumAllTypesBikeChart from "./SumAllTypesBikeChart/SumAllTypesBikeChart";
 const Charts = () => {
   const { resultsArray } = useCountTotalNestedEventsPerMonth(calendarData);
   const { bikeTypeResults } = useCountTotalBikeType(calendarData);
-  const { resultsEventArray, resultByMonthIndex, result } =
+  const { resultByMonthIndex, result } =
     useCountNestedEventsByType(calendarData);
-
-  console.log(result, "result");
 
   return (
     <>

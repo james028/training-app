@@ -1,5 +1,3 @@
-console.log('plank mock')
-
 export const data = [
   {
     1: [
