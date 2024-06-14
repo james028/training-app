@@ -10,7 +10,19 @@ const RecordSchema = new Schema({
   isDifferentExercises: { type: Boolean, required: true },
 });
 
-const MainSchema = new Schema({});
+const omitPrivate = (doc, obj) => {
+  delete obj.__v;
+  delete obj._id;
+  return obj;
+};
+
+let options = {
+  toJSON: {
+    transform: omitPrivate,
+  },
+};
+
+const MainSchema = new Schema({}, options);
 
 for (let i = 1; i <= 12; i++) {
   MainSchema.add({ [`${i}`]: [RecordSchema] });

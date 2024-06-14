@@ -1,21 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import { monthObject, months } from "../../../utils/utils";
 import { RegistrationFormFields } from "../../Forms/EditTrainingForm/EditTrainingForm";
-import { FormProvider, useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import { DateTime } from "luxon";
 import FormInputRadio from "../../shared/FormInputRadio/FormInputRadio";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import useGetApi from "../../../hooks/api/get/useApiGet";
+import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 
 const LIST_URL = "http://localhost:5001/api/plank/list";
 const CREATE_URL = "http://localhost:5001/api/plank/create";
 
 const AddEditPlankTraining = () => {
-  const [toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining] =
-    useState(false);
-  // const [monthName, setMonthName] = useState<string>("");
+  const { toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining } =
+    usePlankSectionContext();
+
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+    getValues,
+    //register,
+    //setValue,
+  } = useFormContext();
 
   const { mutate } = usePostApi(CREATE_URL, ["createPlank"]);
   const { refetch: refetchList } = useGetApi(
@@ -25,25 +35,8 @@ const AddEditPlankTraining = () => {
   );
 
   //to any
-  const form = useForm<any>({
-    defaultValues: {
-      month: "",
-      day: "",
-      duration: {
-        hour: "",
-        minutes: "",
-        seconds: "",
-      },
-      isDifferentExercises: "",
-    },
-  });
-  const {
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = form;
 
+  // @ts-ignore
   const onSubmit = handleSubmit((data: RegistrationFormFields) => {
     //zmienic zeby nie wysylalo czerwiec tylko index, czyli no fubkcja na stowrzenie z tab z ob z month
     console.log("submitting... edit plak", data);
@@ -126,65 +119,67 @@ const AddEditPlankTraining = () => {
       <button
         className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
         type="submit"
-        onClick={() => setToggleOpenFormPanelTraining((prev) => !prev)}
+        onClick={() => setToggleOpenFormPanelTraining((prev: any) => !prev)}
       >
         {!toggleOpenFormPanelTraining ? "Dodaj trening" : "Zamknij panel"}
       </button>
       {toggleOpenFormPanelTraining ? (
         <>
-          <FormProvider {...form}>
-            <form onSubmit={onSubmit}>
-              <FormInputSelect<any>
-                id="month"
-                name="month"
-                label="Miesiąc"
-                className="mb-2"
-                errors={errors}
-                rules={{ required: "Pole jest wymagane" }}
-                options={months}
-              />
-              <FormInputSelect<any>
-                id="day"
-                name="day"
-                label="Dzień"
-                className="mb-2"
-                errors={errors}
-                rules={{ required: "Pole jest wymagane" }}
-                options={getDaysByMonth()}
-              />
-              <FormInputDuration<any>
-                id="duration"
-                // @ts-ignore
-                type="number"
-                name="duration"
-                label="Długość treningu"
-                className="mb-2"
-                errors={errors}
-                rules={{ required: "Pole jest wymagane" }}
-                // @ts-ignore
-                defaultValue={""}
-              />
-              <FormInputRadio
-                id="isDifferentExercises"
-                // @ts-ignore
-                type="radio"
-                name="isDifferentExercises"
-                label="Czy plank był róznorodny, ze zmienionymi ćwiczeniami?"
-                className="mb-2"
-                errors={errors}
-                rules={{ required: "Pole jest wymagane" }}
-                // @ts-ignore
-                //defaultValue={""}
-                leftSideLabel={true}
-              />
-              <button
-                className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
-                type="submit"
-              >
-                Zapisz
-              </button>
-            </form>
-          </FormProvider>
+          <form onSubmit={onSubmit}>
+            <FormInputSelect<any>
+              id="month"
+              name="month"
+              label="Miesiąc"
+              className="mb-2"
+              errors={errors}
+              rules={{ required: "Pole jest wymagane" }}
+              options={months}
+              // @ts-ignore
+              defaultValue={getValues("month")}
+            />
+            <FormInputSelect<any>
+              id="day"
+              name="day"
+              label="Dzień"
+              className="mb-2"
+              errors={errors}
+              rules={{ required: "Pole jest wymagane" }}
+              options={getDaysByMonth()}
+              // @ts-ignore
+              defaultValue={getValues("day")}
+            />
+            <FormInputDuration<any>
+              id="duration"
+              // @ts-ignore
+              type="number"
+              name="duration"
+              label="Długość treningu"
+              className="mb-2"
+              errors={errors}
+              rules={{ required: "Pole jest wymagane" }}
+              // @ts-ignore
+              //defaultValue={getValues("duration")}
+            />
+            <FormInputRadio
+              id="isDifferentExercises"
+              // @ts-ignore
+              type="radio"
+              name="isDifferentExercises"
+              label="Czy plank był róznorodny, ze zmienionymi ćwiczeniami?"
+              className="mb-2"
+              errors={errors}
+              rules={{ required: "Pole jest wymagane" }}
+              // @ts-ignore
+              defaultValue={getValues("isDifferentExercises")}
+              leftSideLabel={true}
+            />
+            <button
+              className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+              type="submit"
+            >
+              Zapisz
+            </button>
+          </form>
         </>
       ) : null}
     </>

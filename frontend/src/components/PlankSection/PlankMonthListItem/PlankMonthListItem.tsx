@@ -9,6 +9,8 @@ import {
   StyledColumnWidth32,
   StyledColumnWidth10,
 } from "./style";
+import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
+import { useFormContext } from "react-hook-form";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;
@@ -16,6 +18,13 @@ type PlankMonthListItem = {
 };
 
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
+  const [objectData, setObjectData] = React.useState();
+
+  const { toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining } =
+    usePlankSectionContext();
+
+  const { setValue } = useFormContext();
+
   function foo(values: string[], index: number): number {
     return values
       .map((e: string) =>
@@ -86,6 +95,14 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     return referenceMonth <= checkMonth;
   };
 
+  React.useEffect(() => {
+    if (!objectData) return;
+
+    ["day", "month", "duration", "isDifferentExercises"].forEach((field) => {
+      setValue(field, objectData?.[field], { shouldDirty: true });
+    });
+  }, [toggleOpenFormPanelTraining, objectData]);
+
   return (
     <StyledPlankSectionListItemContainer>
       <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -136,7 +153,14 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     "-"
                   )}
                 </StyledColumnWidth10>
-                <div className="c" onClick={() => null}>
+                <div
+                  onClick={() => {
+                    if (!toggleOpenFormPanelTraining) {
+                      setToggleOpenFormPanelTraining(true);
+                    }
+                    setObjectData(t);
+                  }}
+                >
                   <svg
                     className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
                     aria-hidden="true"
