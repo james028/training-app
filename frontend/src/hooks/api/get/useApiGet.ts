@@ -11,11 +11,12 @@ type TUseGetApi = {
 const useGetApi = (
   url: string,
   queryKey: Array<any> | string,
+  params?: Record<any, any>,
   paramsObj?: Record<string, string | number>,
 ): any => {
   const getList = async (): Promise<any> => {
     const result = await axios.get<string>(
-      endpointWithParams(url, null, getParams(paramsObj)),
+      endpointWithParams(url, params, getParams(paramsObj)),
     );
 
     return result.data;

@@ -4,12 +4,10 @@ import PlankMonthListItem from "../PlankMonthListItem/PlankMonthListItem";
 import { StyledPlankSectionContainer } from "./style";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 
+const LIST_URL = "http://localhost:5001/api/plank/list";
+
 const PlankMonthList = () => {
-  const { data, status } = useGetApi(
-    "http://localhost:5001/api/plank/list",
-    ["plankList"],
-    undefined,
-  );
+  const { data, status } = useGetApi(LIST_URL, ["plankList"], undefined);
 
   if (status === "loading") {
     return <div>Loading...</div>;
