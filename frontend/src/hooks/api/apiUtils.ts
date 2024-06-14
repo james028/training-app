@@ -1,5 +1,5 @@
 export const getParams = (
-  paramsObj: Record<string, string | number> | undefined,
+  paramsObj: Record<any, any> | null | undefined,
 ): Record<string, string | number> | undefined | null => {
   //return `_end=${end}&_order=${order}&_sort=${sort}&_start=${start}&`;
 

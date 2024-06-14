@@ -16,6 +16,6 @@ export const StyledColumnWidth32 = styled.div`
   flex: 0 0 32%;
 `;
 
-export const StyledColumnWidth8 = styled.div`
-  flex: 0 0 8%;
+export const StyledColumnWidth10 = styled.div`
+  flex: 0 0 10%;
 `;

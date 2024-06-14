@@ -15,7 +15,7 @@ const CREATE_URL = "http://localhost:5001/api/plank/create";
 const AddEditPlankTraining = () => {
   const [toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining] =
     useState(false);
-  const [monthName, setMonthName] = useState<string>("");
+  // const [monthName, setMonthName] = useState<string>("");
 
   const { mutate } = usePostApi(CREATE_URL, ["createPlank"]);
   const { refetch: refetchList } = useGetApi(
@@ -70,21 +70,24 @@ const AddEditPlankTraining = () => {
       })
       .find((a) => a !== undefined);
 
+    const objD = {
+      Yes: true,
+      No: false,
+    };
+
     newData = {
       ...newData,
       month: monthIndex,
+
+      isDifferentExercises:
+        objD[newData.isDifferentExercises as unknown as keyof typeof objD],
     };
 
-    // @ts-ignore
-    // console.log(
-    //   Object.values(monthObject[newData.month] ?? ""),
-    //   "newData.month",
-    // );
     const { isDifferentExercises, ...newData2 } = newData;
 
     console.log(newData, "newData");
     console.log(newData2, "newData2");
-    mutate(newData, newData2);
+    mutate({ paramsObj: null, bodyData: newData });
     setTimeout(async () => {
       setToggleOpenFormPanelTraining(false);
       reset();
@@ -98,7 +101,7 @@ const AddEditPlankTraining = () => {
 
   const getDaysByMonth = () => {
     const currentDate = DateTime.now();
-    const { year, month } = currentDate.toObject();
+    const { year } = currentDate.toObject();
 
     const monthDays: Record<string, number> = {};
 

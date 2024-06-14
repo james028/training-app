@@ -7,7 +7,7 @@ import {
   StyledPlankSectionListItemContainer,
   StyledColumnWidth20,
   StyledColumnWidth32,
-  StyledColumnWidth8,
+  StyledColumnWidth10,
 } from "./style";
 
 type PlankMonthListItem = {
@@ -100,9 +100,9 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
             <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Długość treningu
             </StyledColumnWidth32>
-            <StyledColumnWidth8 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-              R ćw.
-            </StyledColumnWidth8>
+            <StyledColumnWidth10 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+              Rózne
+            </StyledColumnWidth10>
           </StyledPlankSectionListItem>
           {itemData[item].length === 0 ? <div>-</div> : null}
           {itemData[item].map((t, index) => {
@@ -115,7 +115,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {t.duration}
                 </StyledColumnWidth32>
-                <StyledColumnWidth8 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                <StyledColumnWidth10 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {t.isDifferentExercises ? (
                     <svg
                       className="w-6 h-6 text-emerald-600 dark:text-white"
@@ -135,7 +135,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                   ) : (
                     "-"
                   )}
-                </StyledColumnWidth8>
+                </StyledColumnWidth10>
                 <div className="c" onClick={() => null}>
                   <svg
                     className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"

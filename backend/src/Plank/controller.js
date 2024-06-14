@@ -19,17 +19,13 @@ exports.getPlank = asyncHandler(async (req, res) => {
 // @route   POST /api/plank/create
 exports.createPlank = asyncHandler(async (req, res) => {
   try {
-    const { duration, day, month } = req.query;
+    const { month } = req.body;
 
     const createdData = await PlankDataModel.findOneAndUpdate(
       { [month]: { $exists: true } },
       {
         $push: {
-          [month]: {
-            duration,
-            month,
-            day,
-          },
+          [month]: req.body,
         },
       },
     );

@@ -9,33 +9,25 @@ const usePostApi = (
   queryKey: Array<any> | string,
   params?: Record<any, any>,
 ) => {
-  const createPost = async (
-    bodyData?: Record<any, any>,
-    paramsObj?: Record<string, string | number>,
-  ): Promise<any> => {
-    const ee = {
-      month: "1",
-      day: "13",
-      duration: "11:22:33",
-      isDifferentExercises: "No",
-    };
-    console.log(bodyData, "bodyData");
-    console.log(getParams(paramsObj), "getParams(paramsObj)");
-    console.log(paramsObj, "paramsObj");
+  const createPost = async ({
+    paramsObj,
+    bodyData,
+  }: {
+    paramsObj: Record<any, any> | null | undefined;
+    bodyData: Record<any, any> | null | undefined;
+  }): Promise<any> => {
     const result = await axios.post<string>(
-      endpointWithParams(link, params, getParams(ee)),
-      //bodyData,
+      endpointWithParams(link, params, getParams(paramsObj)),
+      bodyData,
     );
 
     return result.data;
   };
 
-  return useMutation<any, Error, any>(createPost, {
-    onSuccess: (data: Record<string, any>) => {
+  return useMutation<any, Error, any>((body) => createPost(body), {
+    onSuccess: () => {
       // @ts-ignore
-
-      console.log(data, "dd");
-      queryClient.invalidateQueries(["aa"]);
+      queryClient.invalidateQueries(queryKey);
     },
     onError: () => {
       console.log("there was an error");
