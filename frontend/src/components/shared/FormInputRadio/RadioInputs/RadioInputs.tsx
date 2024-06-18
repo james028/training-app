@@ -36,6 +36,7 @@ const RadioInputs: FC<RadioInputsProps> = ({
       >
         {label}
       </label>
+      {/*tutaj dać moze w innej miejsce*/}
       {[
         { label: "Tak", value: "differentYes" },
         { label: "Nie", value: "differentNo" },
