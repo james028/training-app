@@ -163,8 +163,7 @@ const AddEditPlankTraining = () => {
               className="mb-2"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
-              // @ts-ignore
-              //defaultValue={"No"}
+              defaultValue={objectData?.isDifferentExercises}
               leftSideLabel={true}
             />
             <button

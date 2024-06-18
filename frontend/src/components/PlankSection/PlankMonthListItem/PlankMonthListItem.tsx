@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { monthObject } from "../../../utils/utils";
 import { DateTime } from "luxon";
@@ -10,18 +10,31 @@ import {
   StyledColumnWidth10,
 } from "./style";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
+import Modal from "../../shared/Modal/Modal";
+import useGetApi from "../../../hooks/api/get/useApiGet";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;
   item: string;
 };
 
+const LIST_URL = "http://localhost:5001/api/plank/list";
+
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
+  const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
+
   const {
     toggleOpenFormPanelTraining,
     setToggleOpenFormPanelTraining,
+    objectData,
     setObjectData,
   } = usePlankSectionContext();
+
+  const { refetch: refetchList } = useGetApi(
+    LIST_URL,
+    ["plankList"],
+    undefined,
+  );
 
   function foo(values: string[], index: number): number {
     return values
@@ -123,7 +136,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                   {t.duration}
                 </StyledColumnWidth32>
                 <StyledColumnWidth10 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t.isDifferentExercises ? (
+                  {t.isDifferentExercises === "differentYes" ? (
                     <svg
                       className="w-6 h-6 text-emerald-600 dark:text-white"
                       aria-hidden="true"
@@ -169,7 +182,12 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     />
                   </svg>
                 </div>
-                <div className="c" onClick={() => null}>
+                <div
+                  onClick={() => {
+                    setIsOpenRemoveModal((prev) => !prev);
+                    setObjectData(t);
+                  }}
+                >
                   <svg
                     className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
                     aria-hidden="true"
@@ -212,6 +230,49 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           Ten miesiąc jeszcze nie istnieje
         </div>
       )}
+
+      {isOpenRemoveModal ? (
+        <Modal
+          openModal={() => setIsOpenRemoveModal(true)}
+          closeModal={() => setIsOpenRemoveModal(false)}
+          modalTitle={"Modal do usuniecia"}
+        >
+          <div>Modal remove</div>
+          <div>
+            `Czy usunąć trening o ${objectData?.month} ${objectData?.day} o
+            dlugosci ${objectData?.duration} id ${objectData?._id}`
+          </div>
+          <div onClick={() => setIsOpenRemoveModal(false)}>Close</div>
+          <button
+            onClick={() => {
+              const someData = {};
+              const putMethod = {
+                method: "DELETE",
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8", // Indicates the content
+                },
+                //body: JSON.stringify(someData), // We send data in JSON format
+              };
+
+              console.log(objectData?._id, "id");
+              const url = `http://localhost:5001/api/plank/delete?id=${objectData?._id}&month=${objectData?.month}`;
+
+              fetch(url, putMethod)
+                .then((response) => response.json())
+                .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it
+                .catch((err) => console.log(err));
+              setTimeout(async () => {
+                setToggleOpenFormPanelTraining(false);
+                //reset();
+                await refetchList?.();
+              }, 500);
+              setIsOpenRemoveModal(false);
+            }}
+          >
+            Usuń
+          </button>
+        </Modal>
+      ) : null}
     </StyledPlankSectionListItemContainer>
   );
 };

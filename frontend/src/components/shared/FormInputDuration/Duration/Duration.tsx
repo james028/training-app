@@ -52,13 +52,12 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
 
     useEffect(() => {
       if (durationData) {
-        console.log(durationData, "durationData");
         durationData.map((data: any) => {
           const { fieldName, value } = data;
           setValue(`${id}.${fieldName}`, `${value}`, { shouldDirty: true });
         });
       }
-    }, [setValue, id]);
+    }, [setValue, id, defaultValue]);
 
     return (
       <div className="flex">

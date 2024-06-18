@@ -20,22 +20,44 @@ exports.getPlank = asyncHandler(async (req, res) => {
 // @desc    Create new plank training
 // @route   POST /api/plank/create
 exports.createPlank = asyncHandler(async (req, res) => {
+  const { month, day, duration, isDifferentExercises } = req.body;
+
   try {
-    const { month } = req.body;
+    const plankList = await PlankDataModel.find({}, null, null);
 
-    console.log(req.body, "body");
-
-    const createdData = await PlankDataModel.findOneAndUpdate(
-      { [month]: { $exists: true } },
-      {
-        $push: {
-          [month]: req.body,
+    if (plankList.length === 0) {
+      const createdData = await PlankDataModel.findOneAndUpdate(
+        {},
+        {
+          $push: { [month]: { month, day, duration, isDifferentExercises } },
         },
-      },
-    );
+        {
+          new: true,
+          upsert: true,
+          setDefaultsOnInsert: true,
+        },
+      );
 
-    if (createdData) {
-      res.status(200).json({ message: `Utworzono dla id: ${createdData.id}` });
+      if (createdData) {
+        res
+          .status(200)
+          .json({ message: `Utworzono dla id: ${createdData.id}` });
+      }
+    } else {
+      const createdData = await PlankDataModel.findOneAndUpdate(
+        { [month]: { $exists: true } },
+        {
+          $push: {
+            [month]: { month, day, duration, isDifferentExercises },
+          },
+        },
+      );
+
+      if (createdData) {
+        res
+          .status(200)
+          .json({ message: `Utworzono dla id: ${createdData.id}` });
+      }
     }
   } catch (error) {
     console.log(error, "err");
@@ -103,17 +125,16 @@ exports.updatePlank = asyncHandler(async (req, res) => {
 // @desc    Delete exist training
 // @route   DELETE /api/plank/delete
 exports.deletePlank = asyncHandler(async (req, res) => {
-  try {
-    const { id, month } = req.query;
+  const { id, month } = req.query;
 
-    const deletedData = await PlankDataModel.findOneAndUpdate(
-      {},
+  try {
+    const deletedData = await PlankDataModel.updateOne(
+      { [`${month}._id`]: id },
       { $pull: { [month]: { _id: id } } },
-      { new: true },
     );
 
     if (deletedData) {
-      res.status(200).json({ message: `Usunięto dla id: ${deletedData.id}` });
+      res.status(200).json({ message: `Usunięto` });
     }
   } catch (error) {
     console.log(error, "err");
