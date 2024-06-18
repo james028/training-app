@@ -7,7 +7,7 @@ const RecordSchema = new Schema({
   duration: { type: String, required: true },
   month: { type: String, required: true },
   day: { type: Number, required: true },
-  isDifferentExercises: { type: Boolean, required: true },
+  isDifferentExercises: { type: String, required: true },
 });
 
 const omitPrivate = (doc, obj) => {

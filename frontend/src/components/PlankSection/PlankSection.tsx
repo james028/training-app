@@ -6,7 +6,8 @@ import { FormProvider, useForm } from "react-hook-form";
 
 const PlankSection = () => {
   const [toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining] =
-    useState(false);
+    useState(true);
+  const [objectData, setObjectData] = React.useState();
 
   const form = useForm<any>({
     defaultValues: {
@@ -20,16 +21,17 @@ const PlankSection = () => {
       isDifferentExercises: "",
     },
   });
-  const { getValues } = form;
-
-  console.log(getValues("day"), "val");
-  console.log(getValues("month"), "val2");
 
   return (
     <div>
       Plank Section
       <PlankSectionContext.Provider
-        value={{ toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining }}
+        value={{
+          toggleOpenFormPanelTraining,
+          setToggleOpenFormPanelTraining,
+          objectData,
+          setObjectData,
+        }}
       >
         <FormProvider {...form}>
           <AddEditPlankTraining />

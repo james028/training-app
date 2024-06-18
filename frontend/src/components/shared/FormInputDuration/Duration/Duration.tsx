@@ -2,19 +2,25 @@ import React, { FC, forwardRef, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { StyledDurationContainer, StyledDurationLabel } from "./style";
 
-export type DurationProps = {
+type DurationProps = {
   id: string;
   name: string;
   className?: string;
   rules: any;
 };
+//
+// type DurationDataProps = {
+//   title: string;
+//   fieldName: string;
+//   value: string;
+// };
 
 const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
   ({ id, name, className = "", rules, ...props }, ref) => {
-    // dać do folderu const.ts
+    // dać do folderu const.ts ///nieee
     const { register, setValue } = useFormContext();
 
-    const durationArrayData = [
+    const durationArrayData: any = [
       {
         title: "hr",
         fieldName: "hour",
@@ -36,7 +42,7 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
 
     const durationArray = defaultValue?.split(":");
     const durationData = durationArrayData?.map(
-      (duration: Record<string, string>, index) => {
+      (duration: Record<string, string>, index: string | number) => {
         return {
           ...duration,
           value: Number(durationArray?.[index] ?? 0),
@@ -46,7 +52,8 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
 
     useEffect(() => {
       if (durationData) {
-        durationData.map((data: any, index) => {
+        console.log(durationData, "durationData");
+        durationData.map((data: any) => {
           const { fieldName, value } = data;
           setValue(`${id}.${fieldName}`, `${value}`, { shouldDirty: true });
         });
@@ -55,7 +62,7 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
 
     return (
       <div className="flex">
-        {durationData.map(({ title, fieldName }: any, index) => {
+        {durationData.map(({ title, fieldName, value }: any) => {
           return (
             <StyledDurationContainer key={fieldName} className="relative">
               <StyledDurationLabel className="text-gray-800 block mb-1 text-sm tracking-wide">

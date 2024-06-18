@@ -14,15 +14,17 @@ const LIST_URL = "http://localhost:5001/api/plank/list";
 const CREATE_URL = "http://localhost:5001/api/plank/create";
 
 const AddEditPlankTraining = () => {
-  const { toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining } =
-    usePlankSectionContext();
+  const {
+    toggleOpenFormPanelTraining,
+    setToggleOpenFormPanelTraining,
+    objectData,
+  } = usePlankSectionContext();
 
   const {
     handleSubmit,
     watch,
     reset,
     formState: { errors },
-    getValues,
     //register,
     //setValue,
   } = useFormContext();
@@ -33,8 +35,6 @@ const AddEditPlankTraining = () => {
     ["plankList"],
     undefined,
   );
-
-  //to any
 
   // @ts-ignore
   const onSubmit = handleSubmit((data: RegistrationFormFields) => {
@@ -53,33 +53,21 @@ const AddEditPlankTraining = () => {
     };
 
     const monthIndex = Object.keys(monthObject)
-      .map((e) => {
+      .map((month) => {
         if (
-          monthObject[e as unknown as keyof typeof monthObject] ===
-          newData.month
+          monthObject[month as unknown as keyof typeof monthObject] ===
+          newData?.month
         ) {
-          return e;
+          return month;
         }
       })
       .find((a) => a !== undefined);
 
-    const objD = {
-      Yes: true,
-      No: false,
-    };
-
     newData = {
       ...newData,
       month: monthIndex,
-
-      isDifferentExercises:
-        objD[newData.isDifferentExercises as unknown as keyof typeof objD],
     };
 
-    const { isDifferentExercises, ...newData2 } = newData;
-
-    console.log(newData, "newData");
-    console.log(newData2, "newData2");
     mutate({ paramsObj: null, bodyData: newData });
     setTimeout(async () => {
       setToggleOpenFormPanelTraining(false);
@@ -135,7 +123,11 @@ const AddEditPlankTraining = () => {
               rules={{ required: "Pole jest wymagane" }}
               options={months}
               // @ts-ignore
-              defaultValue={getValues("month")}
+              defaultValue={
+                monthObject[
+                  objectData?.month as unknown as keyof typeof monthObject
+                ]
+              }
             />
             <FormInputSelect<any>
               id="day"
@@ -146,7 +138,9 @@ const AddEditPlankTraining = () => {
               rules={{ required: "Pole jest wymagane" }}
               options={getDaysByMonth()}
               // @ts-ignore
-              defaultValue={getValues("day")}
+              defaultValue={getDaysByMonth()?.find(
+                (day: number) => day === objectData?.day,
+              )}
             />
             <FormInputDuration<any>
               id="duration"
@@ -158,7 +152,7 @@ const AddEditPlankTraining = () => {
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               // @ts-ignore
-              //defaultValue={getValues("duration")}
+              defaultValue={objectData?.duration}
             />
             <FormInputRadio
               id="isDifferentExercises"
@@ -170,7 +164,7 @@ const AddEditPlankTraining = () => {
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               // @ts-ignore
-              defaultValue={getValues("isDifferentExercises")}
+              //defaultValue={"No"}
               leftSideLabel={true}
             />
             <button

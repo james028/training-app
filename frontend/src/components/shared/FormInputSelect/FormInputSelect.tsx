@@ -5,7 +5,6 @@ import {
   FieldValues,
   Path,
   RegisterOptions,
-  UseFormRegister,
 } from "react-hook-form";
 import Select from "./Select/Select";
 import { ErrorMessage } from "@hookform/error-message";

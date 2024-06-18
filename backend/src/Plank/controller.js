@@ -8,10 +8,12 @@ exports.getPlank = asyncHandler(async (req, res) => {
     const plankList = await PlankDataModel.find({}, null, null);
 
     if (!plankList) {
+      res.status(404).json({ message: "Data not found" });
     }
     res.status(200).json(plankList);
   } catch (error) {
     console.log(error, "err");
+    res.status(404).json({ error: "Not found!" });
   }
 });
 
@@ -20,6 +22,8 @@ exports.getPlank = asyncHandler(async (req, res) => {
 exports.createPlank = asyncHandler(async (req, res) => {
   try {
     const { month } = req.body;
+
+    console.log(req.body, "body");
 
     const createdData = await PlankDataModel.findOneAndUpdate(
       { [month]: { $exists: true } },
@@ -35,6 +39,7 @@ exports.createPlank = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error, "err");
+    res.status(404).json({ error: "Not found!" });
   }
 });
 
@@ -66,6 +71,10 @@ exports.updatePlank = asyncHandler(async (req, res) => {
 
     const findData = await findEntryById(req.query.id);
 
+    if (!findData) {
+      res.status(404).json({ message: "Data not found" });
+    }
+
     const updateData = {
       month: req.query.month || findData.month,
       duration: req.query.duration || findData.duration,
@@ -87,6 +96,7 @@ exports.updatePlank = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error, "err");
+    res.status(404).json({ error: "Not found!" });
   }
 });
 
@@ -107,5 +117,6 @@ exports.deletePlank = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error, "err");
+    res.status(404).json({ error: "Not found!" });
   }
 });

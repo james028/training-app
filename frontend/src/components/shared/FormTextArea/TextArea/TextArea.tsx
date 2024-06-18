@@ -1,4 +1,4 @@
-import React, { FC, forwardRef, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 export type TextAreaProps = {
@@ -28,7 +28,6 @@ const TextArea: FC<TextAreaProps> = ({
     }
   }, [defaultValue, setValue, id]);
 
-  console.log(label);
   return (
     <div className="relative">
       <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">

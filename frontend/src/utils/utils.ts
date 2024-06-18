@@ -16,6 +16,21 @@ export const months = [
   "December",
 ].map((month) => t(month));
 
+// export const monthsPl = [
+//   "Styczeń",
+//   "Luty",
+//   "Marzec",
+//   "Kwiecień",
+//   "Maj",
+//   "Czerwiec",
+//   "Lipiec",
+//   "Sierpień",
+//   "Wrzesień",
+//   "Październik",
+//   "Listopad",
+//   "Grudzień",
+// ];
+
 //indeksy miesięcy
 export const monthObject = {
   1: "Styczeń",

@@ -10,7 +10,6 @@ import {
   StyledColumnWidth10,
 } from "./style";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
-import { useFormContext } from "react-hook-form";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;
@@ -18,12 +17,11 @@ type PlankMonthListItem = {
 };
 
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
-  const [objectData, setObjectData] = React.useState();
-
-  const { toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining } =
-    usePlankSectionContext();
-
-  const { setValue } = useFormContext();
+  const {
+    toggleOpenFormPanelTraining,
+    setToggleOpenFormPanelTraining,
+    setObjectData,
+  } = usePlankSectionContext();
 
   function foo(values: string[], index: number): number {
     return values
@@ -94,14 +92,6 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
 
     return referenceMonth <= checkMonth;
   };
-
-  React.useEffect(() => {
-    if (!objectData) return;
-
-    ["day", "month", "duration", "isDifferentExercises"].forEach((field) => {
-      setValue(field, objectData?.[field], { shouldDirty: true });
-    });
-  }, [toggleOpenFormPanelTraining, objectData]);
 
   return (
     <StyledPlankSectionListItemContainer>

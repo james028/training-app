@@ -40,7 +40,6 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
   });
   const {
     handleSubmit,
-    register,
     formState: { errors },
   } = form;
 
@@ -61,8 +60,6 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
     console.log(newData);
     closeModal();
   });
-
-  console.log(eventData, "eventDats");
 
   return (
     <FormProvider {...form}>
