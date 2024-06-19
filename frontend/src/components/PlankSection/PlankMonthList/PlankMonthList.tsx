@@ -7,9 +7,13 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 const LIST_URL = "http://localhost:5001/api/plank/list";
 
 const PlankMonthList = () => {
-  const { data, status } = useGetApi(LIST_URL, ["plankList"], undefined);
+  const { data, status, isRefetching } = useGetApi(
+    LIST_URL,
+    ["plankList"],
+    undefined,
+  );
 
-  if (status === "loading") {
+  if (status === "loading" || isRefetching) {
     return <div>Loading...</div>;
   }
 

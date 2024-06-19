@@ -6,6 +6,7 @@ const PlankDataModel = require("./model");
 exports.getPlank = asyncHandler(async (req, res) => {
   try {
     const plankList = await PlankDataModel.find({}, null, null);
+    //const plankList = await PlankDataModel.deleteMany({});
 
     if (!plankList) {
       res.status(404).json({ message: "Data not found" });
@@ -68,9 +69,12 @@ exports.createPlank = asyncHandler(async (req, res) => {
 // @desc    Update exist training
 // @route   POST lub PUT /api/plank/update
 exports.updatePlank = asyncHandler(async (req, res) => {
-  try {
-    const { id, month } = req.query;
+  const { id, month } = req.body;
 
+  console.log(req.body, "vodu");
+
+  console.log(id, "id", req.query.id);
+  try {
     const findEntryById = async (id) => {
       try {
         const docs = await PlankDataModel.find({});
@@ -93,28 +97,35 @@ exports.updatePlank = asyncHandler(async (req, res) => {
 
     const findData = await findEntryById(req.query.id);
 
-    if (!findData) {
-      res.status(404).json({ message: "Data not found" });
-    }
+    console.log(findData, "findData");
+    // if (!findData) {
+    //   res.status(404).json({ message: "Data not found" });
+    // }
+
+    console.log(req.query.month, "ffff");
 
     const updateData = {
-      month: req.query.month || findData.month,
-      duration: req.query.duration || findData.duration,
-      day: req.query.day || findData.day,
+      month: req.query.month || findData?.month,
+      duration: req.body.duration || findData?.duration,
+      day: req.body.day || findData?.day,
       isDifferentExercises:
-        req.query.isDifferentExercises || findData.isDifferentExercises,
+        req.body.isDifferentExercises || findData?.isDifferentExercises,
     };
 
-    const updatedData = await PlankDataModel.findOneAndUpdate(
+    console.log(updateData, "up");
+
+    await PlankDataModel.updateOne(
+      { [`${findData?.month}._id`]: findData?._id },
+      { $pull: { [findData?.month]: { _id: findData?._id } } },
+    );
+
+    const updatedData = await PlankDataModel.updateOne(
       {},
-      { $set: { [month]: [{ _id: id, ...updateData }] } },
-      { new: true },
+      { $push: { [req.query.month]: { _id: id, ...updateData } } },
     );
 
     if (updatedData) {
-      res
-        .status(200)
-        .json({ message: `Zaaktualizowano dla id: ${deletedData.id}` });
+      res.status(200).json({ message: `Zaaktualizowano` });
     }
   } catch (error) {
     console.log(error, "err");

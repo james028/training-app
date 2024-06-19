@@ -12,6 +12,7 @@ import {
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import Modal from "../../shared/Modal/Modal";
 import useGetApi from "../../../hooks/api/get/useApiGet";
+import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;
@@ -38,7 +39,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
 
   function foo(values: string[], index: number): number {
     return values
-      .map((e: string) =>
+      ?.map((e: string) =>
         e.split(":").reverse()[index]
           ? Number(e.split(":").reverse()[index])
           : 0,
@@ -230,47 +231,47 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           Ten miesiąc jeszcze nie istnieje
         </div>
       )}
-
       {isOpenRemoveModal ? (
         <Modal
           openModal={() => setIsOpenRemoveModal(true)}
           closeModal={() => setIsOpenRemoveModal(false)}
-          modalTitle={"Modal do usuniecia"}
+          modalTitle={"Usuwanie treningu"}
         >
-          <div>Modal remove</div>
-          <div>
-            `Czy usunąć trening o ${objectData?.month} ${objectData?.day} o
-            dlugosci ${objectData?.duration} id ${objectData?._id}`
-          </div>
-          <div onClick={() => setIsOpenRemoveModal(false)}>Close</div>
-          <button
-            onClick={() => {
-              const someData = {};
-              const putMethod = {
-                method: "DELETE",
-                headers: {
-                  "Content-type": "application/json; charset=UTF-8", // Indicates the content
-                },
-                //body: JSON.stringify(someData), // We send data in JSON format
-              };
+          <RemovePlankTraining closeModal={() => setIsOpenRemoveModal(false)} />
+          {/*<div>Modal remove</div>*/}
+          {/*<div>*/}
+          {/*  `Czy usunąć trening o ${objectData?.month} ${objectData?.day} o*/}
+          {/*  dlugosci ${objectData?.duration} id ${objectData?._id}`*/}
+          {/*</div>*/}
+          {/*<div onClick={() => setIsOpenRemoveModal(false)}>Close</div>*/}
+          {/*<button*/}
+          {/*  onClick={() => {*/}
+          {/*    const someData = {};*/}
+          {/*    const putMethod = {*/}
+          {/*      method: "DELETE",*/}
+          {/*      headers: {*/}
+          {/*        "Content-type": "application/json; charset=UTF-8", // Indicates the content*/}
+          {/*      },*/}
+          {/*      //body: JSON.stringify(someData), // We send data in JSON format*/}
+          {/*    };*/}
 
-              console.log(objectData?._id, "id");
-              const url = `http://localhost:5001/api/plank/delete?id=${objectData?._id}&month=${objectData?.month}`;
+          {/*    console.log(objectData?._id, "id");*/}
+          {/*    const url = `http://localhost:5001/api/plank/delete?id=${objectData?._id}&month=${objectData?.month}`;*/}
 
-              fetch(url, putMethod)
-                .then((response) => response.json())
-                .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it
-                .catch((err) => console.log(err));
-              setTimeout(async () => {
-                setToggleOpenFormPanelTraining(false);
-                //reset();
-                await refetchList?.();
-              }, 500);
-              setIsOpenRemoveModal(false);
-            }}
-          >
-            Usuń
-          </button>
+          {/*    fetch(url, putMethod)*/}
+          {/*      .then((response) => response.json())*/}
+          {/*      .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it*/}
+          {/*      .catch((err) => console.log(err));*/}
+          {/*    setTimeout(async () => {*/}
+          {/*      setToggleOpenFormPanelTraining(false);*/}
+          {/*      //reset();*/}
+          {/*      await refetchList?.();*/}
+          {/*    }, 500);*/}
+          {/*    setIsOpenRemoveModal(false);*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  Usuń*/}
+          {/*</button>*/}
         </Modal>
       ) : null}
     </StyledPlankSectionListItemContainer>

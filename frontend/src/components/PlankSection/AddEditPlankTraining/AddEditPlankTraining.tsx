@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import { monthObject, months } from "../../../utils/utils";
 import { RegistrationFormFields } from "../../Forms/EditTrainingForm/EditTrainingForm";
@@ -14,6 +14,8 @@ const LIST_URL = "http://localhost:5001/api/plank/list";
 const CREATE_URL = "http://localhost:5001/api/plank/create";
 
 const AddEditPlankTraining = () => {
+  const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
+
   const {
     toggleOpenFormPanelTraining,
     setToggleOpenFormPanelTraining,
@@ -68,12 +70,35 @@ const AddEditPlankTraining = () => {
       month: monthIndex,
     };
 
-    mutate({ paramsObj: null, bodyData: newData });
+    // mutate({ paramsObj: null, bodyData: newData });
+    // setTimeout(async () => {
+    //   setToggleOpenFormPanelTraining(false);
+    //   reset();
+    //   await refetchList?.();
+    // }, 500);
+
+    const someData = {};
+    const putMethod = {
+      method: "PATCH",
+      // headers: {
+      //   "Content-type": "application/json; charset=UTF-8", // Indicates the content
+      // },
+      body: JSON.stringify(newData), // We send data in JSON format
+    };
+
+    console.log(objectData, "obj");
+    const url = `http://localhost:5001/api/plank/update?id=${objectData?._id}&month=${newData?.month}`;
+
+    fetch(url, putMethod)
+      .then((response) => response.json())
+      .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it
+      .catch((err) => console.log(err));
     setTimeout(async () => {
       setToggleOpenFormPanelTraining(false);
       reset();
       await refetchList?.();
     }, 500);
+    setIsOpenRemoveModal(false);
   });
 
   const getDays = (year: any, month: any) => {
@@ -172,7 +197,55 @@ const AddEditPlankTraining = () => {
             >
               Zapisz
             </button>
+            <button
+              onClick={onSubmit}
+              className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+              type="submit"
+            >
+              Zaaktualizuj
+            </button>
           </form>
+          {/*{isOpenRemoveModal ? (*/}
+          {/*  <Modal*/}
+          {/*    openModal={() => setIsOpenRemoveModal(true)}*/}
+          {/*    closeModal={() => setIsOpenRemoveModal(false)}*/}
+          {/*    modalTitle={"Modal do aaktualizacji"}*/}
+          {/*  >*/}
+          {/*    <div>Modal remove</div>*/}
+          {/*    <div>*/}
+          {/*      `Czy akkt trening o ${objectData?.month} ${objectData?.day} o*/}
+          {/*      dlugosci ${objectData?.duration} id ${objectData?._id}`*/}
+          {/*    </div>*/}
+          {/*    <div onClick={() => setIsOpenRemoveModal(false)}>Close</div>*/}
+          {/*    <button*/}
+          {/*      onClick={() => {*/}
+          {/*        const someData = {};*/}
+          {/*        const putMethod = {*/}
+          {/*          method: "PATCH",*/}
+          {/*          headers: {*/}
+          {/*            "Content-type": "application/json; charset=UTF-8", // Indicates the content*/}
+          {/*          },*/}
+          {/*          body: JSON.stringify(objectData), // We send data in JSON format*/}
+          {/*        };*/}
+
+          {/*        const url = `http://localhost:5001/api/plank/update`;*/}
+
+          {/*        fetch(url, putMethod)*/}
+          {/*          .then((response) => response.json())*/}
+          {/*          .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it*/}
+          {/*          .catch((err) => console.log(err));*/}
+          {/*        setTimeout(async () => {*/}
+          {/*          setToggleOpenFormPanelTraining(false);*/}
+          {/*          //reset();*/}
+          {/*          await refetchList?.();*/}
+          {/*        }, 500);*/}
+          {/*        setIsOpenRemoveModal(false);*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      Usuń*/}
+          {/*    </button>*/}
+          {/*  </Modal>*/}
+          {/*) : null}*/}
         </>
       ) : null}
     </>

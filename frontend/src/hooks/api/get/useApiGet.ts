@@ -22,11 +22,9 @@ const useGetApi = (
     return result.data;
   };
 
-  const { isLoading, isError, data, status, refetch } = useQuery<any>(
-    [queryKey],
-    getList,
-  );
+  const { isRefetching, isLoading, isError, data, status, refetch } =
+    useQuery<any>([queryKey], getList);
 
-  return { data, isLoading, isError, status, refetch };
+  return { data, isLoading, isError, status, refetch, isRefetching };
 };
 export default useGetApi;

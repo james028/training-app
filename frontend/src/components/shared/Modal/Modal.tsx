@@ -1,7 +1,14 @@
 import React, { useRef } from "react";
 import { StyledModalWidth } from "./style";
 
-const Modal = ({ children, closeModal, modalTitle, openModal }: any) => {
+type ModalProps = {
+  children: any;
+  closeModal: () => void;
+  modalTitle: string;
+  openModal: () => void;
+};
+
+const Modal = ({ children, closeModal, modalTitle, openModal }: ModalProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const dialogRef = useRef<any | null>(null);
 
