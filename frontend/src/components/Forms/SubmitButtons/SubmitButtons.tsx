@@ -3,9 +3,13 @@ import React from "react";
 const SubmitButtons = ({
   closeModal,
   saveChanges,
+  submitTitle,
+  closeTitle,
 }: {
   closeModal: () => void;
   saveChanges?: (e: any) => void;
+  submitTitle?: string;
+  closeTitle?: string;
 }) => {
   return (
     <div className="flex items-center justify-end border-t border-solid border-blueGray-200 rounded-b p-2">
@@ -14,14 +18,14 @@ const SubmitButtons = ({
         type="button"
         onClick={closeModal}
       >
-        Zamknij
+        {closeTitle || "Zamknij"}
       </button>
       <button
         className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
         type="submit"
-        // onClick={saveChanges}
+        onClick={saveChanges}
       >
-        Zapisz zmiany
+        {submitTitle || "Zapisz zmiany"}
       </button>
     </div>
   );
