@@ -27,8 +27,6 @@ const AddEditPlankTraining = () => {
     watch,
     reset,
     formState: { errors },
-    //register,
-    //setValue,
   } = useFormContext();
 
   const { mutate } = usePostApi(CREATE_URL, ["createPlank"], null, {
