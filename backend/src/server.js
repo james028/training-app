@@ -7,22 +7,21 @@ const debug = require("debug");
 const app = express();
 const server = http.createServer(app);
 const port = 5001;
-const routes = [];
-//const debugLog = debug("app");
+const debugLog = debug("app");
 
 const UsersRouter = require("./Plank/routes");
 
 const loggerOptions = {
-    transports: [new winston.transports.Console()],
-    format: winston.format.combine(
-        winston.format.json(),
-        winston.format.prettyPrint(),
-        winston.format.colorize({ all: true }),
-    ),
+  transports: [new winston.transports.Console()],
+  format: winston.format.combine(
+    winston.format.json(),
+    winston.format.prettyPrint(),
+    winston.format.colorize({ all: true }),
+  ),
 };
 
 if (!process.env.DEBUG) {
-    loggerOptions.meta = false; // when not debugging, make terse
+  loggerOptions.meta = false; // when not debugging, make terse
 }
 
 const runningMessage = `Server running at http://localhost:${port}`;
@@ -33,5 +32,5 @@ app.use(cors());
 UsersRouter.routesConfig(app);
 
 server.listen(port, () => {
-    console.log(runningMessage, "runningMessage");
+  console.log(runningMessage, "runningMessage");
 });

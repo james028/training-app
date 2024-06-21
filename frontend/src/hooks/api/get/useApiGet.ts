@@ -8,6 +8,7 @@ type TUseGetApi = {
 
 //const API_SINGLE_BRIDGE_MANAGEMENT = "/bridge_management/:category:/:id:/";
 
+//otypować
 const useGetApi = (
   url: string,
   queryKey: Array<any> | string,

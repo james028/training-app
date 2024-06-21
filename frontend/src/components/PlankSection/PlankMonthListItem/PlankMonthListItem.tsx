@@ -19,23 +19,14 @@ type PlankMonthListItem = {
   item: string;
 };
 
-const LIST_URL = "http://localhost:5001/api/plank/list";
-
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
 
   const {
     toggleOpenFormPanelTraining,
     setToggleOpenFormPanelTraining,
-    objectData,
     setObjectData,
   } = usePlankSectionContext();
-
-  const { refetch: refetchList } = useGetApi(
-    LIST_URL,
-    ["plankList"],
-    undefined,
-  );
 
   function foo(values: string[], index: number): number {
     return values
@@ -238,40 +229,6 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           modalTitle={"Usuwanie treningu"}
         >
           <RemovePlankTraining closeModal={() => setIsOpenRemoveModal(false)} />
-          {/*<div>Modal remove</div>*/}
-          {/*<div>*/}
-          {/*  `Czy usunąć trening o ${objectData?.month} ${objectData?.day} o*/}
-          {/*  dlugosci ${objectData?.duration} id ${objectData?._id}`*/}
-          {/*</div>*/}
-          {/*<div onClick={() => setIsOpenRemoveModal(false)}>Close</div>*/}
-          {/*<button*/}
-          {/*  onClick={() => {*/}
-          {/*    const someData = {};*/}
-          {/*    const putMethod = {*/}
-          {/*      method: "DELETE",*/}
-          {/*      headers: {*/}
-          {/*        "Content-type": "application/json; charset=UTF-8", // Indicates the content*/}
-          {/*      },*/}
-          {/*      //body: JSON.stringify(someData), // We send data in JSON format*/}
-          {/*    };*/}
-
-          {/*    console.log(objectData?._id, "id");*/}
-          {/*    const url = `http://localhost:5001/api/plank/delete?id=${objectData?._id}&month=${objectData?.month}`;*/}
-
-          {/*    fetch(url, putMethod)*/}
-          {/*      .then((response) => response.json())*/}
-          {/*      .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it*/}
-          {/*      .catch((err) => console.log(err));*/}
-          {/*    setTimeout(async () => {*/}
-          {/*      setToggleOpenFormPanelTraining(false);*/}
-          {/*      //reset();*/}
-          {/*      await refetchList?.();*/}
-          {/*    }, 500);*/}
-          {/*    setIsOpenRemoveModal(false);*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  Usuń*/}
-          {/*</button>*/}
         </Modal>
       ) : null}
     </StyledPlankSectionListItemContainer>

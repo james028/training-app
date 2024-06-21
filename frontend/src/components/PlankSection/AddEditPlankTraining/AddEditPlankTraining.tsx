@@ -9,13 +9,13 @@ import FormInputRadio from "../../shared/FormInputRadio/FormInputRadio";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
+import usePatchApi from "../../../hooks/api/patch/useApiPatch";
 
 const LIST_URL = "http://localhost:5001/api/plank/list";
 const CREATE_URL = "http://localhost:5001/api/plank/create";
+const UPDATE_URL = "http://localhost:5001/api/plank/update";
 
 const AddEditPlankTraining = () => {
-  const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
-
   const {
     toggleOpenFormPanelTraining,
     setToggleOpenFormPanelTraining,
@@ -31,7 +31,17 @@ const AddEditPlankTraining = () => {
     //setValue,
   } = useFormContext();
 
-  const { mutate } = usePostApi(CREATE_URL, ["createPlank"]);
+  const { mutate } = usePostApi(CREATE_URL, ["createPlank"], null, {
+    "Content-type": "application/json",
+  });
+  const { mutate: updateMutate } = usePatchApi(
+    UPDATE_URL,
+    ["updatePlank"],
+    null,
+    {
+      "Content-type": "application/json",
+    },
+  );
   const { refetch: refetchList } = useGetApi(
     LIST_URL,
     ["plankList"],
@@ -68,37 +78,24 @@ const AddEditPlankTraining = () => {
     newData = {
       ...newData,
       month: monthIndex,
+      id: objectData?._id,
     };
 
-    // mutate({ paramsObj: null, bodyData: newData });
-    // setTimeout(async () => {
-    //   setToggleOpenFormPanelTraining(false);
-    //   reset();
-    //   await refetchList?.();
-    // }, 500);
-
-    const someData = {};
-    const putMethod = {
-      method: "PATCH",
-      // headers: {
-      //   "Content-type": "application/json; charset=UTF-8", // Indicates the content
-      // },
-      body: JSON.stringify(newData), // We send data in JSON format
+    const handleActionFetch = () => {
+      setTimeout(async () => {
+        setToggleOpenFormPanelTraining(false);
+        reset();
+        await refetchList?.();
+      }, 500);
     };
 
-    console.log(objectData, "obj");
-    const url = `http://localhost:5001/api/plank/update?id=${objectData?._id}&month=${newData?.month}`;
-
-    fetch(url, putMethod)
-      .then((response) => response.json())
-      .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it
-      .catch((err) => console.log(err));
-    setTimeout(async () => {
-      setToggleOpenFormPanelTraining(false);
-      reset();
-      await refetchList?.();
-    }, 500);
-    setIsOpenRemoveModal(false);
+    if (Object.keys(objectData ?? {}).length > 0) {
+      updateMutate({ paramsObj: null, bodyData: newData });
+      handleActionFetch();
+    } else {
+      mutate({ paramsObj: null, bodyData: newData });
+      handleActionFetch();
+    }
   });
 
   const getDays = (year: any, month: any) => {
@@ -195,57 +192,11 @@ const AddEditPlankTraining = () => {
               className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
               type="submit"
             >
-              Zapisz
-            </button>
-            <button
-              onClick={onSubmit}
-              className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
-              type="submit"
-            >
-              Zaaktualizuj
+              {Object.keys(objectData ?? {}).length > 0
+                ? "Zaaktualizuj"
+                : "Zapisz"}
             </button>
           </form>
-          {/*{isOpenRemoveModal ? (*/}
-          {/*  <Modal*/}
-          {/*    openModal={() => setIsOpenRemoveModal(true)}*/}
-          {/*    closeModal={() => setIsOpenRemoveModal(false)}*/}
-          {/*    modalTitle={"Modal do aaktualizacji"}*/}
-          {/*  >*/}
-          {/*    <div>Modal remove</div>*/}
-          {/*    <div>*/}
-          {/*      `Czy akkt trening o ${objectData?.month} ${objectData?.day} o*/}
-          {/*      dlugosci ${objectData?.duration} id ${objectData?._id}`*/}
-          {/*    </div>*/}
-          {/*    <div onClick={() => setIsOpenRemoveModal(false)}>Close</div>*/}
-          {/*    <button*/}
-          {/*      onClick={() => {*/}
-          {/*        const someData = {};*/}
-          {/*        const putMethod = {*/}
-          {/*          method: "PATCH",*/}
-          {/*          headers: {*/}
-          {/*            "Content-type": "application/json; charset=UTF-8", // Indicates the content*/}
-          {/*          },*/}
-          {/*          body: JSON.stringify(objectData), // We send data in JSON format*/}
-          {/*        };*/}
-
-          {/*        const url = `http://localhost:5001/api/plank/update`;*/}
-
-          {/*        fetch(url, putMethod)*/}
-          {/*          .then((response) => response.json())*/}
-          {/*          .then((data) => console.log(data)) // Manipulate the data retrieved back, if we want to do something with it*/}
-          {/*          .catch((err) => console.log(err));*/}
-          {/*        setTimeout(async () => {*/}
-          {/*          setToggleOpenFormPanelTraining(false);*/}
-          {/*          //reset();*/}
-          {/*          await refetchList?.();*/}
-          {/*        }, 500);*/}
-          {/*        setIsOpenRemoveModal(false);*/}
-          {/*      }}*/}
-          {/*    >*/}
-          {/*      Usuń*/}
-          {/*    </button>*/}
-          {/*  </Modal>*/}
-          {/*) : null}*/}
         </>
       ) : null}
     </>

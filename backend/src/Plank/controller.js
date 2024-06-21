@@ -69,15 +69,12 @@ exports.createPlank = asyncHandler(async (req, res) => {
 // @desc    Update exist training
 // @route   POST lub PUT /api/plank/update
 exports.updatePlank = asyncHandler(async (req, res) => {
-  const { id, month } = req.body;
+  const { id, month, duration, day, isDifferentExercises } = req.body;
 
-  console.log(req.body, "vodu");
-
-  console.log(id, "id", req.query.id);
   try {
     const findEntryById = async (id) => {
       try {
-        const docs = await PlankDataModel.find({});
+        const docs = await PlankDataModel.find({}, null, null);
         for (const doc of docs) {
           for (let month = 1; month <= 12; month++) {
             const entries = doc[month.toString()];
@@ -95,24 +92,19 @@ exports.updatePlank = asyncHandler(async (req, res) => {
       }
     };
 
-    const findData = await findEntryById(req.query.id);
+    const findData = await findEntryById(id);
 
-    console.log(findData, "findData");
-    // if (!findData) {
-    //   res.status(404).json({ message: "Data not found" });
-    // }
-
-    console.log(req.query.month, "ffff");
+    if (!findData) {
+      res.status(404).json({ message: "Data not found" });
+    }
 
     const updateData = {
-      month: req.query.month || findData?.month,
-      duration: req.body.duration || findData?.duration,
-      day: req.body.day || findData?.day,
+      month: month || findData?.month,
+      duration: duration || findData?.duration,
+      day: day || findData?.day,
       isDifferentExercises:
-        req.body.isDifferentExercises || findData?.isDifferentExercises,
+        isDifferentExercises || findData?.isDifferentExercises,
     };
-
-    console.log(updateData, "up");
 
     await PlankDataModel.updateOne(
       { [`${findData?.month}._id`]: findData?._id },
@@ -121,7 +113,7 @@ exports.updatePlank = asyncHandler(async (req, res) => {
 
     const updatedData = await PlankDataModel.updateOne(
       {},
-      { $push: { [req.query.month]: { _id: id, ...updateData } } },
+      { $push: { [month]: { _id: id, ...updateData } } },
     );
 
     if (updatedData) {

@@ -4,20 +4,20 @@ import { endpointWithParams, getParams } from "../apiUtils";
 
 const queryClient = new QueryClient();
 
-const usePostApi = (
+const usePatchApi = (
   link: string,
   queryKey: Array<any> | string,
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
 ) => {
-  const createPost = async ({
+  const updatePatch = async ({
     paramsObj,
     bodyData,
   }: {
     paramsObj: Record<any, any> | null | undefined;
     bodyData: Record<any, any> | null | undefined;
   }): Promise<any> => {
-    const result = await axios.post<string>(
+    const result = await axios.patch<string>(
       endpointWithParams(link, params, getParams(paramsObj)),
       bodyData,
       { headers },
@@ -26,7 +26,7 @@ const usePostApi = (
     return result.data;
   };
 
-  return useMutation<any, Error, any>((body) => createPost(body), {
+  return useMutation<any, Error, any>((body) => updatePatch(body), {
     onSuccess: () => {
       // @ts-ignore
       queryClient.invalidateQueries(queryKey);
@@ -41,4 +41,4 @@ const usePostApi = (
   });
 };
 
-export default usePostApi;
+export default usePatchApi;
