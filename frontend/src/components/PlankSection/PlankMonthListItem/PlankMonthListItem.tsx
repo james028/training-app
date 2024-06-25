@@ -11,7 +11,6 @@ import {
 } from "./style";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import Modal from "../../shared/Modal/Modal";
-import useGetApi from "../../../hooks/api/get/useApiGet";
 import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
 
 type PlankMonthListItem = {

@@ -10,6 +10,7 @@ const port = 5001;
 const debugLog = debug("app");
 
 const UsersRouter = require("./Plank/routes");
+const UsersRouterTest = require("./Plank/routes-test");
 
 const loggerOptions = {
   transports: [new winston.transports.Console()],
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use(cors());
 
 UsersRouter.routesConfig(app);
+UsersRouterTest.routesConfigTest(app);
 
 server.listen(port, () => {
   console.log(runningMessage, "runningMessage");

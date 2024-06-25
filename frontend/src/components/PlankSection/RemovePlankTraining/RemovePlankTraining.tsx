@@ -4,23 +4,29 @@ import { monthObject } from "../../../utils/utils";
 import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
+import { AppContext } from "../../../appContext/appContext";
 
 type RemovePlankTrainingProps = {
   closeModal: () => void;
 };
 
-const LIST_URL = "http://localhost:5001/api/plank/list";
-const DELETE_URL = "http://localhost:5001/api/plank/delete";
+const URL = "http://localhost:5001/";
+//const DELETE_URL = "http://localhost:5001/api/plank/delete";
 
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const {
     objectData: { month, day, duration, _id: id },
   } = usePlankSectionContext();
+  const { link } = React.useContext(AppContext);
 
-  const { mutate } = useDeleteApi(DELETE_URL, ["deletePlank"], undefined);
+  const { mutate } = useDeleteApi(
+    `${URL}${link}/delete`,
+    ["deletePlank"],
+    undefined,
+  );
 
   const { refetch: refetchList } = useGetApi(
-    LIST_URL,
+    `${URL}${link}/list`,
     ["plankList"],
     undefined,
   );

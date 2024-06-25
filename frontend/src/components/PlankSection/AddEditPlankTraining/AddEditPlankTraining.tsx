@@ -10,10 +10,11 @@ import usePostApi from "../../../hooks/api/post/useApiPost";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import usePatchApi from "../../../hooks/api/patch/useApiPatch";
+import { AppContext } from "../../../appContext/appContext";
 
-const LIST_URL = "http://localhost:5001/api/plank/list";
-const CREATE_URL = "http://localhost:5001/api/plank/create";
-const UPDATE_URL = "http://localhost:5001/api/plank/update";
+const URL = "http://localhost:5001/";
+//const CREATE_URL = "http://localhost:5001/api/plank/create";
+//const UPDATE_URL = "http://localhost:5001/api/plank/update";
 
 const AddEditPlankTraining = () => {
   const {
@@ -21,6 +22,7 @@ const AddEditPlankTraining = () => {
     setToggleOpenFormPanelTraining,
     objectData,
   } = usePlankSectionContext();
+  const { link } = React.useContext(AppContext);
 
   const {
     handleSubmit,
@@ -29,11 +31,11 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutate } = usePostApi(CREATE_URL, ["createPlank"], null, {
+  const { mutate } = usePostApi(`${URL}${link}/create`, ["createPlank"], null, {
     "Content-type": "application/json",
   });
   const { mutate: updateMutate } = usePatchApi(
-    UPDATE_URL,
+    `${URL}${link}/update`,
     ["updatePlank"],
     null,
     {
@@ -41,7 +43,7 @@ const AddEditPlankTraining = () => {
     },
   );
   const { refetch: refetchList } = useGetApi(
-    LIST_URL,
+    `${URL}${link}/list`,
     ["plankList"],
     undefined,
   );
