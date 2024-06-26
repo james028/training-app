@@ -28,7 +28,7 @@ const MainSchema = new Schema(
     name: { type: String, required: false },
     color: { type: String, required: false },
   },
-  //options,
+  options,
 );
 
 const TrainingTypeDataModel = mongoose.model("training-type", MainSchema);

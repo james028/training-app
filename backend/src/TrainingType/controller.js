@@ -8,20 +8,16 @@ exports.getListTrainingType = asyncHandler(async (req, res) => {
     const trainingTypeList = await TrainingTypeDataModel.find({}, null, null);
     //const trainingTypeList = await TrainingTypeDataModel.deleteMany({});
 
-    console.log(trainingTypeList.filter(Boolean), "ww");
-    const list = trainingTypeList?.filter(Boolean);
     if (!trainingTypeList) {
       res.status(404).json({ message: "Data not found" });
     }
-    res.status(200).json({
-      list: trainingTypeList
-        .filter((obj) => {
-          // Tworzymy nowy obiekt na podstawie istniejącego obiektu, ale bez klucza "__v"
-          const { __v, ...rest } = obj;
-          return rest;
-        })
-        .filter(Boolean),
-    });
+    res
+      .status(200)
+      .json({
+        trainingTypeList: trainingTypeList.filter(
+          (value) => Object.keys(value).length !== 0,
+        ),
+      });
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });
