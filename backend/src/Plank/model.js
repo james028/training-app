@@ -3,7 +3,7 @@ const mongoose = require("../common/mongoose.service.js");
 const Schema = mongoose.Schema;
 
 const RecordSchema = new Schema({
-  id: { type: Number, required: true },
+  id: { type: String, required: true },
   duration: { type: String, required: true },
   month: { type: String, required: true },
   day: { type: Number, required: true },

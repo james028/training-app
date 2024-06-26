@@ -3,7 +3,7 @@ const mongooseTest = require("../common/mongoose.service");
 const Schema = mongooseTest.Schema;
 
 const RecordSchemaTest = new Schema({
-  id: { type: Number, required: true },
+  id: { type: String, required: true },
   duration: { type: String, required: true },
   month: { type: String, required: true },
   day: { type: Number, required: true },

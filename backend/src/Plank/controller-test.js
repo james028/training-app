@@ -3,7 +3,7 @@ const PlankTestDataModel = require("./model-test");
 
 // @desc    Gets all plank trainings from every month
 // @route   GET /api/plank/list
-exports.getPlank = asyncHandler(async (req, res) => {
+exports.getPlankTest = asyncHandler(async (req, res) => {
   try {
     console.log("get plank test");
     const plankList = await PlankTestDataModel.find({}, null, null);
@@ -21,7 +21,7 @@ exports.getPlank = asyncHandler(async (req, res) => {
 
 // @desc    Create new plank training
 // @route   POST /api/plank/create
-exports.createPlank = asyncHandler(async (req, res) => {
+exports.createPlankTest = asyncHandler(async (req, res) => {
   const { month, day, duration, isDifferentExercises } = req.body;
 
   console.log(req.body);
@@ -71,7 +71,7 @@ exports.createPlank = asyncHandler(async (req, res) => {
 
 // @desc    Update exist training
 // @route   POST lub PUT /api/plank/update
-exports.updatePlank = asyncHandler(async (req, res) => {
+exports.updatePlankTest = asyncHandler(async (req, res) => {
   const { id, month, duration, day, isDifferentExercises } = req.body;
 
   try {
@@ -130,7 +130,7 @@ exports.updatePlank = asyncHandler(async (req, res) => {
 
 // @desc    Delete exist training
 // @route   DELETE /api/plank/delete
-exports.deletePlank = asyncHandler(async (req, res) => {
+exports.deletePlankTest = asyncHandler(async (req, res) => {
   const { id, month } = req.query;
 
   try {

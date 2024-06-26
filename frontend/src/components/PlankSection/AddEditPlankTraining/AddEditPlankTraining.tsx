@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import { monthObject, months } from "../../../utils/utils";
 import { RegistrationFormFields } from "../../Forms/EditTrainingForm/EditTrainingForm";
@@ -31,16 +31,11 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutate } = usePostApi(`${URL}${link}/create`, ["createPlank"], null, {
-    "Content-type": "application/json",
-  });
+  const { mutate } = usePostApi(`${URL}${link}/create`, ["createPlank"], null);
   const { mutate: updateMutate } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
     null,
-    {
-      "Content-type": "application/json",
-    },
   );
   const { refetch: refetchList } = useGetApi(
     `${URL}${link}/list`,
@@ -78,6 +73,7 @@ const AddEditPlankTraining = () => {
     newData = {
       ...newData,
       month: monthIndex,
+      day: Number(newData.day),
       id: objectData?._id,
     };
 

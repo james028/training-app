@@ -7,10 +7,10 @@ const debug = require("debug");
 const app = express();
 const server = http.createServer(app);
 const port = 5001;
-const debugLog = debug("app");
+//const debugLog = debug("app");
 
-const UsersRouter = require("./Plank/routes");
-const UsersRouterTest = require("./Plank/routes-test");
+const PlankRouter = require("./Plank/routes");
+const TrainingTypeRouter = require("./TrainingType/routes");
 
 const loggerOptions = {
   transports: [new winston.transports.Console()],
@@ -25,13 +25,26 @@ if (!process.env.DEBUG) {
   loggerOptions.meta = false; // when not debugging, make terse
 }
 
-const runningMessage = `Server running at http://localhost:${port}`;
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+  );
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    return res.status(200).json({});
+  }
+  next();
+});
 
 app.use(express.json());
 app.use(cors());
 
-UsersRouter.routesConfig(app);
-UsersRouterTest.routesConfigTest(app);
+PlankRouter.routesConfig(app);
+TrainingTypeRouter.routesConfig(app);
+
+const runningMessage = `Server running at http://localhost:${port}`;
 
 server.listen(port, () => {
   console.log(runningMessage, "runningMessage");

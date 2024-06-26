@@ -26,10 +26,9 @@ const usePatchApi = (
     return result.data;
   };
 
-  return useMutation<any, Error, any>((body) => updatePatch(body), {
+  return useMutation<Promise<any>, Error, any>((body) => updatePatch(body), {
     onSuccess: () => {
-      // @ts-ignore
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries([queryKey, link]);
     },
     onError: () => {
       console.log("there was an error");

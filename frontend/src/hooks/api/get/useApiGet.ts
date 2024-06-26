@@ -24,7 +24,7 @@ const useGetApi = (
   };
 
   const { isRefetching, isLoading, isError, data, status, refetch } =
-    useQuery<any>([queryKey], getList);
+    useQuery<any>([queryKey, url], getList);
 
   return { data, isLoading, isError, status, refetch, isRefetching };
 };

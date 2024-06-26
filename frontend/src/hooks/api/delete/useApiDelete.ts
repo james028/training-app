@@ -19,7 +19,7 @@ const useDeleteApi = (
     return result.data;
   };
 
-  return useMutation<any, Error, any>(deleteMethod, {
+  return useMutation<Promise<any>, Error, any>(deleteMethod, {
     onSuccess: () => {
       // @ts-ignore
       queryClient.invalidateQueries(queryKey);
