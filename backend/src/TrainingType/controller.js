@@ -11,13 +11,13 @@ exports.getListTrainingType = asyncHandler(async (req, res) => {
     if (!trainingTypeList) {
       res.status(404).json({ message: "Data not found" });
     }
-    res
-      .status(200)
-      .json({
-        trainingTypeList: trainingTypeList.filter(
-          (value) => Object.keys(value).length !== 0,
-        ),
-      });
+
+    const newTrainingTypeList = [...trainingTypeList];
+    const filtered = newTrainingTypeList.filter(
+      (value) => Object.keys(value).length !== 0,
+    );
+
+    res.status(200).json(filtered);
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });
