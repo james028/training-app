@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import FormInput from "../shared/FormInput/FormInput";
+import { HexColorPicker } from "react-colorful";
 
 const data = [
   { id: "1", name: "Siłownia", color: "#6a215e" },
@@ -8,6 +9,8 @@ const data = [
   { id: "1", name: "Cardio-las", color: "#cd8f67" },
 ];
 const TrainingsType = () => {
+  const [color, setColor] = useState("#b32aa9");
+
   return (
     <div>
       <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -32,6 +35,19 @@ const TrainingsType = () => {
           className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 
           text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 `}
         />
+        <HexColorPicker
+          color={color}
+          onChange={(color) => {
+            console.log(color, "color");
+            setColor(color);
+          }}
+        />
+
+        <div
+          className="value"
+          style={{ width: "40px", height: "40px", backgroundColor: `${color}` }}
+        ></div>
+        <div>Current color is {color}</div>
         <button
           className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
           type="submit"
@@ -62,7 +78,7 @@ const TrainingsType = () => {
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {item[it]}
+                            {item[it] ?? "-"}
                           </th>
                         );
                       })}
