@@ -43,6 +43,7 @@ const AddEditPlankTraining = () => {
     undefined,
   );
 
+  // poprawic to
   // @ts-ignore
   const onSubmit = handleSubmit((data: RegistrationFormFields) => {
     //zmienic zeby nie wysylalo czerwiec tylko index, czyli no fubkcja na stowrzenie z tab z ob z month

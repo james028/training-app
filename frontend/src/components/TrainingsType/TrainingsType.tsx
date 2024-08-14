@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import FormInput from "../shared/FormInput/FormInput";
 import { HexColorPicker } from "react-colorful";
+import { FormProvider, useForm } from "react-hook-form";
+import { RegistrationFormFields } from "../Forms/EditTrainingForm/EditTrainingForm";
+import useGetApi from "../../hooks/api/get/useApiGet";
+import { AppContext } from "../../appContext/appContext";
+import TrainingTypeList from "./TrainingTypeList/TrainingTypeList";
 
 const data = [
   { id: "1", name: "Siłownia", color: "#6a215e" },
@@ -8,88 +13,103 @@ const data = [
   { id: "1", name: "Airbike", color: "#3a3f56" },
   { id: "1", name: "Cardio-las", color: "#cd8f67" },
 ];
+
+const URL = "http://localhost:5001/";
+
 const TrainingsType = () => {
-  const [color, setColor] = useState("#b32aa9");
+  const [color, setColor] = useState<string>("");
+
+  const form = useForm<any>({
+    defaultValues: {
+      trainingName: "",
+      color: "",
+    },
+  });
+
+  const { handleSubmit, register, setValue } = form;
+
+  const link = "api/training-type/list";
+  const { data: dataTrainingType } = useGetApi(
+    `${URL}${link}`,
+    ["trainingTypeList"],
+    undefined,
+  );
+
+  console.log(dataTrainingType, "dataTrainingType");
+
+  const onSubmit = handleSubmit((data: any) => {
+    console.log(data);
+
+    setTimeout(async () => {
+      //await refetchList?.();
+    }, 500);
+    //closeModal();
+  });
+
+  const hexToRgba = (hex: string, alpha = 1): string => {
+    //if (hex && hex.match(/\w\w/g).length !== 0) {
+    // @ts-ignore
+    const [r, g, b] = hex
+      .match(/\w\w/g)
+      .map((val: string) => parseInt(val, 16));
+    return `rgba(${r},${g},${b},${alpha})`;
+    //}
+  };
 
   return (
-    <div>
+    <>
       <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         Dodaj typ treningu:
       </h2>
-      <form>
-        {/*<FormInput<any>*/}
-        {/*  id=""*/}
-        {/*  // @ts-ignore*/}
-        {/*  type="text"*/}
-        {/*  name=""*/}
-        {/*  label="Tytuł treningu"*/}
-        {/*  className="mb-2"*/}
-        {/*  errors={{}}*/}
-        {/*  rules={{}}*/}
-        {/*  defaultValue={{}}*/}
-        {/*/>*/}
-        <input
-          // id={id}
-          // //ref={ref}
-          // aria-label={label}
-          className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full py-2 px-4 
-          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 `}
-        />
-        <HexColorPicker
-          color={color}
-          onChange={(color) => {
-            console.log(color, "color");
-            setColor(color);
-          }}
-        />
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit}>
+          <FormInput<any>
+            id="trainingName"
+            // @ts-ignore
+            type="text"
+            name="trainingName"
+            label="Typ treningu"
+            className="mb-2"
+            errors={{}}
+            rules={{}}
+          />
+          <HexColorPicker
+            color={color}
+            onChange={(color) => {
+              setValue("color", color);
+              setColor(color);
+            }}
+          />
+          {color ? (
+            <>
+              <div
+                className="value"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  backgroundColor: `${color}`,
+                }}
+              ></div>
+              <div>Hex wybranego koloru to {color}</div>
+              <div>Rgba wybranego koloru to {hexToRgba(color)}</div>
+            </>
+          ) : null}
 
-        <div
-          className="value"
-          style={{ width: "40px", height: "40px", backgroundColor: `${color}` }}
-        ></div>
-        <div>Current color is {color}</div>
-        <button
-          className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
-          type="submit"
-        >
-          Dodaj
-        </button>
-      </form>
-      <div className="relative overflow-x-auto">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                Product name
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Color
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.length > 0
-              ? data?.map((item: any) => {
-                  return (
-                    <tr>
-                      {["name", "color"].map((it: any) => {
-                        return (
-                          <th
-                            scope="row"
-                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                          >
-                            {item[it] ?? "-"}
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  );
-                })
-              : null}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          <button
+            className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+            type="submit"
+          >
+            Dodaj
+          </button>
+        </form>
+      </FormProvider>
+      <TrainingTypeList
+        dataTrainingType={[
+          { name: " a", color: "b" },
+          { name: "a a", color: "bb" },
+        ]}
+      />
+    </>
   );
 };
 

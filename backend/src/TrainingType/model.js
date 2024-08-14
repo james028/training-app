@@ -25,7 +25,7 @@ let options = {
 const MainSchema = new Schema(
   {
     id: { type: String, required: false },
-    name: { type: String, required: false },
+    trainingName: { type: String, required: false },
     color: { type: String, required: false },
   },
   options,
