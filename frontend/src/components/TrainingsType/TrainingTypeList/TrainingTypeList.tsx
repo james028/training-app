@@ -1,37 +1,30 @@
 import React, { useEffect, useState } from "react";
 
 const TrainingTypeList = ({ dataTrainingType }: any) => {
-  // if (dataTrainingType.length === 0) {
-  //   return <div>Brak danych</div>;
-  // }
-  const [columns, setColumns] = useState<{ it: string; label: string }[]>([]);
+  const [columns, setColumns] = useState<string[]>([]);
 
   const displayColumns = () => {
-    //if (dataTrainingType?.length > 0) {
-    console.log("dsdsad");
-    console.log(dataTrainingType, "a");
-    const columnsArr: { it: string; label: string }[] = [];
-    const x = dataTrainingType?.map((item: any) => {
-      console.log(Object.keys(item).length, "length");
-      return Object.keys(item).map((it) => {
-        columnsArr.push({
-          it,
-          label: "AA",
-        });
+    const keys = dataTrainingType?.reduce((acc: string[], obj: {}) => {
+      Object.keys(obj).forEach((key) => {
+        //temporary
+        if (key !== "_id") {
+          if (!acc.includes(key)) {
+            //zrobić na key i label
+            acc.push(key);
+          }
+        }
       });
-    });
+      return acc;
+    }, []);
 
-    console.log(columnsArr, "xx");
-
-    setColumns(columnsArr);
-    //}
+    setColumns(keys);
   };
 
   useEffect(() => {
     displayColumns();
-  }, []);
+  }, [dataTrainingType]);
 
-  console.log(columns, " it: string; label: string }[]");
+  //dodać loading
 
   return (
     <div className="relative overflow-x-auto">
@@ -48,15 +41,14 @@ const TrainingTypeList = ({ dataTrainingType }: any) => {
         </thead>
         <tbody>
           {dataTrainingType?.length > 0 ? (
-            dataTrainingType?.map((item: any, index: number) => {
+            dataTrainingType?.map((item: Record<string, string>) => {
               return (
-                <tr key={index}>
+                <tr key={item._id}>
                   {columns &&
-                    columns.map((it: any, index: number) => {
-                      console.log(item[it], it, item, "item");
+                    columns.map((it: string) => {
                       return (
                         <th
-                          key={index}
+                          key={it}
                           scope="row"
                           className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >

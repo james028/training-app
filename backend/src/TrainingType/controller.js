@@ -13,6 +13,8 @@ exports.getListTrainingType = asyncHandler(async (req, res) => {
     }
 
     const newTrainingTypeList = [...trainingTypeList];
+
+    console.log(trainingTypeList, "trainingTypeList");
     const filtered = newTrainingTypeList.filter(
       (value) => Object.keys(value).length !== 0,
     );
@@ -27,19 +29,19 @@ exports.getListTrainingType = asyncHandler(async (req, res) => {
 // @desc    Create new training type
 // @route   POST /api/training-type/create
 exports.createTrainingType = asyncHandler(async (req, res) => {
-  const { name, color } = req.query;
+  const { trainingName, color } = req.body;
 
-  console.log("ss");
-  console.log(req.query);
   try {
     const createdData = await TrainingTypeDataModel.create(
-      { name, color },
+      { trainingName, color },
       {
         new: true,
         upsert: true,
         setDefaultsOnInsert: true,
       },
     );
+
+    console.log(createdData, "create");
 
     if (createdData) {
       res

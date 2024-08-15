@@ -6,6 +6,7 @@ import { RegistrationFormFields } from "../Forms/EditTrainingForm/EditTrainingFo
 import useGetApi from "../../hooks/api/get/useApiGet";
 import { AppContext } from "../../appContext/appContext";
 import TrainingTypeList from "./TrainingTypeList/TrainingTypeList";
+import usePostApi from "../../hooks/api/post/useApiPost";
 
 const data = [
   { id: "1", name: "Siłownia", color: "#6a215e" },
@@ -29,19 +30,25 @@ const TrainingsType = () => {
   const { handleSubmit, register, setValue } = form;
 
   const link = "api/training-type/list";
-  const { data: dataTrainingType } = useGetApi(
+  const linkCreate = "api/training-type/create";
+  const { data: dataTrainingType, refetch } = useGetApi(
     `${URL}${link}`,
     ["trainingTypeList"],
     undefined,
   );
 
-  console.log(dataTrainingType, "dataTrainingType");
+  const { mutate } = usePostApi(
+    `${URL}${linkCreate}`,
+    ["createTrainingTypeList"],
+    null,
+  );
 
   const onSubmit = handleSubmit((data: any) => {
     console.log(data);
 
+    mutate({ paramsObj: null, bodyData: data });
     setTimeout(async () => {
-      //await refetchList?.();
+      await refetch?.();
     }, 500);
     //closeModal();
   });
@@ -104,10 +111,9 @@ const TrainingsType = () => {
         </form>
       </FormProvider>
       <TrainingTypeList
-        dataTrainingType={[
-          { name: " a", color: "b" },
-          { name: "a a", color: "bb" },
-        ]}
+        dataTrainingType={dataTrainingType?.filter(
+          (value: any) => Object.keys(value).length !== 0,
+        )}
       />
     </>
   );

@@ -16,9 +16,9 @@ const Trainings = () => {
       <div className="container mx-auto px-4 py-2 md:py-24">
         <TrainingsType />
       </div>
-      <div className="container mx-auto px-4 py-2 md:py-24">
-        <PlankSection />
-      </div>
+      {/*<div className="container mx-auto px-4 py-2 md:py-24">*/}
+      {/*  <PlankSection />*/}
+      {/*</div>*/}
     </React.Fragment>
   );
 };
