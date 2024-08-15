@@ -12,14 +12,7 @@ exports.getListTrainingType = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Data not found" });
     }
 
-    const newTrainingTypeList = [...trainingTypeList];
-
-    console.log(trainingTypeList, "trainingTypeList");
-    const filtered = newTrainingTypeList.filter(
-      (value) => Object.keys(value).length !== 0,
-    );
-
-    res.status(200).json(filtered);
+    res.status(200).json(trainingTypeList);
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });
@@ -32,21 +25,13 @@ exports.createTrainingType = asyncHandler(async (req, res) => {
   const { trainingName, color } = req.body;
 
   try {
-    const createdData = await TrainingTypeDataModel.create(
-      { trainingName, color },
-      {
-        new: true,
-        upsert: true,
-        setDefaultsOnInsert: true,
-      },
-    );
-
-    console.log(createdData, "create");
+    const createdData = await TrainingTypeDataModel.create({
+      trainingName,
+      color,
+    });
 
     if (createdData) {
-      res
-        .status(200)
-        .json({ message: `Utworzono dla id: ${createdData?._id}` });
+      res.status(200).json({ message: "Utworzono nowy typ treningu" });
     }
   } catch (error) {
     console.log(error);

@@ -18,6 +18,7 @@ export type RegistrationFormFields = {
   trainingTitle?: string;
   trainingDescription?: string;
 };
+
 const AddTrainingForm = ({ closeModal }: any) => {
   const form = useForm<RegistrationFormFields>({
     defaultValues: {

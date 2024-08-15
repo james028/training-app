@@ -2,18 +2,9 @@ import React, { useState } from "react";
 import FormInput from "../shared/FormInput/FormInput";
 import { HexColorPicker } from "react-colorful";
 import { FormProvider, useForm } from "react-hook-form";
-import { RegistrationFormFields } from "../Forms/EditTrainingForm/EditTrainingForm";
 import useGetApi from "../../hooks/api/get/useApiGet";
-import { AppContext } from "../../appContext/appContext";
 import TrainingTypeList from "./TrainingTypeList/TrainingTypeList";
 import usePostApi from "../../hooks/api/post/useApiPost";
-
-const data = [
-  { id: "1", name: "Siłownia", color: "#6a215e" },
-  { id: "1", name: "Sauna", color: "#78d258" },
-  { id: "1", name: "Airbike", color: "#3a3f56" },
-  { id: "1", name: "Cardio-las", color: "#cd8f67" },
-];
 
 const URL = "http://localhost:5001/";
 
@@ -27,15 +18,16 @@ const TrainingsType = () => {
     },
   });
 
-  const { handleSubmit, register, setValue } = form;
+  const { handleSubmit, register, setValue, reset } = form;
 
   const link = "api/training-type/list";
   const linkCreate = "api/training-type/create";
-  const { data: dataTrainingType, refetch } = useGetApi(
-    `${URL}${link}`,
-    ["trainingTypeList"],
-    undefined,
-  );
+  const {
+    data: dataTrainingType,
+    refetch,
+    status,
+    isRefetching,
+  } = useGetApi(`${URL}${link}`, ["trainingTypeList"], undefined);
 
   const { mutate } = usePostApi(
     `${URL}${linkCreate}`,
@@ -44,13 +36,11 @@ const TrainingsType = () => {
   );
 
   const onSubmit = handleSubmit((data: any) => {
-    console.log(data);
-
     mutate({ paramsObj: null, bodyData: data });
     setTimeout(async () => {
+      reset();
       await refetch?.();
     }, 500);
-    //closeModal();
   });
 
   const hexToRgba = (hex: string, alpha = 1): string => {
@@ -111,9 +101,9 @@ const TrainingsType = () => {
         </form>
       </FormProvider>
       <TrainingTypeList
-        dataTrainingType={dataTrainingType?.filter(
-          (value: any) => Object.keys(value).length !== 0,
-        )}
+        dataTrainingType={dataTrainingType}
+        status={status}
+        isRefetching={isRefetching}
       />
     </>
   );
