@@ -4,6 +4,7 @@ import PlankMonthListItem from "../PlankMonthListItem/PlankMonthListItem";
 import { StyledPlankSectionContainer } from "./style";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { AppContext } from "../../../appContext/appContext";
+import Loading from "../../shared/Loading/Loading";
 
 const URL = "http://localhost:5001/";
 
@@ -17,7 +18,7 @@ const PlankMonthList = () => {
   );
 
   if (status === "loading" || isRefetching) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (status === "error") {

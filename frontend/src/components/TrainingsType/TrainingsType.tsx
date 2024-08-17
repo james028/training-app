@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import useGetApi from "../../hooks/api/get/useApiGet";
 import TrainingTypeList from "./TrainingTypeList/TrainingTypeList";
 import usePostApi from "../../hooks/api/post/useApiPost";
+import { StyledColorRectangle } from "./style";
 
 const URL = "http://localhost:5001/";
 
@@ -39,18 +40,16 @@ const TrainingsType = () => {
     mutate({ paramsObj: null, bodyData: data });
     setTimeout(async () => {
       reset();
+      setColor("");
       await refetch?.();
     }, 500);
   });
 
   const hexToRgba = (hex: string, alpha = 1): string => {
-    //if (hex && hex.match(/\w\w/g).length !== 0) {
-    // @ts-ignore
     const [r, g, b] = hex
-      .match(/\w\w/g)
+      .match(/\w\w/g)!
       .map((val: string) => parseInt(val, 16));
     return `rgba(${r},${g},${b},${alpha})`;
-    //}
   };
 
   return (
@@ -66,34 +65,34 @@ const TrainingsType = () => {
             type="text"
             name="trainingName"
             label="Typ treningu"
-            className="mb-2"
+            className="mb-2 w-2/5"
             errors={{}}
             rules={{}}
           />
-          <HexColorPicker
-            color={color}
-            onChange={(color) => {
-              setValue("color", color);
-              setColor(color);
-            }}
-          />
-          {color ? (
-            <>
-              <div
-                className="value"
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  backgroundColor: `${color}`,
-                }}
-              ></div>
-              <div>Hex wybranego koloru to {color}</div>
-              <div>Rgba wybranego koloru to {hexToRgba(color)}</div>
-            </>
-          ) : null}
-
+          <div className="flex">
+            <HexColorPicker
+              color={color}
+              onChange={(color) => {
+                setValue("color", color);
+                setColor(color);
+              }}
+            />
+            {color ? (
+              <div className=" flex flex-col ml-3">
+                <StyledColorRectangle color={color}></StyledColorRectangle>
+                <div>
+                  Hex wybranego koloru to{" "}
+                  <span className="font-bold">{color}</span>
+                </div>
+                <div>
+                  Rgba wybranego koloru to{" "}
+                  <span className="font-bold">{hexToRgba(color)}</span>
+                </div>
+              </div>
+            ) : null}
+          </div>
           <button
-            className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+            className=" mt-3 focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
             type="submit"
           >
             Dodaj

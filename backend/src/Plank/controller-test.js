@@ -5,7 +5,6 @@ const PlankTestDataModel = require("./model-test");
 // @route   GET /api/plank/list
 exports.getPlankTest = asyncHandler(async (req, res) => {
   try {
-    console.log("get plank test");
     const plankList = await PlankTestDataModel.find({}, null, null);
     //const plankList = await PlankTestDataModel.deleteMany({});
 
@@ -23,8 +22,6 @@ exports.getPlankTest = asyncHandler(async (req, res) => {
 // @route   POST /api/plank/create
 exports.createPlankTest = asyncHandler(async (req, res) => {
   const { month, day, duration, isDifferentExercises } = req.body;
-
-  console.log(req.body);
 
   try {
     const plankList = await PlankTestDataModel.find({}, null, null);
