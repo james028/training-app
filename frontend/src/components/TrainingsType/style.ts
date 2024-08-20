@@ -9,5 +9,6 @@ export const StyledColorRectangle = styled.div<{ color: string }>`
 export const StyledColorContainer = styled.div<{ color: string }>`
   min-height: 40px;
   width: 14.28%;
+  border-radius: 4px;
   background-color: ${(props) => (props.color ? `${props.color}` : null)};
 `;

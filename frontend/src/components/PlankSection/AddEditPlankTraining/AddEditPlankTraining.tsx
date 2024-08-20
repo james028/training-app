@@ -137,7 +137,7 @@ const AddEditPlankTraining = () => {
               id="month"
               name="month"
               label="Miesiąc"
-              className="mb-2"
+              className="mb-2 w-2/5"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               options={months}
@@ -152,7 +152,7 @@ const AddEditPlankTraining = () => {
               id="day"
               name="day"
               label="Dzień"
-              className="mb-2"
+              className="mb-2 w-2/5"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               options={getDaysByMonth()}
@@ -167,7 +167,7 @@ const AddEditPlankTraining = () => {
               type="number"
               name="duration"
               label="Długość treningu"
-              className="mb-2"
+              className="mb-2 w-2/5"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               // @ts-ignore

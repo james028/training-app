@@ -90,7 +90,7 @@ const TrainingTypeList: React.FC<TrainingTypeListProps> = ({
                     columns.map((it: Columns) => {
                       if (it.key === "color") {
                         return (
-                          <div className="flex items-center">
+                          <div className="flex items-center pt-1">
                             <div key={it.key} className="w-16">
                               {item[it.key as keyof typeof item] || "-"}
                             </div>

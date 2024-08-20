@@ -1,20 +1,37 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 
 import { TDay } from "../../../types/app-types";
 
 import EditTraining from "../../Forms/EditTraining/EditTraining";
 import AddTraining from "../../Forms/AddTraining/AddTraining";
 import { StyledContainerDay } from "./style";
+import useGetApi from "../../../hooks/api/get/useApiGet";
 
 type TCalendarDay = {
   data: TDay[];
   day: string;
 };
 
+export const StyledTypeContainer = styled.div<{
+  hexcolor: string | undefined | null;
+}>`
+  background-color: ${(props) => (props.hexcolor ? `${props.hexcolor}` : null)};
+`;
+
+const URL = "http://localhost:5001/";
+
 const CalendarDay = ({ data, day }: TCalendarDay) => {
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
   const [openModalAddTraining, setOpenModalAddTraining] = useState(false);
   const [eventData, setEventData] = useState<Record<any, any>>({});
+
+  const link = "api/training-type/list";
+  const { data: dataTrainingType } = useGetApi(
+    `${URL}${link}`,
+    ["trainingTypeList"],
+    undefined,
+  );
 
   const handleEditTraining = (event: TDay): void => {
     setOpenModalEditTraining(true);
@@ -25,6 +42,17 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
     setOpenModalAddTraining(true);
   };
 
+  //albo to będzie po id, ale to juz jak zrobie nie mockowe dane, wydaje mi sie ze po id
+  const findColor = (eventType: string): string | undefined | null => {
+    if (!dataTrainingType?.length) return;
+
+    const findData = dataTrainingType.find(
+      (type: any) => type.trainingName === eventType,
+    );
+
+    return findData?.color || null;
+  };
+
   const renderEvents = () => {
     if (data?.length > 3) {
       return <div className="flex items-center align-items">+3</div>;
@@ -32,16 +60,17 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
       if (data?.length > 0) {
         return data?.map((event: TDay, index1: any) => {
           return (
-            <div
+            <StyledTypeContainer
               //zmienic, jak będzie id z danych z TDay z BE
               key={index1}
-              className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
+              hexcolor={findColor(event.type)}
+              className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-white cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >
               <div className="flex items-center justify-between">
                 <span>{event.type}</span>
                 <svg
-                  className="h-6 w-6 text-gray-500 inline-flex leading-none"
+                  className="h-6 w-6 inline-flex leading-none text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -54,7 +83,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
                   />
                 </svg>
               </div>
-            </div>
+            </StyledTypeContainer>
           );
         });
       }
