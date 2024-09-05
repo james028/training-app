@@ -516,6 +516,18 @@ export const calendarData: any = {
               bikeKilometers: null,
               duration: "01:00",
             },
+            {
+              type: "b2",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00",
+            },
+            {
+              type: "b2",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00",
+            },
           ],
         },
         {
