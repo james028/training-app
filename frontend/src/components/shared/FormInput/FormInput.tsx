@@ -53,9 +53,7 @@ const FormInput = <TFormValues extends Record<string, unknown>>({
         errors={errors ?? {}}
         name={name as string}
         render={({ message }) => (
-          <FormErrorMessage className="mt-1">
-            {(message as any)?.message}
-          </FormErrorMessage>
+          <FormErrorMessage className="mt-1">{message}</FormErrorMessage>
         )}
       />
     </div>

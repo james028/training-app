@@ -22,10 +22,7 @@ const useYupValidationResolver = (validationSchema: any) =>
           errors: errors.inner.reduce(
             (allErrors: any, currentError: any) => ({
               ...allErrors,
-              [currentError.path]: {
-                //type: currentError.type ?? "validation",
-                message: currentError.message,
-              },
+              [currentError.path]: currentError.message,
             }),
             {},
           ),
@@ -36,8 +33,18 @@ const useYupValidationResolver = (validationSchema: any) =>
   );
 
 const schema = yup.object().shape({
-  email: yup.string().email().required({ message: "ssdsadfsfa" }),
-  password: yup.string().min(8).max(32).required(),
+  email: yup.string().email().required({ message: "Email jest wymagany" }),
+  // password: yup
+  //   .string()
+  //   .min(8)
+  //   .max(32)
+  //   .required({ message: "Hasło jest wymagane" }),
+  // confirmPassword: yup.string().min(8).max(32).required({ message: "hh" }),
+
+  password: yup.string().required({ message: "Password is required" }),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password")], { message: "Passwords must match" }),
 });
 
 const Register = () => {
@@ -47,6 +54,7 @@ const Register = () => {
       email: "",
       username: "",
       password: "",
+      confirmPassword: "",
     },
     //resolver: useYupValidationResolver(schema),
     resolver: useYupValidationResolver(schema),
@@ -62,13 +70,6 @@ const Register = () => {
     console.log(data, "data");
   });
 
-  // const a = errors?.["email"] ?? {};
-  //
-
-  const a = (errors.email?.message as any)?.message;
-
-  console.log(a);
-
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -79,17 +80,12 @@ const Register = () => {
           <FormProvider {...form}>
             <form className="space-y-4 md:space-y-6" onSubmit={onSubmit}>
               <div>
-                <input
-                  {...register("email")}
-                  style={{ border: "1px solid black" }}
-                />
-                <div>{(a as any)?.message}</div>
-                {/*<label*/}
-                {/*  htmlFor="email"*/}
-                {/*  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"*/}
-                {/*>*/}
-                {/*  Your email*/}
-                {/*</label>*/}
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your email
+                </label>
                 <FormInput<any>
                   id="email"
                   // @ts-ignore
@@ -100,26 +96,36 @@ const Register = () => {
                   errors={errors}
                   rules={{ required: "Pole jest wymagane11" }}
                 />
-                {/*<FormInput<any>*/}
-                {/*  id="username"*/}
-                {/*  // @ts-ignore*/}
-                {/*  type="text"*/}
-                {/*  name="username"*/}
-                {/*  label="Nazwa użytkownika"*/}
-                {/*  className="mb-2"*/}
-                {/*  errors={{}}*/}
-                {/*  rules={{}}*/}
-                {/*/>*/}
-                {/*<FormInput<any>*/}
-                {/*  id="password"*/}
-                {/*  // @ts-ignore*/}
-                {/*  type="text"*/}
-                {/*  name="password"*/}
-                {/*  label="Hasło"*/}
-                {/*  className="mb-2"*/}
-                {/*  errors={{}}*/}
-                {/*  rules={{}}*/}
-                {/*/>*/}
+                <FormInput<any>
+                  id="username"
+                  // @ts-ignore
+                  type="text"
+                  name="username"
+                  label="Nazwa użytkownika"
+                  className="mb-2"
+                  errors={{}}
+                  rules={{}}
+                />
+                <FormInput<any>
+                  id="password"
+                  // @ts-ignore
+                  type="text"
+                  name="password"
+                  label="Hasło"
+                  className="mb-2"
+                  errors={errors}
+                  rules={{}}
+                />
+                <FormInput<any>
+                  id="confirmPassword"
+                  // @ts-ignore
+                  type="text"
+                  name="confirmPassword"
+                  label="Potwierdź hasło"
+                  className="mb-2"
+                  errors={errors}
+                  rules={{}}
+                />
               </div>
               <button
                 type="submit"
