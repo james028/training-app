@@ -1,20 +1,73 @@
 import React from "react";
+import * as yup from "yup";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
 
+const useYupValidationResolver = (validationSchema: any) =>
+  React.useCallback(
+    async (data: any) => {
+      try {
+        const values = await validationSchema.validate(data, {
+          abortEarly: false,
+        });
+
+        return {
+          values,
+          errors: {},
+        };
+      } catch (errors) {
+        return {
+          values: {},
+          // @ts-ignore
+          errors: errors.inner.reduce(
+            (allErrors: any, currentError: any) => ({
+              ...allErrors,
+              [currentError.path]: {
+                //type: currentError.type ?? "validation",
+                message: currentError.message,
+              },
+            }),
+            {},
+          ),
+        };
+      }
+    },
+    [validationSchema],
+  );
+
+const schema = yup.object().shape({
+  email: yup.string().email().required({ message: "ssdsadfsfa" }),
+  password: yup.string().min(8).max(32).required(),
+});
+
 const Register = () => {
+  //any otypować
   const form = useForm<any>({
     defaultValues: {
       email: "",
       username: "",
       password: "",
     },
+    //resolver: useYupValidationResolver(schema),
+    resolver: useYupValidationResolver(schema),
   });
-  const { handleSubmit, register, setValue, reset } = form;
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = form;
 
+  console.log(errors, "erorrs");
   const onSubmit = handleSubmit((data: any) => {
     console.log(data, "data");
   });
+
+  // const a = errors?.["email"] ?? {};
+  //
+
+  const a = (errors.email?.message as any)?.message;
+
+  console.log(a);
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -26,12 +79,17 @@ const Register = () => {
           <FormProvider {...form}>
             <form className="space-y-4 md:space-y-6" onSubmit={onSubmit}>
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
+                <input
+                  {...register("email")}
+                  style={{ border: "1px solid black" }}
+                />
+                <div>{(a as any)?.message}</div>
+                {/*<label*/}
+                {/*  htmlFor="email"*/}
+                {/*  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"*/}
+                {/*>*/}
+                {/*  Your email*/}
+                {/*</label>*/}
                 <FormInput<any>
                   id="email"
                   // @ts-ignore
@@ -39,29 +97,29 @@ const Register = () => {
                   name="email"
                   label="Email"
                   className="mb-2"
-                  errors={{}}
-                  rules={{}}
+                  errors={errors}
+                  rules={{ required: "Pole jest wymagane11" }}
                 />
-                <FormInput<any>
-                  id="username"
-                  // @ts-ignore
-                  type="text"
-                  name="username"
-                  label="Nazwa użytkownika"
-                  className="mb-2"
-                  errors={{}}
-                  rules={{}}
-                />
-                <FormInput<any>
-                  id="password"
-                  // @ts-ignore
-                  type="text"
-                  name="password"
-                  label="Hasło"
-                  className="mb-2"
-                  errors={{}}
-                  rules={{}}
-                />
+                {/*<FormInput<any>*/}
+                {/*  id="username"*/}
+                {/*  // @ts-ignore*/}
+                {/*  type="text"*/}
+                {/*  name="username"*/}
+                {/*  label="Nazwa użytkownika"*/}
+                {/*  className="mb-2"*/}
+                {/*  errors={{}}*/}
+                {/*  rules={{}}*/}
+                {/*/>*/}
+                {/*<FormInput<any>*/}
+                {/*  id="password"*/}
+                {/*  // @ts-ignore*/}
+                {/*  type="text"*/}
+                {/*  name="password"*/}
+                {/*  label="Hasło"*/}
+                {/*  className="mb-2"*/}
+                {/*  errors={{}}*/}
+                {/*  rules={{}}*/}
+                {/*/>*/}
               </div>
               <button
                 type="submit"
