@@ -7,10 +7,11 @@ const debug = require("debug");
 const app = express();
 const server = http.createServer(app);
 const port = 5001;
-//const debugLog = debug("app");
+const debugLog = debug("app");
 
 const PlankRouter = require("./Plank/routes");
 const TrainingTypeRouter = require("./TrainingType/routes");
+const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
 
 const loggerOptions = {
   transports: [new winston.transports.Console()],
@@ -43,6 +44,7 @@ app.use(cors());
 
 PlankRouter.routesConfig(app);
 TrainingTypeRouter.routesConfig(app);
+UserRegisterLoginRouter.routesConfig(app);
 
 const runningMessage = `Server running at http://localhost:${port}`;
 

@@ -38,6 +38,7 @@ const TrainingsType = () => {
 
   const onSubmit = handleSubmit((data: any) => {
     mutate({ paramsObj: null, bodyData: data });
+
     setTimeout(async () => {
       reset();
       setColor("");

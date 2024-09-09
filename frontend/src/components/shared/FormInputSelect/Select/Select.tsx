@@ -25,7 +25,7 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
 
     return (
       <>
-        <label className="text-gray-800 block mb-1 font-bold text-sm tracking-wide">
+        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
           {label}
         </label>
         <div className="relative">

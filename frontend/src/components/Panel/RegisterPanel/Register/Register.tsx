@@ -2,10 +2,26 @@ import React from "react";
 import * as yup from "yup";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
+import { AnySchema } from "yup";
+import { useNavigate } from "react-router-dom";
+import usePostApi from "../../../../hooks/api/post/useApiPost";
+import { data } from "../../../../mock/plank-mock";
 
-const useYupValidationResolver = (validationSchema: any) =>
+type RegisterFormFields = {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+};
+
+// to do innego pliku takiego folder hooks
+type ValidationErrors = Record<string, { type: string; message: string }>;
+
+const useYupValidationResolver = <TData extends {}>(
+  validationSchema: AnySchema,
+) =>
   React.useCallback(
-    async (data: any) => {
+    async (data: TData) => {
       try {
         const values = await validationSchema.validate(data, {
           abortEarly: false,
@@ -13,61 +29,97 @@ const useYupValidationResolver = (validationSchema: any) =>
 
         return {
           values,
-          errors: {},
+          errors: {} as ValidationErrors,
         };
       } catch (errors) {
+        let errorsObject: ValidationErrors;
+        //let ValidationErrors;
+        //if (errors instanceof ValidationErrors) {
+        errorsObject = (errors as any).inner.reduce(
+          (
+            allErrors: ValidationErrors,
+            currentError: { path: string; type: string; message: string },
+          ) => ({
+            ...allErrors,
+            [currentError.path]: {
+              type: currentError.type,
+              message: currentError.message,
+            },
+          }),
+          {} as ValidationErrors,
+        );
+        // /}
         return {
           values: {},
-          // @ts-ignore
-          errors: errors.inner.reduce(
-            (allErrors: any, currentError: any) => ({
-              ...allErrors,
-              [currentError.path]: currentError.message,
-            }),
-            {},
-          ),
+          errors: errorsObject,
         };
       }
     },
     [validationSchema],
   );
 
+//schema do innego pliku
 const schema = yup.object().shape({
-  email: yup.string().email().required({ message: "Email jest wymagany" }),
-  // password: yup
-  //   .string()
-  //   .min(8)
-  //   .max(32)
-  //   .required({ message: "Hasło jest wymagane" }),
-  // confirmPassword: yup.string().min(8).max(32).required({ message: "hh" }),
-
-  password: yup.string().required({ message: "Password is required" }),
+  email: yup
+    .string()
+    .email("Email jest niepoprawny")
+    .required("Email jest wymagany"),
+  username: yup.string().required("Nazwa użytkownika jest wymagana"),
+  password: yup
+    .string()
+    .min(8, "Hasło musi mieć minumum 8 znaków")
+    .max(32, "Hasło musi mieć maksymalnie 32 znaki")
+    .required("Hasło jest wymagane"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("password")], { message: "Passwords must match" }),
+    .oneOf([yup.ref("password")], "Hasła się nie zgadzają "),
 });
 
+const URL = "http://localhost:5001/";
+
 const Register = () => {
-  //any otypować
-  const form = useForm<any>({
+  const navigate = useNavigate();
+
+  const form = useForm<RegisterFormFields>({
     defaultValues: {
       email: "",
       username: "",
       password: "",
       confirmPassword: "",
     },
-    //resolver: useYupValidationResolver(schema),
     resolver: useYupValidationResolver(schema),
   });
   const {
     handleSubmit,
-    register,
     formState: { errors },
+    reset,
   } = form;
 
-  console.log(errors, "erorrs");
+  const linkRegister = "api/user/register";
+  const { mutate, status } = usePostApi(
+    `${URL}${linkRegister}`,
+    ["userRegister"],
+    null,
+  );
+
   const onSubmit = handleSubmit((data: any) => {
+    //try {
     console.log(data, "data");
+
+    const { confirmPassword, ...restObjectData } = data;
+    mutate({ paramsObj: null, bodyData: restObjectData });
+
+    //if (status === "success") {
+    setTimeout(async () => {
+      reset();
+      //navigate("/dashboard");
+    }, 500);
+    //}
+
+    //} catch (error) {
+    //console.log(error);
+    //pozniej tutaj toast ze nie udalo sie zarejestrować
+    //}
   });
 
   return (
@@ -80,12 +132,6 @@ const Register = () => {
           <FormProvider {...form}>
             <form className="space-y-4 md:space-y-6" onSubmit={onSubmit}>
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
                 <FormInput<any>
                   id="email"
                   // @ts-ignore
@@ -94,7 +140,7 @@ const Register = () => {
                   label="Email"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane11" }}
+                  rules={{}}
                 />
                 <FormInput<any>
                   id="username"
@@ -103,7 +149,7 @@ const Register = () => {
                   name="username"
                   label="Nazwa użytkownika"
                   className="mb-2"
-                  errors={{}}
+                  errors={errors}
                   rules={{}}
                 />
                 <FormInput<any>
