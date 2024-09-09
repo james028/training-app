@@ -12,17 +12,12 @@ exports.handleRegister = asyncHandler(async (req, res) => {
 
   try {
     console.log(username, email, password);
-    const existingUser = await UserModel.findOne(
-      { email, username },
-      null,
-      null,
-    );
+    const existingUser = await UserModel.findOne({ email }, null, null);
 
     console.log(existingUser, "ex");
     if (existingUser) {
       return res.status(400).json({
-        message:
-          "Użytkownik z takim e-mailem lub nazwą użytkownika już istnieje.",
+        message: "Użytkownik z takim e-mailem uż istnieje.",
       });
     }
 
