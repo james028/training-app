@@ -1,50 +1,66 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryKey,
+  useMutation,
+  UseMutationResult,
+} from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import { useState } from "react";
-import { string } from "yup";
 
 const queryClient = new QueryClient();
 
-const useFeedbackIndicator = () => {
-  const [status, setStatus] = useState<any>();
+export enum Status {
+  LOADING = "loading",
+  SUCCESS = "success",
+  ERROR = "error",
+}
+type StatusProps = "loading" | "success" | "error";
 
-  let indicator;
+const useSetResponseStatus = (): {
+  responseStatus: Status;
+  setLoading: () => void;
+  setSuccess: () => void;
+  setError: () => void;
+} => {
+  const [status, setStatus] = useState<StatusProps>();
 
-  if (status === "loading") {
-    indicator = "L";
-  } else if (status === "success") {
-    indicator = "S";
-  } else if (status === "error") {
-    indicator = "E";
-  }
+  const responseStatusObject = {
+    loading: Status.LOADING,
+    success: Status.SUCCESS,
+    error: Status.ERROR,
+  };
 
-  const setLoading = () => setStatus("loading");
+  let responseStatus: Status =
+    responseStatusObject[
+      status as unknown as keyof typeof responseStatusObject
+    ];
+
+  const setLoading = () => {
+    setStatus("loading");
+  };
   const setSuccess = () => {
     setStatus("success");
-    //setupTimerToClearStatus();
   };
   const setError = () => {
     setStatus("error");
-    //setupTimerToClearStatus();
   };
 
-  console.log(indicator, "1");
-  return { indicator, setLoading, setSuccess, setError };
+  //console.log(responseStatus, "1");
+  return { responseStatus, setLoading, setSuccess, setError };
 };
 
 const usePostApi = (
   link: string,
-  queryKey: Array<any> | string,
+  queryKey: Array<QueryKey> | QueryKey,
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
-) => {
-  //const [error, setError] = useState(false);
-
-  const { indicator, setLoading, setSuccess, setError } =
-    useFeedbackIndicator();
-
-  console.log(indicator, "2");
+): {
+  mutation: UseMutationResult<Promise<any>, Error, any>;
+  responseStatus: Status;
+} => {
+  const { responseStatus, setLoading, setSuccess, setError } =
+    useSetResponseStatus();
 
   const createPost = async ({
     paramsObj,
@@ -72,18 +88,15 @@ const usePostApi = (
         setSuccess();
       },
       onError: () => {
-        //alert("there was an error");
         setError();
       },
       onSettled: () => {
-        // // @ts-ignore
-        // queryClient.invalidateQueries("create");
         queryClient.invalidateQueries([queryKey, link]);
       },
     },
   );
 
-  return { mutation, indicator };
+  return { mutation, responseStatus };
 };
 
 export default usePostApi;

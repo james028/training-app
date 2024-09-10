@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import * as yup from "yup";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import usePostApi from "../../../../hooks/api/post/useApiPost";
+import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
-import { getValidationSchema } from "../schemas";
+import { registerSchema } from "../schemas";
 
 type RegisterFormFields = {
   email: string;
@@ -14,13 +13,9 @@ type RegisterFormFields = {
   confirmPassword: string;
 };
 
-//schema do innego pliku
-
 const URL = "http://localhost:5001/";
 
 const Register = () => {
-  const [isRegistered, setIsRegistered] = useState(false);
-
   const navigate = useNavigate();
 
   const form = useForm<RegisterFormFields>({
@@ -30,9 +25,7 @@ const Register = () => {
       password: "",
       confirmPassword: "",
     },
-    resolver: useYupValidationResolver(
-      getValidationSchema({ formType: "register" }),
-    ),
+    resolver: useYupValidationResolver(registerSchema),
   });
   const {
     handleSubmit,
@@ -41,7 +34,7 @@ const Register = () => {
   } = form;
 
   const linkRegister = "api/auth/register";
-  const { mutation, indicator } = usePostApi(
+  const { mutation, responseStatus } = usePostApi(
     `${URL}${linkRegister}`,
     ["userRegister"],
     null,
@@ -56,12 +49,11 @@ const Register = () => {
 
     //console.log(indicator, "indi");
 
-    if (indicator === "E") {
-      //setTimeout(async () => {
-      reset();
-      setIsRegistered(true);
-      //}, 500);
-    }
+    //if (responseStatus === "E") {
+    //setTimeout(async () => {
+    reset();
+    //}, 500);
+    //}
 
     //} catch (error) {
     //console.log(error);
@@ -69,7 +61,7 @@ const Register = () => {
     //}
   });
 
-  const isAfterRegisteredPanel = indicator === "S";
+  const isAfterRegisteredPanel = responseStatus === Status.SUCCESS;
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -78,7 +70,7 @@ const Register = () => {
           {!isAfterRegisteredPanel ? (
             <>
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Create an account
+                Zarejestruj się
               </h1>
               <FormProvider {...form}>
                 <form className="space-y-4 md:space-y-6" onSubmit={onSubmit}>
@@ -128,15 +120,16 @@ const Register = () => {
                     type="submit"
                     className=" bg-blue-500 md:bg-green-500 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
-                    Create an account
+                    Zarejestruj się
                   </button>
                   <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Already have an account?{" "}
+                    Masz już konto?{" "}
                     <a
-                      href="#"
+                      onClick={() => navigate("/login")}
+                      href=""
                       className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                     >
-                      Login here
+                      Zaloguj się
                     </a>
                   </p>
                 </form>

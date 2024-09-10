@@ -3,7 +3,7 @@ const UserModel = require("./model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-function comparePassword() {
+function comparePassword(password, existPassword) {
   return bcrypt.compare(password, existPassword);
 }
 
@@ -47,7 +47,7 @@ exports.handleLogin = asyncHandler(async (req, res) => {
     const user = await UserModel.findOne({ email }, null, null);
 
     if (!user) {
-      res.json({ message: "Nie znaleziono użytkownika" });
+      res.status(401).json({ message: "Nie znaleziono użytkownika" });
     }
 
     const match = await comparePassword(password, user.password);
@@ -72,9 +72,9 @@ exports.handleLogin = asyncHandler(async (req, res) => {
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
-      res.json({ accessToken });
+      res.json({ accessToken, message: "Zalogowałeś się" });
     } else {
-      res.json({ message: "Invalid username or password" });
+      res.status(401).json({ message: "Niepoprawne hasło" });
     }
   } catch (error) {
     console.error(error);

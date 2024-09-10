@@ -1,10 +1,12 @@
 import axios from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, QueryKey, useMutation } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const useDeleteApi = (
   link: string,
-  queryKey: Array<any> | string,
+  queryKey: Array<QueryKey> | QueryKey,
   params?: Record<any, any>,
 ) => {
   const deleteMethod = async ({
@@ -21,15 +23,13 @@ const useDeleteApi = (
 
   return useMutation<Promise<any>, Error, any>(deleteMethod, {
     onSuccess: () => {
-      // @ts-ignore
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries([queryKey, link]);
     },
     onError: () => {
       console.log("there was an error");
     },
     onSettled: () => {
-      // // @ts-ignore
-      // queryClient.invalidateQueries("create");
+      queryClient.invalidateQueries([queryKey, link]);
     },
   });
 };

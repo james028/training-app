@@ -1,26 +1,66 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
+import { loginSchema } from "../schemas";
+import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
+import { useNavigate } from "react-router-dom";
 
 type LoginFormFields = {
   email: string;
   password: string;
 };
 
+const URL = "http://localhost:5001/";
+
 const Login = () => {
+  const navigate = useNavigate();
+
   const form = useForm<LoginFormFields>({
     defaultValues: {
       email: "",
       password: "",
     },
-    //resolver: useYupValidationResolver(""),
+    resolver: useYupValidationResolver(loginSchema),
   });
   const {
     handleSubmit,
     formState: { errors },
     reset,
   } = form;
+
+  const linkRegister = "api/auth/login";
+  const { mutation, responseStatus } = usePostApi(
+    `${URL}${linkRegister}`,
+    ["userLogin"],
+    null,
+  );
+
+  const onSubmit = handleSubmit((data: any) => {
+    mutation.mutate({ paramsObj: null, bodyData: data });
+
+    //po zalogowaniu przeniesienie do dashboard
+
+    console.log(responseStatus, "response");
+    setTimeout(async () => {
+      reset();
+    }, 500);
+  });
+
+  //poszukać moze jakiegoś innego rozwiązania
+  useEffect(() => {
+    if (responseStatus === Status.SUCCESS) {
+      navigate("/dashboard");
+    }
+  }, [responseStatus]);
+
+  // if (responseStatus === Status.SUCCESS) {
+  //   navigate("/dashboard");
+  // }
+
+  // if (responseStatus === Status.SUCCESS) {
+  //   return <div>Logout</div>;
+  // }
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -29,10 +69,10 @@ const Login = () => {
           {
             <>
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Create an account
+                Zalogus się
               </h1>
               <FormProvider {...form}>
-                <form className="space-y-4 md:space-y-6" onSubmit={() => null}>
+                <form className="space-y-4 md:space-y-6" onSubmit={onSubmit}>
                   <div>
                     <FormInput<any>
                       id="email"
@@ -40,16 +80,6 @@ const Login = () => {
                       type="text"
                       name="email"
                       label="Email"
-                      className="mb-2"
-                      errors={errors}
-                      rules={{}}
-                    />
-                    <FormInput<any>
-                      id="username"
-                      // @ts-ignore
-                      type="text"
-                      name="username"
-                      label="Nazwa użytkownika"
                       className="mb-2"
                       errors={errors}
                       rules={{}}
@@ -64,30 +94,20 @@ const Login = () => {
                       errors={errors}
                       rules={{}}
                     />
-                    <FormInput<any>
-                      id="confirmPassword"
-                      // @ts-ignore
-                      type="text"
-                      name="confirmPassword"
-                      label="Potwierdź hasło"
-                      className="mb-2"
-                      errors={errors}
-                      rules={{}}
-                    />
                   </div>
                   <button
                     type="submit"
                     className=" bg-blue-500 md:bg-green-500 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
-                    Create an account
+                    Zaloguj
                   </button>
                   <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Already have an account?{" "}
+                    Zapomniałeś hasło?{" "}
                     <a
                       href="#"
                       className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                     >
-                      Login here
+                      Przypomnij
                     </a>
                   </p>
                 </form>

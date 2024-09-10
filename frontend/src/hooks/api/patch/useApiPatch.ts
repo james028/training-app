@@ -1,4 +1,4 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { QueryClient, QueryKey, useMutation } from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 
@@ -6,7 +6,7 @@ const queryClient = new QueryClient();
 
 const usePatchApi = (
   link: string,
-  queryKey: Array<any> | string,
+  queryKey: Array<QueryKey> | QueryKey,
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
 ) => {
@@ -34,8 +34,7 @@ const usePatchApi = (
       console.log("there was an error");
     },
     onSettled: () => {
-      // // @ts-ignore
-      // queryClient.invalidateQueries("create");
+      queryClient.invalidateQueries([queryKey, link]);
     },
   });
 };
