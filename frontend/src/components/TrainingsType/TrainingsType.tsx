@@ -30,14 +30,14 @@ const TrainingsType = () => {
     isRefetching,
   } = useGetApi(`${URL}${link}`, ["trainingTypeList"], undefined);
 
-  const { mutate } = usePostApi(
-    `${URL}${linkCreate}`,
-    ["createTrainingTypeList"],
-    null,
-  );
+  // const { mutate } = usePostApi(
+  //   `${URL}${linkCreate}`,
+  //   ["createTrainingTypeList"],
+  //   null,
+  // );
 
   const onSubmit = handleSubmit((data: any) => {
-    mutate({ paramsObj: null, bodyData: data });
+    //mutate({ paramsObj: null, bodyData: data });
 
     setTimeout(async () => {
       reset();

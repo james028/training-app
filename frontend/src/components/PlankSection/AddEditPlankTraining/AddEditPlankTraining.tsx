@@ -31,7 +31,7 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutate } = usePostApi(`${URL}${link}/create`, ["createPlank"], null);
+  //const { mutate } = usePostApi(`${URL}${link}/create`, ["createPlank"], null);
   const { mutate: updateMutate } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
@@ -90,7 +90,7 @@ const AddEditPlankTraining = () => {
       updateMutate({ paramsObj: null, bodyData: newData });
       handleActionFetch();
     } else {
-      mutate({ paramsObj: null, bodyData: newData });
+      //mutate({ paramsObj: null, bodyData: newData });
       handleActionFetch();
     }
   });

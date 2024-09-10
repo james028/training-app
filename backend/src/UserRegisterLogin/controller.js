@@ -17,7 +17,7 @@ exports.handleRegister = asyncHandler(async (req, res) => {
     console.log(existingUser, "ex");
     if (existingUser) {
       return res.status(400).json({
-        message: "Użytkownik z takim e-mailem uż istnieje.",
+        message: "Użytkownik z takim e-mailem już istnieje.",
       });
     }
 
