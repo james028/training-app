@@ -31,11 +31,11 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutation } = usePostApi(
-    `${URL}${link}/create`,
-    ["createPlank"],
-    null,
-  );
+  // const { mutation } = usePostApi(
+  //   `${URL}${link}/create`,
+  //   ["createPlank"],
+  //   null,
+  // );
   const { mutate: updateMutate } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
@@ -49,7 +49,7 @@ const AddEditPlankTraining = () => {
 
   // poprawic to
   // @ts-ignore
-  const onSubmit = handleSubmit((data: RegistrationFormFields) => {
+  const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     //zmienic zeby nie wysylalo czerwiec tylko index, czyli no fubkcja na stowrzenie z tab z ob z month
     console.log("submitting... edit plak", data);
 
@@ -91,10 +91,12 @@ const AddEditPlankTraining = () => {
     };
 
     if (Object.keys(objectData ?? {}).length > 0) {
-      updateMutate({ paramsObj: null, bodyData: newData });
+      //to zmienic na async await
+
+      //await updateMutate({ paramsObj: null, bodyData: newData });
       handleActionFetch();
     } else {
-      mutation.mutate({ paramsObj: null, bodyData: newData });
+      // await mutation.mutate({ paramsObj: null, bodyData: newData });
       handleActionFetch();
     }
   });

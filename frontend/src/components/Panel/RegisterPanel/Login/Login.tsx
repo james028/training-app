@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
@@ -14,6 +14,7 @@ type LoginFormFields = {
 const URL = "http://localhost:5001/";
 
 const Login = () => {
+  const [test, setTest] = useState<any>({});
   const navigate = useNavigate();
 
   const form = useForm<LoginFormFields>({
@@ -30,29 +31,54 @@ const Login = () => {
   } = form;
 
   const linkRegister = "api/auth/login";
-  const { mutation, responseStatus } = usePostApi(
+  const { responseStatus, mutation: createMutation } = usePostApi(
     `${URL}${linkRegister}`,
     ["userLogin"],
     null,
   );
 
-  const onSubmit = handleSubmit((data: any) => {
-    mutation.mutate({ paramsObj: null, bodyData: data });
+  const authenticate = (data: any, next?: () => void) => {
+    // Storing JWT token in user's browser
+    if (typeof window !== "undefined") {
+      localStorage.setItem("jwt", JSON.stringify(data));
+      if (next) {
+        next();
+      }
+    }
+  };
 
-    //po zalogowaniu przeniesienie do dashboard
+  const onSubmit = handleSubmit(async (data: any) => {
+    try {
+      const { data: data2 } = await createMutation.mutateAsync({
+        paramsObj: null,
+        bodyData: data,
+      });
 
-    console.log(responseStatus, "response");
-    setTimeout(async () => {
-      reset();
-    }, 500);
+      if (!data2) return;
+
+      if (data2) {
+        console.log(data2, "123data");
+        setTest(data2);
+        authenticate(data2);
+      }
+
+      //po zalogowaniu przeniesienie do dashboard
+
+      //console.log(responseStatus, "response");
+      setTimeout(async () => {
+        reset();
+      }, 500);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   //poszukać moze jakiegoś innego rozwiązania
-  useEffect(() => {
-    if (responseStatus === Status.SUCCESS) {
-      navigate("/dashboard");
-    }
-  }, [responseStatus]);
+  //useEffect(() => {
+  //if (responseStatus === Status.SUCCESS) {
+  //navigate("/dashboard");
+  //}
+  //}, [responseStatus]);
 
   // if (responseStatus === Status.SUCCESS) {
   //   navigate("/dashboard");
@@ -64,6 +90,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      {test.email} {test.username}
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           {

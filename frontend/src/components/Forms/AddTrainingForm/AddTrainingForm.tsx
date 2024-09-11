@@ -40,7 +40,7 @@ const AddTrainingForm = ({ closeModal }: any) => {
     formState: { errors },
   } = form;
 
-  const onSubmit = handleSubmit((data: RegistrationFormFields) => {
+  const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     console.log("submitting...", data);
 
     //tutaj funkcja na be na async/await

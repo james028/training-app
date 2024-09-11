@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useSession from "./useSession";
+
+const isAuthenticated = () => {
+  // Checking if the user is authenticated
+  if (typeof window === "undefined") {
+    return false;
+  }
+  if (localStorage.getItem("jwt")) {
+    return JSON.parse(localStorage.getItem("jwt") || "{}");
+  } else return false;
+};
 
 const Navbar = () => {
+  const [session] = useSession();
+
   const navigate = useNavigate();
 
   const headerItems = [
@@ -10,9 +23,19 @@ const Navbar = () => {
     { page: "/login", label: "Zaloguj się" },
   ];
 
+  console.log(Object.values(session?.user).filter(Boolean), "ee");
+
+  const userButtons =
+    Object.values(session?.user).filter(Boolean).length > 0 ? (
+      <>
+        <div>Wyloguj</div>
+      </>
+    ) : null;
+
   return (
     <>
       <nav className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+        {userButtons}
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a
             href="#"

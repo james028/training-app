@@ -43,7 +43,7 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
     formState: { errors },
   } = form;
 
-  const onSubmit = handleSubmit((data: RegistrationFormFields) => {
+  const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     console.log("submitting... edit", data);
 
     //tutaj funkcja na be na async/await

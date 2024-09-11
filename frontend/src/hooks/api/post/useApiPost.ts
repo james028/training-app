@@ -55,48 +55,50 @@ const usePostApi = (
   queryKey: Array<QueryKey> | QueryKey,
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
-): {
-  mutation: UseMutationResult<Promise<any>, Error, any>;
-  responseStatus: Status;
-} => {
-  const { responseStatus, setLoading, setSuccess, setError } =
-    useSetResponseStatus();
+) =>
+  // : {
+  //mutation: UseMutationResult<Promise<any>, Error, any>;
+  // responseStatus: Status;
+  //}
+  {
+    const { responseStatus, setLoading, setSuccess, setError } =
+      useSetResponseStatus();
 
-  const createPost = async ({
-    paramsObj,
-    bodyData,
-  }: {
-    paramsObj: Record<any, any> | null | undefined;
-    bodyData: Record<any, any> | null | undefined;
-  }): Promise<any> => {
-    setLoading();
-
-    const result = await axios.post<string>(
-      endpointWithParams(link, params, getParams(paramsObj)),
+    const createPost = async ({
+      paramsObj,
       bodyData,
-      { headers },
+    }: {
+      paramsObj: Record<any, any> | null | undefined;
+      bodyData: Record<any, any> | null | undefined;
+    }): Promise<any> => {
+      setLoading();
+
+      const result = await axios.post<string>(
+        endpointWithParams(link, params, getParams(paramsObj)),
+        bodyData,
+        { headers },
+      );
+
+      return result.data;
+    };
+
+    const mutation = useMutation<Promise<any>, Error, any>(
+      (body) => createPost(body),
+      {
+        onSuccess: (data) => {
+          queryClient.invalidateQueries([queryKey, link]);
+          setSuccess();
+        },
+        onError: () => {
+          setError();
+        },
+        onSettled: () => {
+          queryClient.invalidateQueries([queryKey, link]);
+        },
+      },
     );
 
-    return result.data;
+    return { responseStatus, mutation };
   };
-
-  const mutation = useMutation<Promise<any>, Error, any>(
-    (body) => createPost(body),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([queryKey, link]);
-        setSuccess();
-      },
-      onError: () => {
-        setError();
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries([queryKey, link]);
-      },
-    },
-  );
-
-  return { mutation, responseStatus };
-};
 
 export default usePostApi;

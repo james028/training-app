@@ -63,7 +63,7 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       const refreshToken = jwt.sign(
         { username: user.username },
         `${process.env.REFRESH_TOKEN_SECRET}`,
-        { expiresIn: "1d" },
+        { expiresIn: "30s" },
       );
 
       res.cookie("jwt", refreshToken, {
@@ -72,7 +72,13 @@ exports.handleLogin = asyncHandler(async (req, res) => {
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
-      res.json({ accessToken, message: "Zalogowałeś się" });
+
+      const { password, ...restData } = user;
+      res.json({
+        accessToken,
+        message: "Zalogowałeś się",
+        data: { id: user._id, email: user.email, username: user.username },
+      });
     } else {
       res.status(401).json({ message: "Niepoprawne hasło" });
     }
