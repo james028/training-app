@@ -5,6 +5,8 @@ import { useYupValidationResolver } from "../../../../hooks/useYupValidationReso
 import { loginSchema } from "../schemas";
 import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../../../../appContext/appContext";
+import { useLocalStorage2 } from "../../../../hooks/useLocalStorage/useLocalStorage";
 
 type LoginFormFields = {
   email: string;
@@ -16,6 +18,10 @@ const URL = "http://localhost:5001/";
 const Login = () => {
   const [test, setTest] = useState<any>({});
   const navigate = useNavigate();
+
+  const { setUser } = React.useContext(AppContext);
+
+  const [value, setValue] = useLocalStorage2("jwt");
 
   const form = useForm<LoginFormFields>({
     defaultValues: {
@@ -31,40 +37,24 @@ const Login = () => {
   } = form;
 
   const linkRegister = "api/auth/login";
-  const { responseStatus, mutation: createMutation } = usePostApi(
+  const { responseStatus, mutation } = usePostApi(
     `${URL}${linkRegister}`,
     ["userLogin"],
     null,
   );
 
-  const authenticate = (data: any, next?: () => void) => {
-    // Storing JWT token in user's browser
-    if (typeof window !== "undefined") {
-      localStorage.setItem("jwt", JSON.stringify(data));
-      if (next) {
-        next();
-      }
-    }
-  };
-
   const onSubmit = handleSubmit(async (data: any) => {
     try {
-      const { data: data2 } = await createMutation.mutateAsync({
+      const { data: responseData } = await mutation.mutateAsync({
         paramsObj: null,
         bodyData: data,
       });
 
-      if (!data2) return;
-
-      if (data2) {
-        console.log(data2, "123data");
-        setTest(data2);
-        authenticate(data2);
+      if (responseData) {
+        setValue(responseData);
+        setUser(setValue(responseData));
       }
-
       //po zalogowaniu przeniesienie do dashboard
-
-      //console.log(responseStatus, "response");
       setTimeout(async () => {
         reset();
       }, 500);
@@ -73,20 +63,13 @@ const Login = () => {
     }
   });
 
-  //poszukać moze jakiegoś innego rozwiązania
-  //useEffect(() => {
-  //if (responseStatus === Status.SUCCESS) {
-  //navigate("/dashboard");
-  //}
-  //}, [responseStatus]);
+  useEffect(() => {
+    if (responseStatus === Status.SUCCESS) {
+      navigate("/dashboard");
+    }
+  }, [responseStatus]);
 
-  // if (responseStatus === Status.SUCCESS) {
-  //   navigate("/dashboard");
-  // }
-
-  // if (responseStatus === Status.SUCCESS) {
-  //   return <div>Logout</div>;
-  // }
+  console.log(value, "login");
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">

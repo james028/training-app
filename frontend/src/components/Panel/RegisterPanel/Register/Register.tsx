@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { registerSchema } from "../schemas";
+import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 
 type RegisterFormFields = {
   email: string;
@@ -34,40 +34,33 @@ const Register = () => {
   } = form;
 
   const linkRegister = "api/auth/register";
-  // const { mutation, responseStatus } = usePostApi(
-  //   `${URL}${linkRegister}`,
-  //   ["userRegister"],
-  //   null,
-  // );
+  const { mutation, responseStatus } = usePostApi(
+    `${URL}${linkRegister}`,
+    ["userRegister"],
+    null,
+  );
 
   const onSubmit = handleSubmit(async (data: any) => {
-    //try {
-    //console.log(data, "data");
+    try {
+      const { confirmPassword, ...restObjectData } = data;
+      await mutation.mutate({ paramsObj: null, bodyData: restObjectData });
 
-    const { confirmPassword, ...restObjectData } = data;
-    // await mutation.mutate({ paramsObj: null, bodyData: restObjectData });
-
-    //console.log(indicator, "indi");
-
-    //if (responseStatus === "E") {
-    //setTimeout(async () => {
-    reset();
-    //}, 500);
-    //}
-
-    //} catch (error) {
-    //console.log(error);
-    //pozniej tutaj toast ze nie udalo sie zarejestrować
-    //}
+      setTimeout(async () => {
+        reset();
+      }, 500);
+    } catch (error) {
+      console.log(error);
+      //pozniej tutaj toast ze nie udalo sie zarejestrować
+    }
   });
 
-  //const isAfterRegisteredPanel = responseStatus === Status.SUCCESS;
+  const isAfterRegisteredPanel = responseStatus === Status.SUCCESS;
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-          {!true ? (
+          {!isAfterRegisteredPanel ? (
             <>
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Zarejestruj się
