@@ -5,8 +5,7 @@ import { useYupValidationResolver } from "../../../../hooks/useYupValidationReso
 import { loginSchema } from "../schemas";
 import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../../../appContext/appContext";
-import { useLocalStorage2 } from "../../../../hooks/useLocalStorage/useLocalStorage";
+import { useAppContext } from "../../../../appContext/appContext";
 
 type LoginFormFields = {
   email: string;
@@ -16,12 +15,9 @@ type LoginFormFields = {
 const URL = "http://localhost:5001/";
 
 const Login = () => {
-  const [test, setTest] = useState<any>({});
   const navigate = useNavigate();
 
-  const { setUser } = React.useContext(AppContext);
-
-  const [value, setValue] = useLocalStorage2("jwt");
+  const { addUser } = useAppContext();
 
   const form = useForm<LoginFormFields>({
     defaultValues: {
@@ -51,8 +47,7 @@ const Login = () => {
       });
 
       if (responseData) {
-        setValue(responseData);
-        setUser(setValue(responseData));
+        addUser(responseData);
       }
       //po zalogowaniu przeniesienie do dashboard
       setTimeout(async () => {
@@ -69,11 +64,8 @@ const Login = () => {
     }
   }, [responseStatus]);
 
-  console.log(value, "login");
-
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      {test.email} {test.username}
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           {

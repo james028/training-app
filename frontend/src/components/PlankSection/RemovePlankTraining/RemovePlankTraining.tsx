@@ -4,7 +4,7 @@ import { monthObject } from "../../../utils/utils";
 import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
-import { AppContext } from "../../../appContext/appContext";
+import { useAppContext } from "../../../appContext/appContext";
 
 type RemovePlankTrainingProps = {
   closeModal: () => void;
@@ -17,7 +17,7 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const {
     objectData: { month, day, duration, _id: id },
   } = usePlankSectionContext();
-  const { link } = React.useContext(AppContext);
+  const { link } = useAppContext();
 
   const { mutate } = useDeleteApi(
     `${URL}${link}/delete`,

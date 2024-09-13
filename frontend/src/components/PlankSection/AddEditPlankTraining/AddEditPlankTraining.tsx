@@ -6,11 +6,10 @@ import { useFormContext } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import { DateTime } from "luxon";
 import FormInputRadio from "../../shared/FormInputRadio/FormInputRadio";
-import usePostApi from "../../../hooks/api/post/useApiPost";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import usePatchApi from "../../../hooks/api/patch/useApiPatch";
-import { AppContext } from "../../../appContext/appContext";
+import { useAppContext } from "../../../appContext/appContext";
 
 const URL = "http://localhost:5001/";
 //const CREATE_URL = "http://localhost:5001/api/plank/create";
@@ -22,7 +21,7 @@ const AddEditPlankTraining = () => {
     setToggleOpenFormPanelTraining,
     objectData,
   } = usePlankSectionContext();
-  const { link } = React.useContext(AppContext);
+  const { link } = useAppContext();
 
   const {
     handleSubmit,

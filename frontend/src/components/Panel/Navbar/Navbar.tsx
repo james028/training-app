@@ -1,14 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../../appContext/appContext";
-import { useLocalStorage2 } from "../../../hooks/useLocalStorage/useLocalStorage";
+import { useAppContext } from "../../../appContext/appContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const { user } = React.useContext(AppContext);
-
-  const [value] = useLocalStorage2("jwt");
+  const { user } = useAppContext();
 
   const headerItems = [
     { page: "", label: "Home" },
@@ -16,17 +13,10 @@ const Navbar = () => {
     { page: "/login", label: "Zaloguj się" },
   ];
 
-  console.log(value, "eeeeee", user, "user");
+  console.log(user, "user w navbar");
   return (
     <>
       <nav className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-        {!(Object.values(value ?? {}).filter(Boolean).length > 0)
-          ? "Zaloguj się "
-          : "Wyloguj się"}
-        {value?.email}
-        {!(Object.values(user ?? {}).filter(Boolean).length > 0)
-          ? "Zaloguj się "
-          : "Wyloguj się"}
         {user?.email}
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a

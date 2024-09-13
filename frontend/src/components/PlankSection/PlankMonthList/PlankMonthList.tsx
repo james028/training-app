@@ -3,13 +3,14 @@ import React from "react";
 import PlankMonthListItem from "../PlankMonthListItem/PlankMonthListItem";
 import { StyledPlankSectionContainer } from "./style";
 import useGetApi from "../../../hooks/api/get/useApiGet";
-import { AppContext } from "../../../appContext/appContext";
+
 import Loading from "../../shared/Loading/Loading";
+import { useAppContext } from "../../../appContext/appContext";
 
 const URL = "http://localhost:5001/";
 
 const PlankMonthList = () => {
-  const { link } = React.useContext(AppContext);
+  const { link } = useAppContext();
 
   const { data, status, isRefetching } = useGetApi(
     `${URL}${link}/list`,

@@ -1,26 +1,26 @@
 import React from "react";
-import { Route } from "react-router-dom";
-import Login from "../../Panel/RegisterPanel/Login/Login";
-import Dashboard from "../../Panel/Dashboard/Dashboard";
+import { Navigate } from "react-router-dom";
+import { useAppContext } from "../../../appContext/appContext";
 
 // @ts-ignore
-const PrivateRoute = ({ component: Component, element, ...rest }) => {
-  const isLoggedIn = true;
+const PrivateRoute = ({ children }) => {
+  const { user } = useAppContext();
+  const isLoggedIn = Object.keys(user ?? {}).length > 0;
 
   return (
-    <Route
-      {...rest}
-      // @ts-ignore
-      element={(props) => {
-        return isLoggedIn ? (
-          <Component {...props} />
-        ) : (
-          <Route path="/login" element={<Login />} />
-        );
-      }}
+    <div
+    ///{...rest}
+    // @ts-ignore
+    // element={(props) => {
+    //   return isLoggedIn ? (
+    //     <Component {...props} />
+    //   ) : (
+    //     <Route path="/login" element={<Login />} />
+    //   );
+    // }}
     >
-      <Dashboard />
-    </Route>
+      {isLoggedIn ? children : <Navigate to="/login" />}
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +55,8 @@ const Register = () => {
   });
 
   const isAfterRegisteredPanel = responseStatus === Status.SUCCESS;
+
+  //zrobić przycisk disabled na button jesli walidacja nie przeszla i pola nie sa wypelnione
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
