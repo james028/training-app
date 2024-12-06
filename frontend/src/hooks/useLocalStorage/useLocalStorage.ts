@@ -16,6 +16,7 @@ export function useLocalStorage(key: string) {
       return JSON.parse(localStorageValue);
     }
   });
+
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));
@@ -23,5 +24,10 @@ export function useLocalStorage(key: string) {
       console.error(error);
     }
   }, [key, value]);
-  return [value, setValue];
+
+  const removeValue = () => {
+    window.localStorage.removeItem(key);
+  };
+
+  return [value, setValue, removeValue];
 }

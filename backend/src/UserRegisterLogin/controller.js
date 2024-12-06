@@ -30,6 +30,12 @@ exports.handleRegister = asyncHandler(async (req, res) => {
     });
 
     await newUser.save();
+    res.cookie("jwt", "sss", {
+      httpOnly: false,
+      // sameSite: "None",
+      // secure: true,
+      // maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.status(201).json({ message: "Rejestracja zakończona sukcesem!" });
   } catch (error) {
@@ -66,14 +72,15 @@ exports.handleLogin = asyncHandler(async (req, res) => {
         { expiresIn: "30s" },
       );
 
-      res.cookie("jwt", refreshToken, {
-        httpOnly: true,
-        sameSite: "None",
-        secure: true,
-        maxAge: 24 * 60 * 60 * 1000,
+      res.cookie("jwt", "sss", {
+        //httpOnly: true,
+        // sameSite: "None",
+        // secure: true,
+        // maxAge: 24 * 60 * 60 * 1000,
       });
 
       const { password, ...restData } = user;
+
       res.json({
         accessToken,
         message: "Zalogowałeś się",
@@ -88,4 +95,18 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       .status(500)
       .json({ message: "Błąd serwera. Spróbuj ponownie później." });
   }
+});
+
+exports.handleLogout = asyncHandler(async (req, res) => {
+  const cookies = req.cookies;
+  console.log(cookies, "cookies");
+
+  console.log("csdsadsad", req.cookies?.accessToken, req.cookies?.refreshToken);
+  // if (!cookies?.jwt) {
+  //   return res.status(204); //No content
+  // }
+  // //const refreshToken = cookies.jwt;
+  //
+  // res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  // res.status(204);
 });

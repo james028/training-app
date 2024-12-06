@@ -40,10 +40,10 @@ const Register = () => {
     null,
   );
 
-  const onSubmit = handleSubmit(async (data: any) => {
+  const onSubmit = handleSubmit((data: any) => {
     try {
       const { confirmPassword, ...restObjectData } = data;
-      await mutation.mutate({ paramsObj: null, bodyData: restObjectData });
+      mutation.mutate({ paramsObj: null, bodyData: restObjectData });
 
       setTimeout(async () => {
         reset();

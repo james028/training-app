@@ -16,7 +16,7 @@ const CalendarDays = ({
 
   const getBlankDaysInMonth = (): number => {
     // z context
-    const weekdays2: string[] = [
+    const weekDays: string[] = [
       "Sun",
       "Mon",
       "Tue",
@@ -37,7 +37,7 @@ const CalendarDays = ({
       .toFormat("EEE, M/d/yyyy")
       .split(",")[0];
 
-    return weekdays2.indexOf(firstDayOfMonth);
+    return weekDays.indexOf(firstDayOfMonth);
   };
 
   const createBlankDaysArray = (): any[] => {
@@ -51,6 +51,7 @@ const CalendarDays = ({
         };
       });
   };
+
   const createDaysInMonth = (): void => {
     const blankDaysArray = createBlankDaysArray();
 

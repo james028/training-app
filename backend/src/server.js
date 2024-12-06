@@ -3,6 +3,7 @@ const http = require("http");
 const winston = require("winston");
 const cors = require("cors");
 const debug = require("debug");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const server = http.createServer(app);
@@ -26,6 +27,7 @@ if (!process.env.DEBUG) {
   loggerOptions.meta = false; // when not debugging, make terse
 }
 
+app.use(cookieParser());
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -40,7 +42,14 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(cors());
+//app.use(cors());
+
+const corsOptions = {
+  origin: true, //included origin as true
+  credentials: true, //included credentials as true
+};
+
+app.use(cors(corsOptions));
 
 PlankRouter.routesConfig(app);
 TrainingTypeRouter.routesConfig(app);
