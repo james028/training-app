@@ -5,6 +5,9 @@ import FormInput from "../../shared/FormInput/FormInput";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import FormTextArea from "../../shared/FormTextArea/FormTextArea";
+import usePostApi from "../../../hooks/api/post/useApiPost";
+import useGetApi from "../../../hooks/api/get/useApiGet";
+import { useAppContext } from "../../../appContext/appContext";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -15,11 +18,15 @@ export type RegistrationFormFields = {
   };
   bikeType?: string;
   bikeKilometers?: number;
-  trainingTitle?: string;
-  trainingDescription?: string;
+  title?: string;
+  description?: string;
 };
 
-const AddTrainingForm = ({ closeModal }: any) => {
+const URL = "http://localhost:5001/";
+
+const AddTrainingForm = ({ closeModal, day }: any) => {
+  const { monthIndex } = useAppContext();
+
   const form = useForm<RegistrationFormFields>({
     defaultValues: {
       trainingType: "",
@@ -30,8 +37,8 @@ const AddTrainingForm = ({ closeModal }: any) => {
       },
       bikeType: "",
       bikeKilometers: 0,
-      trainingTitle: "",
-      trainingDescription: "",
+      title: "",
+      description: "",
     },
   });
   const {
@@ -40,23 +47,39 @@ const AddTrainingForm = ({ closeModal }: any) => {
     formState: { errors },
   } = form;
 
+  const linkCreate = "api/calendar/create";
+  const linkTrainingType = "api/training-type/list";
+
+  console.log(linkTrainingType);
+  const { data: dataTrainingType } = useGetApi(
+    `${URL}${linkTrainingType}`,
+    ["trainingTypeList"],
+    undefined,
+  );
+  const { mutation } = usePostApi(
+    `${URL}${linkCreate}`,
+    ["createNewTraining"],
+    null,
+  );
+
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
-    console.log("submitting...", data);
-
-    //tutaj funkcja na be na async/await
-
-    //tu lepiej
-    let newData: any = { ...data };
-
-    newData = {
+    const sendData = {
       ...data,
+      //to do utils
       duration: Object.values(data.duration)
         .map((duration) => duration.toString().padStart(2, "0"))
         .join(":"),
+      month: monthIndex,
+      day,
     };
 
-    console.log(newData);
-    closeModal();
+    mutation.mutate({ paramsObj: null, bodyData: sendData });
+
+    setTimeout(async () => {
+      closeModal();
+      //refetch funkcji calendar-list
+      //await refetch?.();
+    }, 500);
   });
 
   return (
@@ -72,7 +95,18 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 className="mb-2"
                 errors={errors}
                 rules={{ required: "Pole jest wymagane" }}
-                options={["Rower", "Siłownia"]}
+                options={
+                  dataTrainingType.length > 0 &&
+                  //zmienic typowanie
+                  dataTrainingType?.map((e: any) => {
+                    console.log(e, "e");
+
+                    return {
+                      value: e.value,
+                      name: e.trainingName,
+                    };
+                  })
+                }
               />
               <FormInputDuration<any>
                 id="duration"
@@ -97,7 +131,14 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 className="mb-2"
                 errors={errors}
                 rules={{ required: "Pole jest wymagane" }}
-                options={["one", "two"]}
+                //options={["one", "two"]}
+                options={[
+                  { type: "rower", trainingType: "Rower" },
+                  { type: "airbike", trainingType: "Airbike" },
+                ].map((e) => ({
+                  value: e.type,
+                  name: e.trainingType,
+                }))}
               />
               <FormInput<any>
                 id="bikeKilometers"
@@ -116,20 +157,20 @@ const AddTrainingForm = ({ closeModal }: any) => {
                 }}
               />
               <FormInput<any>
-                id="trainingTitle"
+                id="title"
                 // @ts-ignore
                 type="text"
-                name="trainingTitle"
+                name="title"
                 label="Tytuł treningu"
                 className="mb-2"
                 errors={errors}
                 rules={{ required: "Pole jest wymagane" }}
               />
               <FormTextArea<any>
-                id="trainingDescription"
+                id="description"
                 // @ts-ignore
                 //type="text"
-                name="trainingDescription"
+                name="description"
                 label="Opis treningu"
                 //placeholder="Opis treningu"
                 className="mb-2"
@@ -146,7 +187,7 @@ const AddTrainingForm = ({ closeModal }: any) => {
               />
             </div>
           </div>
-          <SubmitButtons closeModal={closeModal} />
+          <SubmitButtons closeModal={closeModal} submitTitle={"Dodaj"} />
         </form>
       </FormProvider>
     </>

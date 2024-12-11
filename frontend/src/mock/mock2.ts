@@ -5,7 +5,20 @@ export const calendarData: any = {
     {
       "01x": [
         {
-          "01": [],
+          "01": [
+            {
+              type: "Airbike",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:20",
+            },
+            {
+              type: "Siłownia",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "01:00",
+            },
+          ],
         },
         {
           "02": [],
@@ -413,8 +426,8 @@ export const calendarData: any = {
               bikeType: "race80",
               bikeKilometers: 43.58,
               duration: "01:56:36",
-              title: "Title test 1",
-              description: "description test",
+              trainingTitle: "Title test 1",
+              trainingDescription: "description test",
             },
           ],
         },
@@ -489,126 +502,7 @@ export const calendarData: any = {
       "07x": [],
     },
     {
-      "08x": [
-        {
-          "01": [],
-        },
-        {
-          "02": [],
-        },
-        {
-          "03": [],
-        },
-        {
-          "04": [],
-        },
-        {
-          "05": [
-            {
-              type: "a1",
-              bikeType: null,
-              bikeKilometers: null,
-              duration: "00:20",
-            },
-            {
-              type: "b2",
-              bikeType: null,
-              bikeKilometers: null,
-              duration: "01:00",
-            },
-            {
-              type: "b2",
-              bikeType: null,
-              bikeKilometers: null,
-              duration: "01:00",
-            },
-            {
-              type: "b2",
-              bikeType: null,
-              bikeKilometers: null,
-              duration: "01:00",
-            },
-          ],
-        },
-        {
-          "06": [],
-        },
-        {
-          "07": [],
-        },
-        {
-          "08": [],
-        },
-        {
-          "09": [],
-        },
-        {
-          "10": [],
-        },
-        {
-          "11": [],
-        },
-        {
-          "12": [],
-        },
-        {
-          "13": [],
-        },
-        {
-          "14": [],
-        },
-        {
-          "15": [],
-        },
-        {
-          "16": [],
-        },
-        {
-          "17": [],
-        },
-        {
-          "18": [],
-        },
-        {
-          "19": [],
-        },
-        {
-          "20": [],
-        },
-        {
-          "21": [],
-        },
-        {
-          "22": [],
-        },
-        {
-          "23": [],
-        },
-        {
-          "24": [],
-        },
-        {
-          "25": [],
-        },
-        {
-          "26": [],
-        },
-        {
-          "27": [],
-        },
-        {
-          "28": [],
-        },
-        {
-          "29": [],
-        },
-        {
-          "30": [],
-        },
-        {
-          "31": [],
-        },
-      ],
+      "08x": [],
     },
     {
       "09x": [],

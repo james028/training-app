@@ -10,6 +10,7 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import usePatchApi from "../../../hooks/api/patch/useApiPatch";
 import { useAppContext } from "../../../appContext/appContext";
+import usePostApi from "../../../hooks/api/post/useApiPost";
 
 const URL = "http://localhost:5001/";
 //const CREATE_URL = "http://localhost:5001/api/plank/create";
@@ -30,18 +31,20 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  // const { mutation } = usePostApi(
-  //   `${URL}${link}/create`,
-  //   ["createPlank"],
-  //   null,
-  // );
+  const { mutation } = usePostApi(
+    //`${URL}${link}/create`,
+    `${URL}api/plank/create`,
+    ["createPlank"],
+    null,
+  );
   const { mutate: updateMutate } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
     null,
   );
   const { refetch: refetchList } = useGetApi(
-    `${URL}${link}/list`,
+    //`${URL}${link}/list`,
+    `${URL}api/plank/list`,
     ["plankList"],
     undefined,
   );
@@ -95,7 +98,7 @@ const AddEditPlankTraining = () => {
       //await updateMutate({ paramsObj: null, bodyData: newData });
       handleActionFetch();
     } else {
-      // await mutation.mutate({ paramsObj: null, bodyData: newData });
+      await mutation.mutate({ paramsObj: null, bodyData: newData });
       handleActionFetch();
     }
   });

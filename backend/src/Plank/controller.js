@@ -11,7 +11,18 @@ exports.getPlank = asyncHandler(async (req, res) => {
     if (!plankList) {
       res.status(404).json({ message: "Data not found" });
     }
-    res.status(200).json(plankList);
+
+    let obj = {};
+
+    for (const [key, value] of Object.entries(plankList)) {
+      obj[key] = value;
+    }
+    // Object.entries(plankList).forEach(([item, item2]) => {
+    //   console.log(item, "item");
+    //   console.log(item2, "item2");
+    //
+    // });
+    res.status(200).json(obj);
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });
@@ -67,7 +78,7 @@ exports.createPlank = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update exist training
-// @route   POST lub PUT /api/plank/update
+// @route   PATCH /api/plank/update
 exports.updatePlank = asyncHandler(async (req, res) => {
   const { id, month, duration, day, isDifferentExercises } = req.body;
 
@@ -98,6 +109,13 @@ exports.updatePlank = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Data not found" });
     }
 
+    //po co to ??
+    //usuniecie ?
+    await PlankDataModel.updateOne(
+      { [`${findData?.month}._id`]: findData?._id },
+      { $pull: { [findData?.month]: { _id: findData?._id } } },
+    );
+
     const updateData = {
       month: month || findData?.month,
       duration: duration || findData?.duration,
@@ -105,11 +123,6 @@ exports.updatePlank = asyncHandler(async (req, res) => {
       isDifferentExercises:
         isDifferentExercises || findData?.isDifferentExercises,
     };
-
-    await PlankDataModel.updateOne(
-      { [`${findData?.month}._id`]: findData?._id },
-      { $pull: { [findData?.month]: { _id: findData?._id } } },
-    );
 
     const updatedData = await PlankDataModel.updateOne(
       {},

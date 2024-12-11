@@ -22,10 +22,11 @@ exports.getListTrainingType = asyncHandler(async (req, res) => {
 // @desc    Create new training type
 // @route   POST /api/training-type/create
 exports.createTrainingType = asyncHandler(async (req, res) => {
-  const { trainingName, color } = req.body;
+  const { type, trainingName, color } = req.body;
 
   try {
     const createdData = await TrainingTypeDataModel.create({
+      type,
       trainingName,
       color,
     });

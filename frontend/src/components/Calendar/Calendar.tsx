@@ -2,22 +2,17 @@ import React, { useState } from "react";
 import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
 import { calendarData } from "../../mock/mock";
-import { DateTime } from "luxon";
+import { useAppContext } from "../../appContext/appContext";
 
 const Calendar = () => {
-  const [monthIndex, setMonthIndex] = useState(() => {
-    const currentDate = DateTime.now();
-    const { month } = currentDate.toObject();
-
-    return month;
-  });
+  const { monthIndex, setMonthIndex } = useAppContext();
 
   const incrementMonth = () => {
-    setMonthIndex((prev) => prev + 1);
+    setMonthIndex((prev: number) => prev + 1);
   };
 
   const decrementMonth = () => {
-    setMonthIndex((prev) => prev - 1);
+    setMonthIndex((prev: number) => prev - 1);
   };
 
   return (

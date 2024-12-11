@@ -1,5 +1,6 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage/useLocalStorage";
+import { DateTime } from "luxon";
 
 export type AppContextProps = {
   url: string;
@@ -19,6 +20,15 @@ const AppContext = createContext<any>({
 
 //otypować
 const ContextProvider = (props: any) => {
+  const [monthIndex, setMonthIndex] = useState(() => {
+    const currentDate = DateTime.now();
+    const { month } = currentDate.toObject();
+
+    //return month;
+
+    return 2;
+  });
+
   const [user, setUser] = useLocalStorage("jwt");
 
   const addUser = (user: Record<string, any>) => {
@@ -26,7 +36,7 @@ const ContextProvider = (props: any) => {
   };
 
   return (
-    <AppContext.Provider value={{ user, addUser }}>
+    <AppContext.Provider value={{ user, addUser, monthIndex, setMonthIndex }}>
       {props.children}
     </AppContext.Provider>
   );

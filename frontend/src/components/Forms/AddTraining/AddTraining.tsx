@@ -8,12 +8,14 @@ const AddTraining = ({
   closeModal,
   modalTitle,
   eventData,
+  day,
 }: {
   isOpenModal: boolean;
   setOpenModal: any;
   closeModal: any;
   modalTitle: string;
   eventData?: Record<any, any>;
+  day: string;
 }) => {
   //eventData w dół dla testu
   return (
@@ -24,7 +26,7 @@ const AddTraining = ({
           closeModal={closeModal}
           modalTitle={modalTitle}
         >
-          <AddTrainingForm closeModal={closeModal} />
+          <AddTrainingForm closeModal={closeModal} day={day} />
         </Modal>
       ) : null}
     </>

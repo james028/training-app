@@ -28,6 +28,6 @@ for (let i = 1; i <= 12; i++) {
   MainSchema.add({ [`${i}`]: [RecordSchema] });
 }
 
-const PlankDataModel = mongoose.model("data", MainSchema);
+const PlankDataModel = mongoose.model("plank-data", MainSchema);
 
 module.exports = PlankDataModel;

@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const port = 5001;
 const debugLog = debug("app");
 
+const CalendarRouter = require("./Calendar/routes");
 const PlankRouter = require("./Plank/routes");
 const TrainingTypeRouter = require("./TrainingType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
@@ -51,6 +52,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+CalendarRouter.routesConfig(app);
 PlankRouter.routesConfig(app);
 TrainingTypeRouter.routesConfig(app);
 UserRegisterLoginRouter.routesConfig(app);

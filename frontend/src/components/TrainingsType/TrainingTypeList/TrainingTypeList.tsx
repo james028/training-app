@@ -4,6 +4,7 @@ import { StyledColorContainer } from "../style";
 
 type TrainingTypeList = {
   _id: string;
+  type: string;
   trainingName: string;
   color: string;
 };
@@ -32,13 +33,13 @@ const TrainingTypeList: React.FC<TrainingTypeListProps> = ({
   const [columns, setColumns] = useState<Columns[]>([]);
 
   const displayColumns = () => {
-    if (!dataTrainingType) return;
+    if (!dataTrainingType?.length) return;
 
     const newDataTrainingType = [...dataTrainingType];
 
     const keysArray = newDataTrainingType?.reduce(
       (acc: string[], obj: TrainingTypeList) => {
-        const { _id, ...rest } = obj;
+        const { _id, type, ...rest } = obj;
         Object.keys(rest).forEach((key) => {
           if (!acc.includes(key)) {
             acc.push(key);

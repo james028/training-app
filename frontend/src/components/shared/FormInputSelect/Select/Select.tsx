@@ -40,10 +40,10 @@ const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
           >
             <option value="">Choose</option>;
             {options?.length &&
-              options?.map((category) => {
+              options?.map(({ value, name }) => {
                 return (
-                  <option key={category} value={category}>
-                    {category}
+                  <option key={value} value={value}>
+                    {name}
                   </option>
                 );
               })}

@@ -36,8 +36,28 @@ const TrainingsType = () => {
     null,
   );
 
+  //to pliku utils
+  function stringToCamelCaseString(str: string): string {
+    return str
+      .split(" ")
+      .map((word: string, index: number) => {
+        if (index == 0) {
+          return word.toLowerCase();
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join("");
+  }
+
   const onSubmit = handleSubmit((data: any) => {
-    mutation.mutate({ paramsObj: null, bodyData: data });
+    const { trainingName } = data;
+
+    const sendData = {
+      ...data,
+      type: stringToCamelCaseString(trainingName),
+    };
+
+    mutation.mutate({ paramsObj: null, bodyData: sendData });
 
     setTimeout(async () => {
       reset();
@@ -46,6 +66,7 @@ const TrainingsType = () => {
     }, 500);
   });
 
+  //to pliku utils
   const hexToRgba = (hex: string, alpha = 1): string => {
     const [r, g, b] = hex
       .match(/\w\w/g)!

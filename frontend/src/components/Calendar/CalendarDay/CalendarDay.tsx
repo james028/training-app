@@ -44,6 +44,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
 
   //albo to będzie po id, ale to juz jak zrobie nie mockowe dane, wydaje mi sie ze po id
   const findColor = (eventType: string): string | undefined | null => {
+    //console.log(dataTrainingType, "data");
     if (!dataTrainingType?.length) return;
 
     const findData = dataTrainingType.find(
@@ -59,12 +60,15 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
     } else {
       if (data?.length > 0) {
         return data?.map((event: TDay, index1: any) => {
+          //console.log(findColor(event.type), "s", event.type);
           return (
             <StyledTypeContainer
               //zmienic, jak będzie id z danych z TDay z BE
               key={index1}
-              hexcolor={findColor(event.type)}
-              className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-white cursor-pointer"
+              hexcolor={null}
+              //hexcolor={findColor(event.type)}
+              className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
+              //className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-white cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >
               <div className="flex items-center justify-between">
@@ -116,6 +120,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
           setOpenModal={setOpenModalEditTraining}
           closeModal={() => setOpenModalAddTraining(false)}
           modalTitle={"Dodaj trening"}
+          day={day}
         />
       ) : null}
     </StyledContainerDay>

@@ -17,8 +17,8 @@ export type RegistrationFormFields = {
   };
   bikeType?: string;
   bikeKilometers?: number;
-  trainingTitle?: string;
-  trainingDescription?: string;
+  title?: string;
+  description?: string;
 };
 
 const EditTrainingForm = ({ eventData, closeModal }: any) => {
@@ -34,8 +34,8 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
       },
       bikeKilometers: 0,
       bikeType: "",
-      trainingTitle: "",
-      trainingDescription: "",
+      title: "",
+      description: "",
     },
   });
   const {
@@ -151,26 +151,26 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
               isEdit={isEdit}
               childrenInput={
                 <FormInput<any>
-                  id="trainingTitle"
+                  id="title"
                   // @ts-ignore
                   type="text"
-                  name="trainingTitle"
+                  name="title"
                   label="Tytuł treningu"
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
-                  defaultValue={eventData?.trainingTitle}
+                  defaultValue={eventData?.title}
                 />
               }
-              eventDataField={eventData?.trainingTitle}
+              eventDataField={eventData?.title}
             />
             <EditLabelInput
               label={"Opis treningu"}
               isEdit={isEdit}
               childrenInput={
                 <FormTextArea<any>
-                  id="trainingDescription"
-                  name="trainingDescription"
+                  id="description"
+                  name="description"
                   label="Opis treningu"
                   //placeholder=""
                   className="mb-2"
@@ -185,10 +185,10 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                     },
                   }}
                   // @ts-ignore
-                  defaultValue={eventData?.trainingDescription}
+                  defaultValue={eventData?.description}
                 />
               }
-              eventDataField={eventData?.trainingDescription}
+              eventDataField={eventData?.description}
             />
           </div>
           <EditButtons

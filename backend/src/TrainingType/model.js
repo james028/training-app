@@ -25,12 +25,13 @@ let options = {
 const MainSchema = new Schema(
   {
     id: { type: String, required: false },
+    type: { type: String, required: false },
     trainingName: { type: String, required: false },
     color: { type: String, required: false },
   },
   options,
 );
 
-const TrainingTypeDataModel = mongoose.model("training-type", MainSchema);
+const TrainingTypeDataModel = mongoose.model("training-type-data", MainSchema);
 
 module.exports = TrainingTypeDataModel;
