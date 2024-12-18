@@ -5,7 +5,14 @@ export const calendarData: any = {
     {
       "01x": [
         {
-          "01": [],
+          "01": [
+            {
+              type: "Airbike",
+              bikeType: null,
+              bikeKilometers: null,
+              duration: "00:20",
+            },
+          ],
         },
         {
           "02": [],

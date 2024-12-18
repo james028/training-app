@@ -77,9 +77,11 @@ const AddEditPlankTraining = () => {
       })
       .find((a) => a !== undefined);
 
+    console.log(monthIndex, "month index", data, "data");
+
     newData = {
       ...newData,
-      month: monthIndex,
+      month: 3,
       day: Number(newData.day),
       id: objectData?._id,
     };
@@ -107,7 +109,7 @@ const AddEditPlankTraining = () => {
     return DateTime.local(year, month).daysInMonth;
   };
 
-  const getDaysByMonth = () => {
+  const getDaysByMonth = (): any => {
     const currentDate = DateTime.now();
     const { year } = currentDate.toObject();
 
@@ -120,14 +122,52 @@ const AddEditPlankTraining = () => {
     }
 
     const { month: monthValue } = watch();
-    const days = monthDays[monthValue.toLowerCase()];
+    //console.log(monthValue, "vv");
+    // const days =
+    //   monthDays[
+    //     monthValue.length > 0 &&
+    //       monthValue?.map((month: any) => month.name.toLowerCase())
+    //   ];
+    // const days2 = "";
 
-    return monthValue
+    console.log(monthValue);
+    // @ts-ignore
+    const days =
+      monthDays[
+        // @ts-ignore
+        monthObject[monthValue.slice(0, 1) === "01" ? 1 : 2].toLowerCase()
+      ];
+
+    console.log(monthDays, "days", days, monthObject[1]);
+    const x = monthValue
       ? Array(days)
           .fill(0)
-          .map((_, number) => number + 1)
+          .map((_, number) => {
+            return {
+              value: number + 1,
+              name: String(number + 1),
+            };
+          })
       : null;
+
+    console.log(x, "x");
+    return x;
   };
+
+  const { month: monthValue } = watch();
+  console.log(monthValue);
+
+  console.log(
+    Object.entries(monthObject).map(([index, month]) => {
+      return {
+        value: index.length === 1 ? `0${index}` : index,
+        name: month,
+      };
+    }),
+    monthObject[objectData?.month as unknown as keyof typeof monthObject],
+  );
+
+  //tu dokonczyc
 
   return (
     <>
@@ -148,7 +188,12 @@ const AddEditPlankTraining = () => {
               className="mb-2 w-2/5"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
-              options={months}
+              options={Object.entries(monthObject).map(([index, month]) => {
+                return {
+                  value: index.length === 1 ? `0${index}` : index,
+                  name: month,
+                };
+              })}
               // @ts-ignore
               defaultValue={
                 monthObject[

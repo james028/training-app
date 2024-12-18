@@ -34,15 +34,49 @@ exports.getPlank = asyncHandler(async (req, res) => {
 exports.createPlank = asyncHandler(async (req, res) => {
   const { month, day, duration, isDifferentExercises } = req.body;
 
+  console.log(req.body);
   try {
     const plankList = await PlankDataModel.find({}, null, null);
 
+    // // Konstrukcja obiektu aktualizacji
+    // const updatePath = `${month}.$[outer].${day}`; // Dynamically access path
+    //
+    // const update = {
+    //   $push: {
+    //     [updatePath]: { duration, isDifferentExercises },
+    //   },
+    // };
+    //
+    // const options = {
+    //   arrayFilters: [{ "outer.monthKey": { $exists: true } }], // Matching array elements
+    //   new: true, // Return the updated document
+    // };
+
     if (plankList.length === 0) {
+      // Konstrukcja obiektu aktualizacji
+      const updatePath = `${month}.$[outer].${day}`; // Dynamically access path
+
+      const update = {
+        $push: {
+          [updatePath]: { duration, isDifferentExercises },
+        },
+      };
+
+      const options = {
+        arrayFilters: [{ "outer.monthKey": { $exists: true } }], // Matching array elements
+        new: true, // Return the updated document
+      };
+      //to do funkcji utils, options jako parameter
       const createdData = await PlankDataModel.findOneAndUpdate(
         {},
         {
-          $push: { [month]: { month, day, duration, isDifferentExercises } },
+          // $push: {
+          //   [month]: { month, day, duration, isDifferentExercises },
+          // },
+          update,
+          options,
         },
+
         {
           new: true,
           upsert: true,
@@ -56,12 +90,27 @@ exports.createPlank = asyncHandler(async (req, res) => {
           .json({ message: `Utworzono dla id: ${createdData.id}` });
       }
     } else {
+      // Konstrukcja obiektu aktualizacji
+      const updatePath = `${month}.$[outer].${day}`; // Dynamically access path
+
+      const update = {
+        $push: {
+          [updatePath]: { duration, isDifferentExercises },
+        },
+      };
+
+      const options = {
+        arrayFilters: [{ "outer.monthKey": { $exists: true } }], // Matching array elements
+        new: true, // Return the updated document
+      };
       const createdData = await PlankDataModel.findOneAndUpdate(
-        { [month]: { $exists: true } },
+        //{ [month]: { $exists: true } },
         {
-          $push: {
-            [month]: { month, day, duration, isDifferentExercises },
-          },
+          // $push: {
+          //   [month]: { month, day, duration, isDifferentExercises },
+          // },
+          update,
+          options,
         },
       );
 

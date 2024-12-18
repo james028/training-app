@@ -19,6 +19,7 @@ exports.getCalendarDataList = asyncHandler(async (req, res) => {
 exports.createNewTraining = asyncHandler(async (req, res) => {
   console.log(req.body, " body creaate");
 
+  //req.body.month = 1,2,3,4...
   try {
   } catch (error) {
     console.log(error, "err");
