@@ -38,34 +38,7 @@ exports.createPlank = asyncHandler(async (req, res) => {
   try {
     const plankList = await PlankDataModel.find({}, null, null);
 
-    // // Konstrukcja obiektu aktualizacji
-    // const updatePath = `${month}.$[outer].${day}`; // Dynamically access path
-    //
-    // const update = {
-    //   $push: {
-    //     [updatePath]: { duration, isDifferentExercises },
-    //   },
-    // };
-    //
-    // const options = {
-    //   arrayFilters: [{ "outer.monthKey": { $exists: true } }], // Matching array elements
-    //   new: true, // Return the updated document
-    // };
-
     if (plankList.length === 0) {
-      // Konstrukcja obiektu aktualizacji
-      const updatePath = `${month}.$[outer].${day}`; // Dynamically access path
-
-      const update = {
-        $push: {
-          [updatePath]: { duration, isDifferentExercises },
-        },
-      };
-
-      const options = {
-        arrayFilters: [{ "outer.monthKey": { $exists: true } }], // Matching array elements
-        new: true, // Return the updated document
-      };
       //to do funkcji utils, options jako parameter
       const createdData = await PlankDataModel.findOneAndUpdate(
         {},
@@ -73,8 +46,7 @@ exports.createPlank = asyncHandler(async (req, res) => {
           // $push: {
           //   [month]: { month, day, duration, isDifferentExercises },
           // },
-          update,
-          options,
+          $push: { [month]: { [day]: 22 } },
         },
 
         {
@@ -90,27 +62,13 @@ exports.createPlank = asyncHandler(async (req, res) => {
           .json({ message: `Utworzono dla id: ${createdData.id}` });
       }
     } else {
-      // Konstrukcja obiektu aktualizacji
-      const updatePath = `${month}.$[outer].${day}`; // Dynamically access path
-
-      const update = {
-        $push: {
-          [updatePath]: { duration, isDifferentExercises },
-        },
-      };
-
-      const options = {
-        arrayFilters: [{ "outer.monthKey": { $exists: true } }], // Matching array elements
-        new: true, // Return the updated document
-      };
       const createdData = await PlankDataModel.findOneAndUpdate(
-        //{ [month]: { $exists: true } },
+        { [month]: { $exists: true } },
         {
           // $push: {
           //   [month]: { month, day, duration, isDifferentExercises },
           // },
-          update,
-          options,
+          $push: { [month]: { day: 22 } },
         },
       );
 

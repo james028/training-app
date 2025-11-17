@@ -10,10 +10,12 @@ import { useAppContext } from "../../../appContext/appContext";
 const URL = "http://localhost:5001/";
 
 const PlankMonthList = () => {
-  const { link } = useAppContext();
+  //const { link } = useAppContext();
+  //temporary, rozwiazac to z globalnego contextu
+  const link = "plank";
 
   const { data, status, isRefetching } = useGetApi(
-    `${URL}${link}/list`,
+    `${URL}api/plank/test/list`,
     ["plankList"],
     undefined,
   );
@@ -28,23 +30,25 @@ const PlankMonthList = () => {
 
   return (
     <>
-      {data?.length > 0
-        ? data.map((itemData: any, index: number) => {
-            return (
-              <StyledPlankSectionContainer key={index}>
-                {Object.keys(itemData).map((item: string, index) => {
-                  return (
-                    <PlankMonthListItem
-                      key={index}
-                      itemData={itemData}
-                      item={item}
-                    />
-                  );
-                })}
-              </StyledPlankSectionContainer>
-            );
-          })
-        : null}
+      {data?.length > 0 ? (
+        data.map((itemData: any, index: number) => {
+          return (
+            <StyledPlankSectionContainer key={index}>
+              {Object.keys(itemData).map((item: string, index) => {
+                return (
+                  <PlankMonthListItem
+                    key={index}
+                    itemData={itemData}
+                    item={item}
+                  />
+                );
+              })}
+            </StyledPlankSectionContainer>
+          );
+        })
+      ) : (
+        <div className="mt-3">Brak danych</div>
+      )}
     </>
   );
 };

@@ -13,11 +13,16 @@ const RecordSchema = new Schema({
 });
 
 const MainSchema = new Schema({}, null);
+const MainSchema2 = new Schema({}, null);
 
 for (let i = 1; i <= 12; i++) {
   MainSchema.add({ [`${i}`]: [RecordSchema] });
+  for (let j = 1; j <= 31; j++) {
+    MainSchema2.add({ [`${j}`]: [MainSchema] });
+  }
 }
 
-const CalendarDataModel = mongoose.model("calendar-list-data", MainSchema);
+// moze tak jak powzezej // maybe that like above
+const CalendarDataModel = mongoose.model("calendar-list-data", MainSchema2);
 
 module.exports = CalendarDataModel;

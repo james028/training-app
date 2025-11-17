@@ -28,15 +28,17 @@ const ContextProvider = (props: any) => {
 
     return 2;
   });
-
   const [user, setUser] = useLocalStorage("jwt");
+  const [linkUrl, setLinkUrl] = useState<string>("");
 
   const addUser = (user: Record<string, any>) => {
     setUser(user);
   };
 
   return (
-    <AppContext.Provider value={{ user, addUser, monthIndex, setMonthIndex }}>
+    <AppContext.Provider
+      value={{ user, addUser, monthIndex, setMonthIndex, setLinkUrl }}
+    >
       {props.children}
     </AppContext.Provider>
   );

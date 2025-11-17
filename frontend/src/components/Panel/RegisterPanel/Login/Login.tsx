@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
@@ -40,21 +40,18 @@ const Login = () => {
   );
 
   const onSubmit = handleSubmit(async (data: any) => {
-    try {
-      const { data: responseData } = await mutation.mutateAsync({
-        paramsObj: null,
-        bodyData: data,
-      });
+    const { data: responseData } = await mutation.mutateAsync({
+      paramsObj: null,
+      bodyData: data,
+      successMessage: "Zalogowano użytkownika!",
+    });
 
-      if (responseData) {
-        addUser(responseData);
-      }
-      //po zalogowaniu przeniesienie do dashboard
+    if (responseData) {
+      addUser(responseData);
       setTimeout(async () => {
         reset();
       }, 500);
-    } catch (error) {
-      console.log(error);
+      //navigate("/dashboard");
     }
   });
 

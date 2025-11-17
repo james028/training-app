@@ -23,6 +23,8 @@ exports.getPlankTest = asyncHandler(async (req, res) => {
 exports.createPlankTest = asyncHandler(async (req, res) => {
   const { month, day, duration, isDifferentExercises } = req.body;
 
+  console.log(req.body);
+
   try {
     const plankList = await PlankTestDataModel.find({}, null, null);
 
@@ -39,11 +41,11 @@ exports.createPlankTest = asyncHandler(async (req, res) => {
         },
       );
 
-      if (createdData) {
-        res
-          .status(200)
-          .json({ message: `Utworzono dla id: ${createdData.id}` });
-      }
+      // if (createdData) {
+      //   res
+      //     .status(200)
+      //     .json({ message: `Utworzono dla id: ${createdData.id}` });
+      // }
     } else {
       const createdData = await PlankTestDataModel.findOneAndUpdate(
         { [month]: { $exists: true } },

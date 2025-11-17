@@ -4,6 +4,8 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -15,7 +17,6 @@
     "debug": "^4.3.4",
     "express": "^4.18.3",
     "express-async-handler": "^1.2.0",
-    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.2",
     "nodemon": "^3.1.0",

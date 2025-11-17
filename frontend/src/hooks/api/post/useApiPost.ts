@@ -7,6 +7,7 @@ import {
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -85,12 +86,15 @@ const usePostApi = (
     const mutation = useMutation<Promise<any>, Error, any>(
       (body) => createPost(body),
       {
-        onSuccess: (data) => {
+        onSuccess: (data, variables) => {
           queryClient.invalidateQueries([queryKey, link]);
           setSuccess();
+          if (variables?.successMessage)
+            toast.success(variables.successMessage);
         },
-        onError: () => {
+        onError: (error: any) => {
           setError();
+          toast.error(error?.message || "Nie udało się zalogować");
         },
         onSettled: () => {
           queryClient.invalidateQueries([queryKey, link]);

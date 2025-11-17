@@ -1,8 +1,9 @@
 import React, { lazy, Suspense } from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-
+import { Toaster } from "react-hot-toast";
 import "./i18n/i18n";
+
 import ContextProvider from "./appContext/appContext";
 import Dashboard from "./components/Panel/Dashboard/Dashboard";
 import Navbar from "./components/Panel/Navbar/Navbar";
@@ -31,6 +32,17 @@ function App() {
       <Suspense fallback={<div>Loading... </div>}>
         {/*<RouterProvider router={router} />*/}
         <ContextProvider>
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+              duration: 3000,
+              style: {
+                fontSize: "14px",
+                padding: "10px 15px",
+              },
+            }}
+          />
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -65,7 +77,7 @@ function App() {
                         link: url.link,
                       }}
                     >
-                      <Trainings />
+                      <Trainings link={url.link} />
                     </ContextProvider>
                   }
                 />
