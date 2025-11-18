@@ -8,6 +8,6 @@ const userRegisterLoginSchema = new Schema({
   password: { type: String, required: true },
 });
 
-const UserModel = mongoose.model("UserRegisterLogin", userRegisterLoginSchema);
+const UserModel = mongoose.model("User", userRegisterLoginSchema);
 
 module.exports = UserModel;

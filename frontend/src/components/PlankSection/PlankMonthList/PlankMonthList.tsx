@@ -10,12 +10,13 @@ import { useAppContext } from "../../../appContext/appContext";
 const URL = "http://localhost:5001/";
 
 const PlankMonthList = () => {
-  //const { link } = useAppContext();
+  const { linkUrl } = useAppContext();
   //temporary, rozwiazac to z globalnego contextu
-  const link = "plank";
+  //const link = "plank";
 
+  console.log(linkUrl, "aaaaaaaa");
   const { data, status, isRefetching } = useGetApi(
-    `${URL}api/plank/test/list`,
+    `${URL}${linkUrl}/list`,
     ["plankList"],
     undefined,
   );

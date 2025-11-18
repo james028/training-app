@@ -89,12 +89,19 @@ const usePostApi = (
         onSuccess: (data, variables) => {
           queryClient.invalidateQueries([queryKey, link]);
           setSuccess();
-          if (variables?.successMessage)
+          if (variables?.successMessage) {
             toast.success(variables.successMessage);
+          }
         },
-        onError: (error: any) => {
+        onError: (error: any, variables: any) => {
           setError();
-          toast.error(error?.message || "Nie udało się zalogować");
+          toast.error(
+            //pózniej na tłumaczenia
+            error?.response?.data?.message || "Coś poszło nie tak 😢",
+          );
+          if (variables?.errorMessage) {
+            toast.error(variables.errorMessage);
+          }
         },
         onSettled: () => {
           queryClient.invalidateQueries([queryKey, link]);

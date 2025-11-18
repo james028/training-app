@@ -10,11 +10,14 @@ function comparePassword(password, existPassword) {
 exports.handleRegister = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: "Wszystkie pola są wymagane" });
+  }
+
   try {
     console.log(username, email, password);
     const existingUser = await UserModel.findOne({ email }, null, null);
 
-    console.log(existingUser, "ex");
     if (existingUser) {
       return res.status(400).json({
         message: "Użytkownik z takim e-mailem już istnieje.",
@@ -30,14 +33,15 @@ exports.handleRegister = asyncHandler(async (req, res) => {
     });
 
     await newUser.save();
-    res.cookie("jwt", "sss", {
-      httpOnly: false,
-      // sameSite: "None",
-      // secure: true,
-      // maxAge: 24 * 60 * 60 * 1000,
-    });
 
-    res.status(201).json({ message: "Rejestracja zakończona sukcesem!" });
+    res.status(201).json({
+      message: "Rejestracja zakończona sukcesem!",
+      data: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
   } catch (error) {
     console.error(error);
     res
@@ -56,39 +60,46 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       res.status(401).json({ message: "Nie znaleziono użytkownika" });
     }
 
-    const match = await comparePassword(password, user.password);
+    console.log(req.body, "a");
+    //
+    // 2. Porównanie hasła
 
+    const match = await bcrypt.compare(password, user.password);
     console.log(match, password, user.password);
-    if (match) {
-      // create JWTs
-      const accessToken = jwt.sign(
-        { username: user.username },
-        `${process.env.ACCESS_TOKEN_SECRET}`,
-        { expiresIn: "30s" },
-      );
-      const refreshToken = jwt.sign(
-        { username: user.username },
-        `${process.env.REFRESH_TOKEN_SECRET}`,
-        { expiresIn: "30s" },
-      );
-
-      res.cookie("jwt", "sss", {
-        //httpOnly: true,
-        // sameSite: "None",
-        // secure: true,
-        // maxAge: 24 * 60 * 60 * 1000,
-      });
-
-      const { password, ...restData } = user;
-
-      res.json({
-        accessToken,
-        message: "Zalogowałeś się",
-        data: { id: user._id, email: user.email, username: user.username },
-      });
-    } else {
-      res.status(401).json({ message: "Niepoprawne hasło" });
+    if (!match) {
+      return res.status(404).json({ message: "Niepoprawne hasło" });
     }
+
+    //
+    // 3. Generujemy access + refresh token
+
+    const accessToken = jwt.sign(
+      { id: user._id, username: user.username },
+      process.env.ACCESS_TOKEN_SECRET || "supersecret",
+      { expiresIn: "15m" },
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_TOKEN_SECRET || "supersecret",
+      { expiresIn: "7d" },
+    );
+
+    // 4. Ustawiamy refresh token w httpOnly cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true, // HTTPS
+      sameSite: "None", // cross-site
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dni
+      path: "/",
+    });
+
+    // 5. Zwracamy access token i dane użytkownika
+    res.json({
+      accessToken,
+      data: { id: user._id, username: user.username, email: user.email },
+      message: "Zalogowano pomyślnie",
+    });
   } catch (error) {
     console.error(error);
     res
@@ -109,4 +120,13 @@ exports.handleLogout = asyncHandler(async (req, res) => {
   //
   // res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
   // res.status(204);
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    path: "/",
+  });
+
+  res.sendStatus(204); // brak treści
 });

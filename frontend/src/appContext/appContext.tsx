@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage/useLocalStorage";
 import { DateTime } from "luxon";
 
@@ -35,12 +35,22 @@ const ContextProvider = (props: any) => {
     setUser(user);
   };
 
+  console.log(user, "user");
+
+  const value = useMemo(
+    () => ({
+      user,
+      addUser,
+      monthIndex,
+      setMonthIndex,
+      linkUrl,
+      setLinkUrl,
+    }),
+    [user, monthIndex, linkUrl],
+  );
+
   return (
-    <AppContext.Provider
-      value={{ user, addUser, monthIndex, setMonthIndex, setLinkUrl }}
-    >
-      {props.children}
-    </AppContext.Provider>
+    <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
   );
 };
 

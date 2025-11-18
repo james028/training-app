@@ -4,6 +4,15 @@ const winston = require("winston");
 const cors = require("cors");
 const debug = require("debug");
 const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+//import crypto from "crypto";
+const crypto = require("crypto");
+
+//const secret = crypto.randomBytes(64).toString("hex");
+//console.log(secret);
 
 const app = express();
 const server = http.createServer(app);

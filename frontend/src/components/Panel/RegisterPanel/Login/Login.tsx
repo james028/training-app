@@ -40,18 +40,25 @@ const Login = () => {
   );
 
   const onSubmit = handleSubmit(async (data: any) => {
-    const { data: responseData } = await mutation.mutateAsync({
-      paramsObj: null,
-      bodyData: data,
-      successMessage: "Zalogowano użytkownika!",
-    });
+    try {
+      const { data: responseData } = await mutation.mutateAsync({
+        paramsObj: null,
+        bodyData: data,
+        successMessage: "Zalogowano użytkownika!",
+        errorMessage: "nie udało się zalogować",
+      });
+      console.log(responseData, "reeeeeeeee");
 
-    if (responseData) {
-      addUser(responseData);
-      setTimeout(async () => {
-        reset();
-      }, 500);
-      //navigate("/dashboard");
+      if (responseData) {
+        addUser(responseData);
+        setTimeout(async () => {
+          reset();
+        }, 500);
+        //navigate("/dashboard");
+      }
+    } catch (error) {
+      //toast.error(error);
+      console.log(error);
     }
   });
 
@@ -60,6 +67,8 @@ const Login = () => {
       navigate("/dashboard");
     }
   }, [responseStatus]);
+
+  console.log("login mount comp");
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
