@@ -22,7 +22,7 @@ exports.getPlank = asyncHandler(async (req, res) => {
     //   console.log(item2, "item2");
     //
     // });
-    res.status(200).json(obj);
+    res.status(200).json(plankList);
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });

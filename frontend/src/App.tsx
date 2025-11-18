@@ -74,7 +74,7 @@ function App() {
       children: [
         { path: "", element: null },
         { path: "/dashboard", element: <Dashboard /> }, //tu bedzie dashboard
-        ...trainingsRoutes,
+        //...trainingsRoutes,
         ...pages,
         //...trainingsRoutes2,
       ],

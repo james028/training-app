@@ -72,7 +72,6 @@ exports.handleLogin = asyncHandler(async (req, res) => {
 
     //
     // 3. Generujemy access + refresh token
-
     const accessToken = jwt.sign(
       { id: user._id, username: user.username },
       process.env.ACCESS_TOKEN_SECRET || "supersecret",

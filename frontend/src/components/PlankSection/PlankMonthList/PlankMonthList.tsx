@@ -16,7 +16,8 @@ const PlankMonthList = () => {
 
   console.log(linkUrl, "aaaaaaaa");
   const { data, status, isRefetching } = useGetApi(
-    `${URL}${linkUrl}/list`,
+    //`${URL}${linkUrl}/list`,
+    `${URL}api/plank/list`,
     ["plankList"],
     undefined,
   );
@@ -28,6 +29,8 @@ const PlankMonthList = () => {
   if (status === "error") {
     return <div>Error...</div>;
   }
+
+  console.log(data);
 
   return (
     <>
