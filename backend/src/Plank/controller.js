@@ -4,25 +4,31 @@ const PlankDataModel = require("./model");
 // @desc    Gets all plank trainings from every month
 // @route   GET /api/plank/list
 exports.getPlank = asyncHandler(async (req, res) => {
+  //const id = req.user.id;
   try {
-    const plankList = await PlankDataModel.find({}, null, null);
+    //const plankList = await PlankDataModel.find({}, null, null);
+
+    //console.log(id);
+    //const plankList = await PlankDataModel.findById({ _id: id }, null, null);
+    //const plankList = await PlankDataModel.findById({}, null, null);
     //const plankList = await PlankDataModel.deleteMany({});
 
-    if (!plankList) {
-      res.status(404).json({ message: "Data not found" });
-    }
+    // console.log(plankList, "planList");
+    // if (!plankList) {
+    //   res.status(404).json({ message: "Data not found" });
+    // }
 
-    let obj = {};
-
-    for (const [key, value] of Object.entries(plankList)) {
-      obj[key] = value;
-    }
+    // let obj = {};
+    //
+    // for (const [key, value] of Object.entries(plankList)) {
+    //   obj[key] = value;
+    // }
     // Object.entries(plankList).forEach(([item, item2]) => {
     //   console.log(item, "item");
     //   console.log(item2, "item2");
     //
     // });
-    res.status(200).json(plankList);
+    res.status(200).json({ plankList: [] });
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });
@@ -34,53 +40,52 @@ exports.getPlank = asyncHandler(async (req, res) => {
 exports.createPlank = asyncHandler(async (req, res) => {
   const { month, day, duration, isDifferentExercises } = req.body;
 
-  console.log(req.body);
+  if (!month || !day || !duration || isDifferentExercises === undefined) {
+    return res
+      .status(400)
+      .json({ message: "Brakuje wymaganych danych treningu." });
+  }
+
+  const id = req.user.id;
+
+  if (!id) {
+    res.status(401).json({ message: "Nie istnieje id użytkownika" });
+  }
   try {
-    const plankList = await PlankDataModel.find({}, null, null);
-
-    if (plankList.length === 0) {
-      //to do funkcji utils, options jako parameter
-      const createdData = await PlankDataModel.findOneAndUpdate(
-        {},
-        {
-          // $push: {
-          //   [month]: { month, day, duration, isDifferentExercises },
-          // },
-          $push: { [month]: { [day]: 22 } },
+    const createdData = await PlankDataModel.findOneAndUpdate(
+      {
+        userId: id,
+      },
+      {
+        $push: {
+          [month]: {
+            month,
+            day,
+            duration,
+            isDifferentExercises,
+            createdAt: new Date(),
+          },
         },
+        //$set: { updatedAt: new Date() },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
+    );
 
-        {
-          new: true,
-          upsert: true,
-          setDefaultsOnInsert: true,
-        },
-      );
-
-      if (createdData) {
-        res
-          .status(200)
-          .json({ message: `Utworzono dla id: ${createdData.id}` });
-      }
-    } else {
-      const createdData = await PlankDataModel.findOneAndUpdate(
-        { [month]: { $exists: true } },
-        {
-          // $push: {
-          //   [month]: { month, day, duration, isDifferentExercises },
-          // },
-          $push: { [month]: { day: 22 } },
-        },
-      );
-
-      if (createdData) {
-        res
-          .status(200)
-          .json({ message: `Utworzono dla id: ${createdData.id}` });
-      }
+    if (createdData) {
+      res
+        .status(200)
+        .json({ message: `Rekord treningu utworzono dla userId: ${id}` });
     }
   } catch (error) {
-    console.log(error, "err");
-    res.status(404).json({ error: "Not found!" });
+    console.error("Błąd podczas tworzenia rekordu Plank:", error);
+
+    res.status(500).json({
+      message: "Wystąpił błąd serwera. Nie udało się utworzyć rekordu.",
+    });
   }
 });
 
@@ -118,10 +123,10 @@ exports.updatePlank = asyncHandler(async (req, res) => {
 
     //po co to ??
     //usuniecie ?
-    await PlankDataModel.updateOne(
-      { [`${findData?.month}._id`]: findData?._id },
-      { $pull: { [findData?.month]: { _id: findData?._id } } },
-    );
+    // await PlankDataModel.updateOne(
+    //   { [`${findData?.month}._id`]: findData?._id },
+    //   { $pull: { [findData?.month]: { _id: findData?._id } } },
+    // );
 
     const updateData = {
       month: month || findData?.month,

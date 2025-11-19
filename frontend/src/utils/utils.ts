@@ -31,8 +31,24 @@ export const months = [
 //   "Grudzień",
 // ];
 
+type MonthIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
+export type MonthName =
+  | "Styczeń"
+  | "Luty"
+  | "Marzec"
+  | "Kwiecień"
+  | "Maj"
+  | "Czerwiec"
+  | "Lipiec"
+  | "Sierpień"
+  | "Wrzesień"
+  | "Październik"
+  | "Listopad"
+  | "Grudzień";
+
 //indeksy miesięcy
-export const monthObject = {
+export const monthObject: { [key in MonthIndex]: MonthName } = {
   1: "Styczeń",
   2: "Luty",
   3: "Marzec",

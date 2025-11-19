@@ -60,18 +60,12 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       res.status(401).json({ message: "Nie znaleziono użytkownika" });
     }
 
-    console.log(req.body, "a");
-    //
-    // 2. Porównanie hasła
-
     const match = await bcrypt.compare(password, user.password);
     console.log(match, password, user.password);
     if (!match) {
       return res.status(404).json({ message: "Niepoprawne hasło" });
     }
 
-    //
-    // 3. Generujemy access + refresh token
     const accessToken = jwt.sign(
       { id: user._id, username: user.username },
       process.env.ACCESS_TOKEN_SECRET || "supersecret",
@@ -84,7 +78,6 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       { expiresIn: "7d" },
     );
 
-    // 4. Ustawiamy refresh token w httpOnly cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true, // HTTPS
@@ -93,10 +86,15 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       path: "/",
     });
 
-    // 5. Zwracamy access token i dane użytkownika
+    const { _id: id, username, email } = user;
     res.json({
       accessToken,
-      data: { id: user._id, username: user.username, email: user.email },
+      data: {
+        accessToken,
+        id,
+        username,
+        email,
+      },
       message: "Zalogowano pomyślnie",
     });
   } catch (error) {

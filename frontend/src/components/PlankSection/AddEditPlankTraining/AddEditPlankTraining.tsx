@@ -13,8 +13,6 @@ import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 
 const URL = "http://localhost:5001/";
-//const CREATE_URL = "http://localhost:5001/api/plank/create";
-//const UPDATE_URL = "http://localhost:5001/api/plank/update";
 
 const AddEditPlankTraining = () => {
   const {
@@ -22,7 +20,9 @@ const AddEditPlankTraining = () => {
     setToggleOpenFormPanelTraining,
     objectData,
   } = usePlankSectionContext();
-  const { link } = useAppContext();
+
+  const { link, user } = useAppContext();
+  const token = user?.accessToken ?? "";
 
   const {
     handleSubmit,
@@ -36,6 +36,7 @@ const AddEditPlankTraining = () => {
     `${URL}api/plank/create`,
     ["createPlank"],
     null,
+    { Authorization: `Bearer ${token}` },
   );
   const { mutate: updateMutate } = usePatchApi(
     `${URL}${link}/update`,
@@ -94,18 +95,19 @@ const AddEditPlankTraining = () => {
       }, 500);
     };
 
-    if (Object.keys(objectData ?? {}).length > 0) {
-      //to zmienic na async await
-
-      //await updateMutate({ paramsObj: null, bodyData: newData });
-      handleActionFetch();
-    } else {
-      await mutation.mutate({ paramsObj: null, bodyData: newData });
-      handleActionFetch();
-    }
+    // if (Object.keys(objectData ?? {}).length > 0) {
+    //   //to zmienic na async await
+    //   console.log("222");
+    //   await updateMutate({ paramsObj: null, bodyData: newData });
+    //   //handleActionFetch();
+    // } else {
+    //   console.log("333");
+    //   await mutation.mutate({ paramsObj: null, bodyData: newData });
+    //   //handleActionFetch();
+    // }
   });
 
-  const getDays = (year: any, month: any) => {
+  const getDays = (year: any, month: any): any => {
     return DateTime.local(year, month).daysInMonth;
   };
 
@@ -120,9 +122,9 @@ const AddEditPlankTraining = () => {
       // @ts-ignore
       monthDays[index] = getDays(year, i);
     }
-
+    console.log(monthDays, "month days");
     const { month: monthValue } = watch();
-    //console.log(monthValue, "vv");
+    console.log(monthValue, "vv");
     // const days =
     //   monthDays[
     //     monthValue.length > 0 &&
@@ -130,22 +132,81 @@ const AddEditPlankTraining = () => {
     //   ];
     // const days2 = "";
 
-    console.log(monthValue);
-    // @ts-ignore
-    const days =
-      monthDays[
-        // @ts-ignore
-        monthObject[monthValue.slice(0, 1) === "01" ? 1 : 2].toLowerCase()
-      ];
+    //console.log(monthValue);
 
-    console.log(monthDays, "days", days, monthObject[1]);
+    // const monthKey = monthValue.startsWith("0")
+    //   ? monthValue.slice(1)
+    //   : monthValue;
+    //
+    // console.log(monthKey, "month key", monthObject[3]);
+    //
+    // // @ts-ignore
+    // const days =
+    //   monthDays[
+    //     // @ts-ignore
+    //     monthObject[monthKey].toLowerCase()
+    //   ];
+
+    // const rawMonth = monthValue.startsWith("0")
+    //   ? monthValue.slice(1)
+    //   : monthValue;
+    //
+    // const monthName = monthObject[rawMonth];
+    //
+    // // if (!monthName) {
+    // //   console.warn("Niepoprawny monthValue:", monthValue);
+    // // }
+    //
+    // const days = monthName ? monthDays[monthName.toLowerCase()] : [];
+
+    const monthKey = parseInt(monthValue, 10); // "03" -> 3
+
+    console.log(monthKey, "key");
+    const monthName = monthObject[monthKey as keyof typeof monthObject];
+
+    const days = monthName ? monthDays[monthName.toLowerCase()] : [];
+    //monthDays["styczeń"];
+    const days2 = monthObject[monthKey as keyof typeof monthObject]
+      ? monthDays[
+          monthObject[monthKey as keyof typeof monthObject].toLowerCase()
+        ]
+      : [];
+
+    // const days3 =
+    //   monthDays[monthObject[parseInt(monthValue, 10)].toLowerCase()];
+
+    // console.log(
+    //   "c",
+    //   // @ts-ignore
+    //   monthObject[
+    //     monthValue.slice(0, 1) === "0" ? monthValue.slice(1, 2) : monthValue
+    //   ],
+    // );
+    // console.log(
+    //   "c1",
+    //   // @ts-ignore
+    //   monthObject[
+    //     monthValue.slice(0, 1) === "0" ? monthValue.slice(1, 2) : monthValue
+    //   ].toLowerCase(),
+    // );
+    // console.log(
+    //   "d",
+    //   monthValue.slice(0, 1) === "0" ? monthValue.slice(1, 2) : monthValue,
+    // );
+
+    console.log(days, "days");
+    console.log(days2, "days2");
+    //console.log(days3, "days3");
+
+    //console.log(monthDays, "days", days, monthObject[1]);
     const x = monthValue
       ? Array(days)
           .fill(0)
           .map((_, number) => {
+            const value = number + 1;
             return {
-              value: number + 1,
-              name: String(number + 1),
+              value,
+              name: String(value),
             };
           })
       : null;
@@ -155,19 +216,17 @@ const AddEditPlankTraining = () => {
   };
 
   const { month: monthValue } = watch();
-  console.log(monthValue);
-
-  console.log(
-    Object.entries(monthObject).map(([index, month]) => {
-      return {
-        value: index.length === 1 ? `0${index}` : index,
-        name: month,
-      };
-    }),
-    monthObject[objectData?.month as unknown as keyof typeof monthObject],
-  );
-
-  //tu dokonczyc
+  // console.log(monthValue);
+  //
+  // console.log(
+  //   Object.entries(monthObject).map(([index, month]) => {
+  //     return {
+  //       value: index.length === 1 ? `0${index}` : index,
+  //       name: month,
+  //     };
+  //   }),
+  //monthObject[objectData?.month as unknown as keyof typeof monthObject],
+  //);
 
   return (
     <>

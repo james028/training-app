@@ -34,8 +34,8 @@ const PlankSection = () => {
         }}
       >
         <FormProvider {...form}>
-          {/*<AddEditPlankTraining />*/}
-          <PlankMonthList />
+          <AddEditPlankTraining />
+          {/*<PlankMonthList />*/}
         </FormProvider>
       </PlankSectionContext.Provider>
     </div>

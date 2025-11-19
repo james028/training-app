@@ -10,7 +10,8 @@ import { useAppContext } from "../../../appContext/appContext";
 const URL = "http://localhost:5001/";
 
 const PlankMonthList = () => {
-  const { linkUrl } = useAppContext();
+  const { linkUrl, user } = useAppContext();
+  const token = user?.accessToken ?? {};
   //temporary, rozwiazac to z globalnego contextu
   //const link = "plank";
 
@@ -20,6 +21,9 @@ const PlankMonthList = () => {
     `${URL}api/plank/list`,
     ["plankList"],
     undefined,
+    undefined,
+    //{ Authorization: `Bearer ${token}` },
+    { "X-Request-Id": "123456" },
   );
 
   if (status === "loading" || isRefetching) {
