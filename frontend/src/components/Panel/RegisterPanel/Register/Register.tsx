@@ -34,7 +34,12 @@ const Register = () => {
   } = form;
 
   const linkRegister = "api/auth/register";
-  const { mutation, responseStatus } = usePostApi(
+  // const { mutation, responseStatus } = usePostApi(
+  //   `${URL}${linkRegister}`,
+  //   ["userRegister"],
+  //   null,
+  // );
+  const { responseStatus } = usePostApi(
     `${URL}${linkRegister}`,
     ["userRegister"],
     null,
@@ -43,7 +48,7 @@ const Register = () => {
   const onSubmit = handleSubmit((data: any) => {
     try {
       const { confirmPassword, ...restObjectData } = data;
-      mutation.mutate({ paramsObj: null, bodyData: restObjectData });
+      //mutation.mutate({ paramsObj: null, bodyData: restObjectData });
 
       setTimeout(async () => {
         reset();

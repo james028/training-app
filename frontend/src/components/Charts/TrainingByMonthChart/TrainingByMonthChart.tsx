@@ -10,7 +10,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { months } from "../../../constants";
+import { TRANSLATED_MONTHS } from "../../../constants";
 
 ChartJS.register(
   CategoryScale,
@@ -91,7 +91,7 @@ const TrainingByMonthChart = ({
   console.log(createDatasetsData(), "333");
 
   const chartData = {
-    labels: months,
+    labels: TRANSLATED_MONTHS,
     datasets: createDatasetsData(),
   };
 

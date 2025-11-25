@@ -25,19 +25,18 @@ const Navbar = () => {
   const isAuth = Object.keys(user ?? {}).length > 0;
 
   const linkLogout = "api/auth/logout";
-  const { responseStatus, mutation } = usePostApi(
-    `${URL}${linkLogout}`,
-    ["userLogout"],
-    null,
-  );
+  const {
+    responseStatus,
+    //mutation
+  } = usePostApi(`${URL}${linkLogout}`, ["userLogout"], null);
 
   const handleLogOut = () => {
     console.log("click logout");
     removeValue();
-    mutation.mutateAsync({
-      paramsObj: null,
-      bodyData: null,
-    });
+    // mutation.mutateAsync({
+    //   paramsObj: null,
+    //   bodyData: null,
+    // });
     addUser(null);
     navigate("/register");
   };

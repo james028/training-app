@@ -33,40 +33,40 @@ const Login = () => {
   } = form;
 
   const linkRegister = "api/auth/login";
-  const { responseStatus, mutation } = usePostApi(
-    `${URL}${linkRegister}`,
-    ["userLogin"],
-    null,
-  );
+  // const { responseStatus, mutation } = usePostApi(
+  //   `${URL}${linkRegister}`,
+  //   ["userLogin"],
+  //   null,
+  // );
 
   const onSubmit = handleSubmit(async (data: any) => {
     try {
-      const { data: responseData } = await mutation.mutateAsync({
-        paramsObj: null,
-        bodyData: data,
-        successMessage: "Zalogowano użytkownika!",
-        errorMessage: "nie udało się zalogować",
-      });
-      console.log(responseData, "reeeeeeeee");
-
-      if (responseData) {
-        addUser(responseData);
-        setTimeout(async () => {
-          reset();
-        }, 500);
-        //navigate("/dashboard");
-      }
+      // const { data: responseData } = await mutation.mutateAsync({
+      //   paramsObj: null,
+      //   bodyData: data,
+      //   successMessage: "Zalogowano użytkownika!",
+      //   errorMessage: "nie udało się zalogować",
+      // });
+      // console.log(responseData, "reeeeeeeee");
+      //
+      // if (responseData) {
+      //   addUser(responseData);
+      //   setTimeout(async () => {
+      //     reset();
+      //   }, 500);
+      //   //navigate("/dashboard");
+      // }
     } catch (error) {
       //toast.error(error);
       console.log(error);
     }
   });
 
-  useEffect(() => {
-    if (responseStatus === Status.SUCCESS) {
-      navigate("/dashboard");
-    }
-  }, [responseStatus]);
+  // useEffect(() => {
+  //   if (responseStatus === Status.SUCCESS) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [responseStatus]);
 
   console.log("login mount comp");
 

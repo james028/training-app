@@ -11,7 +11,6 @@ import usePatchApi from "../../../hooks/api/patch/useApiPatch";
 import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import { convertObjectWithNumbersToString } from "../../../utils";
-import { monthObject } from "../../../constants";
 import {
   ConvertedMonthObjectMap,
   MonthDaysMap,
@@ -20,6 +19,8 @@ import {
   MonthNameLower,
   MonthObjectMap,
 } from "../../../types";
+import { MONTH_NAMES_MAP } from "../../../constants";
+import toast from "react-hot-toast";
 
 const URL = "http://localhost:5001/";
 
@@ -40,14 +41,14 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutation } = usePostApi(
+  const { mutateAsync, mutate } = usePostApi(
     //`${URL}${link}/create`,
     `${URL}api/plank/create`,
     ["createPlank"],
     null,
     { Authorization: `Bearer ${token}` },
   );
-  const { mutate: updateMutate } = usePatchApi(
+  const { mutateAsync: updateMutate } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
     null,
@@ -61,44 +62,10 @@ const AddEditPlankTraining = () => {
 
   // poprawic to
   // @ts-ignore
-  const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
-    //zmienic zeby nie wysylalo czerwiec tylko index, czyli no fubkcja na stowrzenie z tab z ob z month
-
-    //tutaj funkcja na be na async/await
-    let convertedBodyData: any = { ...data };
-
-    convertedBodyData = {
-      ...convertedBodyData,
+  const onSubmit = handleSubmit(async (data: any) => {
+    let convertedBodyData = {
+      ...data,
       duration: convertObjectWithNumbersToString(data.duration),
-    };
-
-    //console.log(convertObjectWithNumbersToString(data.duration));
-
-    const monthIndex = Object.keys(monthObject)
-      .map((month) => {
-        if (
-          monthObject[month as unknown as keyof typeof monthObject] ===
-          convertedBodyData?.month
-        ) {
-          return month;
-        }
-      })
-      .find((a) => a !== undefined);
-
-    console.log(
-      monthIndex,
-      "month index",
-      data,
-      "data",
-      convertedBodyData,
-      "newData",
-    );
-
-    convertedBodyData = {
-      ...convertedBodyData,
-      month: 3,
-      day: Number(convertedBodyData.day),
-      id: objectData?._id,
     };
 
     const handleActionFetch = () => {
@@ -109,20 +76,45 @@ const AddEditPlankTraining = () => {
       }, 500);
     };
 
-    // if (Object.keys(objectData ?? {}).length > 0) {
-    //   //to zmienic na async await
-    //   console.log("222");
-    //   await updateMutate({ paramsObj: null, bodyData: newData });
-    //   //handleActionFetch();
-    // } else {
-    //   console.log("333");
-    //   await mutation.mutate({ paramsObj: null, bodyData: newData });
-    //   //handleActionFetch();
-    // }
+    console.log(data, convertedBodyData);
+
+    try {
+      const isEditing = Object.keys(objectData ?? {}).length > 0;
+      if (isEditing) {
+        //to zmienic na async await
+
+        console.log("edycja");
+        const editedData = {
+          ...data,
+          day: Number(data.day),
+          id: objectData?._id,
+        };
+        await updateMutate({
+          paramsObj: null,
+          bodyData: editedData,
+        });
+      } else {
+        console.log("tworzenie");
+        await mutateAsync({
+          paramsObj: null,
+          bodyData: convertedBodyData,
+        });
+      }
+      //setTimeout(async () => {
+      setToggleOpenFormPanelTraining(false);
+      reset();
+      await refetchList?.();
+      //}, 500);
+    } catch (error) {
+      //toast.error(error?.response.message);
+      console.log(error instanceof Error ? error.message : "Błąd zapisu");
+      toast.error(error instanceof Error ? error.message : "Błąd zapisu");
+      //console.log((error && error?.message) || "");
+    }
   });
 
-  const getDays = (year: number, month: number): number | undefined => {
-    return DateTime.local(year, month).daysInMonth;
+  const getDays = (year: number, month: number): number => {
+    return DateTime.local(year, month).daysInMonth ?? 0;
   };
 
   const convertObjectToLowerCase = (
@@ -157,7 +149,8 @@ const AddEditPlankTraining = () => {
     const monthKey = parseInt(monthValue, 10);
 
     const convertedObjectMonthDays = createObjectMonthDays();
-    const convertedObjectToLowerCase = convertObjectToLowerCase(monthObject);
+    const convertedObjectToLowerCase =
+      convertObjectToLowerCase(MONTH_NAMES_MAP);
 
     const monthName =
       convertedObjectToLowerCase[
@@ -198,7 +191,7 @@ const AddEditPlankTraining = () => {
               className="mb-2 w-2/5"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
-              options={Object.entries(monthObject).map(([index, month]) => {
+              options={Object.entries(MONTH_NAMES_MAP).map(([index, month]) => {
                 return {
                   value: index.length === 1 ? `0${index}` : index,
                   name: month,
@@ -206,8 +199,8 @@ const AddEditPlankTraining = () => {
               })}
               // @ts-ignore
               defaultValue={
-                monthObject[
-                  objectData?.month as unknown as keyof typeof monthObject
+                MONTH_NAMES_MAP[
+                  objectData?.month as unknown as keyof typeof MONTH_NAMES_MAP
                 ]
               }
             />

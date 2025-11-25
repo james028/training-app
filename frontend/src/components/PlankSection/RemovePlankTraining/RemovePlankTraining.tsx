@@ -4,7 +4,7 @@ import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
 import { useAppContext } from "../../../appContext/appContext";
-import { monthObject } from "../../../constants";
+import { MONTH_NAMES_MAP } from "../../../constants";
 
 type RemovePlankTrainingProps = {
   closeModal: () => void;
@@ -49,8 +49,8 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
       <div className="shadow rounded-lg bg-white overflow-hidden w-full block p-8">
         <div className="text-base text-neutral-600 dark:text-neutral-200 cursor-default">
           Czy chcesz usunąć trening z miesiąca{" "}
-          {monthObject[month as unknown as keyof typeof monthObject]} z dnia{" "}
-          {day} o dlugosci {duration}?
+          {MONTH_NAMES_MAP[month as unknown as keyof typeof MONTH_NAMES_MAP]} z
+          dnia {day} o dlugosci {duration}?
         </div>
       </div>
       <SubmitButtons

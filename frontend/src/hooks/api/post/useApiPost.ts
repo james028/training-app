@@ -1,4 +1,5 @@
 import {
+  MutateOptions,
   QueryClient,
   QueryKey,
   useMutation,
@@ -17,6 +18,24 @@ export enum Status {
   ERROR = "error",
 }
 type StatusProps = "loading" | "success" | "error";
+
+interface ApiErrorResponse {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+}
+
+interface MutationVariables {
+  //body: TBody; // Zastąp TBody rzeczywistym typem danych wejściowych
+  //body: any; // Zastąp TBody rzeczywistym typem danych wejściowych
+  successMessage?: string;
+  errorMessage?: string;
+
+  paramsObj: Record<any, any> | null | undefined;
+  bodyData: Record<any, any> | null | undefined;
+}
 
 const useSetResponseStatus = (): {
   responseStatus: Status;
@@ -57,8 +76,13 @@ const usePostApi = (
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
 ): {
-  mutation: UseMutationResult<Promise<any>, Error, any>;
   responseStatus: Status;
+  mutate: any;
+  mutateAsync: any;
+  // mutateAsync: (
+  //   variables: any,
+  //   options?: MutateOptions<Promise<any>, Error, any, unknown>,
+  // ) => Promise<Promise<any>>;
 } => {
   const { responseStatus, setLoading, setSuccess, setError } =
     useSetResponseStatus();
@@ -81,33 +105,35 @@ const usePostApi = (
     return result.data;
   };
 
-  const mutation = useMutation<Promise<any>, Error, any>(
-    (body) => createPost(body),
-    {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([queryKey, link]);
-        setSuccess();
-        if (variables?.successMessage) {
-          toast.success(variables.successMessage);
-        }
-      },
-      onError: (error: any, variables: any) => {
-        setError();
-        toast.error(
-          //pózniej na tłumaczenia
-          error?.response?.data?.message || "Coś poszło nie tak 😢",
-        );
-        if (variables?.errorMessage) {
-          toast.error(variables.errorMessage);
-        }
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries([queryKey, link]);
-      },
+  const { mutate, mutateAsync } = useMutation<
+    Promise<any>,
+    ApiErrorResponse,
+    MutationVariables
+  >((body) => createPost(body), {
+    onSuccess: (data, variables) => {
+      //queryClient.invalidateQueries([queryKey, link]);
+      setSuccess();
+      if (variables?.successMessage) {
+        toast.success(variables.successMessage);
+      }
     },
-  );
+    onError: (error: any, variables: any) => {
+      setError();
+      const message =
+        variables.errorMessage ||
+        error?.response?.data?.message ||
+        "Coś poszło nie tak 😢";
+      toast.error(message);
+      // if (variables?.errorMessage) {
+      //   toast.error(variables.errorMessage);
+      // }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries([queryKey, link]);
+    },
+  });
 
-  return { responseStatus, mutation };
+  return { responseStatus, mutate, mutateAsync };
 };
 
 export default usePostApi;

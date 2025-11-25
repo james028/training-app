@@ -11,7 +11,7 @@ import {
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import Modal from "../../shared/Modal/Modal";
 import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
-import { monthObject } from "../../../constants";
+import { MONTH_NAMES_MAP } from "../../../constants";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;
@@ -73,7 +73,8 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
 
   const displayMonthNames = (monthIndex: string): string => {
     return (
-      monthObject[monthIndex as unknown as keyof typeof monthObject] ?? "-"
+      MONTH_NAMES_MAP[monthIndex as unknown as keyof typeof MONTH_NAMES_MAP] ??
+      "-"
     );
   };
   const displaySumMinutes = (data: any, itemIndex: any): string => {

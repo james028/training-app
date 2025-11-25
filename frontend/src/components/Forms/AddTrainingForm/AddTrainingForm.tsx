@@ -56,11 +56,11 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
     ["trainingTypeList"],
     undefined,
   );
-  const { mutation } = usePostApi(
-    `${URL}${linkCreate}`,
-    ["createNewTraining"],
-    null,
-  );
+  // const { mutation } = usePostApi(
+  //   `${URL}${linkCreate}`,
+  //   ["createNewTraining"],
+  //   null,
+  // );
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     const sendData = {
@@ -73,7 +73,7 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
       day,
     };
 
-    mutation.mutate({ paramsObj: null, bodyData: sendData });
+    //mutation.mutate({ paramsObj: null, bodyData: sendData });
 
     setTimeout(async () => {
       closeModal();

@@ -30,11 +30,11 @@ const TrainingsType = () => {
     isRefetching,
   } = useGetApi(`${URL}${link}`, ["trainingTypeList"], undefined);
 
-  const { mutation } = usePostApi(
-    `${URL}${linkCreate}`,
-    ["createTrainingTypeList"],
-    null,
-  );
+  // const { mutation } = usePostApi(
+  //   `${URL}${linkCreate}`,
+  //   ["createTrainingTypeList"],
+  //   null,
+  // );
 
   //to pliku utils
   function stringToCamelCaseString(str: string): string {
@@ -57,7 +57,7 @@ const TrainingsType = () => {
       type: stringToCamelCaseString(trainingName),
     };
 
-    mutation.mutate({ paramsObj: null, bodyData: sendData });
+    //mutation.mutate({ paramsObj: null, bodyData: sendData });
 
     setTimeout(async () => {
       reset();
