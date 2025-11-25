@@ -1,5 +1,5 @@
-import { TCalendarData } from "../types/app-types";
 import React, { RefObject, useEffect, useState } from "react";
+import { TCalendarData } from "../types";
 
 export const useCountNestedEventsByType = (
   data: TCalendarData,

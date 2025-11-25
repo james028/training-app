@@ -56,60 +56,58 @@ const usePostApi = (
   queryKey: Array<QueryKey> | QueryKey,
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
-) =>
-  // : {
-  //mutation: UseMutationResult<Promise<any>, Error, any>;
-  // responseStatus: Status;
-  //}
-  {
-    const { responseStatus, setLoading, setSuccess, setError } =
-      useSetResponseStatus();
+): {
+  mutation: UseMutationResult<Promise<any>, Error, any>;
+  responseStatus: Status;
+} => {
+  const { responseStatus, setLoading, setSuccess, setError } =
+    useSetResponseStatus();
 
-    const createPost = async ({
-      paramsObj,
+  const createPost = async ({
+    paramsObj,
+    bodyData,
+  }: {
+    paramsObj: Record<any, any> | null | undefined;
+    bodyData: Record<any, any> | null | undefined;
+  }): Promise<any> => {
+    setLoading();
+
+    const result = await axios.post<string>(
+      endpointWithParams(link, params, getParams(paramsObj)),
       bodyData,
-    }: {
-      paramsObj: Record<any, any> | null | undefined;
-      bodyData: Record<any, any> | null | undefined;
-    }): Promise<any> => {
-      setLoading();
-
-      const result = await axios.post<string>(
-        endpointWithParams(link, params, getParams(paramsObj)),
-        bodyData,
-        { headers },
-      );
-
-      return result.data;
-    };
-
-    const mutation = useMutation<Promise<any>, Error, any>(
-      (body) => createPost(body),
-      {
-        onSuccess: (data, variables) => {
-          queryClient.invalidateQueries([queryKey, link]);
-          setSuccess();
-          if (variables?.successMessage) {
-            toast.success(variables.successMessage);
-          }
-        },
-        onError: (error: any, variables: any) => {
-          setError();
-          toast.error(
-            //pózniej na tłumaczenia
-            error?.response?.data?.message || "Coś poszło nie tak 😢",
-          );
-          if (variables?.errorMessage) {
-            toast.error(variables.errorMessage);
-          }
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries([queryKey, link]);
-        },
-      },
+      { headers },
     );
 
-    return { responseStatus, mutation };
+    return result.data;
   };
+
+  const mutation = useMutation<Promise<any>, Error, any>(
+    (body) => createPost(body),
+    {
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries([queryKey, link]);
+        setSuccess();
+        if (variables?.successMessage) {
+          toast.success(variables.successMessage);
+        }
+      },
+      onError: (error: any, variables: any) => {
+        setError();
+        toast.error(
+          //pózniej na tłumaczenia
+          error?.response?.data?.message || "Coś poszło nie tak 😢",
+        );
+        if (variables?.errorMessage) {
+          toast.error(variables.errorMessage);
+        }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries([queryKey, link]);
+      },
+    },
+  );
+
+  return { responseStatus, mutation };
+};
 
 export default usePostApi;

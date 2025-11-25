@@ -8,9 +8,9 @@ import {
 } from "react-hook-form";
 
 import { ErrorMessage } from "@hookform/error-message";
-import { get } from "../../../utils/utils";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 import Input from "./Input/Input";
+import { get } from "../../../utils";
 
 export type FormInputProps<TFormValues extends FieldValues> = {
   id: string;

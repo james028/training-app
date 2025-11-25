@@ -106,17 +106,7 @@ exports.handleLogin = asyncHandler(async (req, res) => {
 });
 
 exports.handleLogout = asyncHandler(async (req, res) => {
-  const cookies = req.cookies;
-  console.log(cookies, "cookies");
-
   console.log("csdsadsad", req.cookies?.accessToken, req.cookies?.refreshToken);
-  // if (!cookies?.jwt) {
-  //   return res.status(204); //No content
-  // }
-  // //const refreshToken = cookies.jwt;
-  //
-  // res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-  // res.status(204);
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
@@ -125,5 +115,5 @@ exports.handleLogout = asyncHandler(async (req, res) => {
     path: "/",
   });
 
-  res.sendStatus(204); // brak treści
+  res.sendStatus(204);
 });

@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import Navbar from "./Panel/Navbar/Navbar";
+import PlankSection from "./PlankSection/PlankSection";
 
 const Home = () => {
   return (

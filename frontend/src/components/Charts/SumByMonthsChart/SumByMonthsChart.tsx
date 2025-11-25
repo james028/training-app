@@ -3,7 +3,7 @@ import { Bar } from "react-chartjs-2";
 
 import { Chart as ChartJS, registerables } from "chart.js";
 import { useTranslation } from "react-i18next";
-import { months } from "../../../utils/utils";
+import { months } from "../../../constants";
 ChartJS.register(...registerables);
 
 type TSumByMonthsChart = {

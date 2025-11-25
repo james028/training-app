@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CalendarDay from "../CalendarDay/CalendarDay";
-import { TMonth, TYear } from "../../../types/app-types";
 
 import { DateTime } from "luxon";
+import { TMonth, TYear } from "../../../types";
 
 const CalendarDays = ({
   dataMonths,

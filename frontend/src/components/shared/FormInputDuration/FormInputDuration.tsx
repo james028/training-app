@@ -5,12 +5,11 @@ import {
   FieldValues,
   Path,
   RegisterOptions,
-  UseFormRegister,
 } from "react-hook-form";
 import Duration from "./Duration/Duration";
 import { InputType } from "../FormInput/Input/Input";
-import { get } from "../../../utils/utils";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
+import { get } from "../../../utils";
 
 export type FormInputDurationProps<TFormValues extends FieldValues> = {
   id: string;

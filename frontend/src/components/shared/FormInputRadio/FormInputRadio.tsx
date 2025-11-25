@@ -2,8 +2,8 @@ import React from "react";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 import { ErrorMessage } from "@hookform/error-message";
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";
-import { get } from "../../../utils/utils";
 import RadioInputs from "./RadioInputs/RadioInputs";
+import { get } from "../../../utils";
 
 export type FormRadioInputProps<TFormValues extends FieldValues> = {
   id: string;

@@ -1,6 +1,5 @@
 import React from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
-import { monthObject, months } from "../../../utils/utils";
 import { RegistrationFormFields } from "../../Forms/EditTrainingForm/EditTrainingForm";
 import { useFormContext } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
@@ -11,6 +10,16 @@ import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionConte
 import usePatchApi from "../../../hooks/api/patch/useApiPatch";
 import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
+import { convertObjectWithNumbersToString } from "../../../utils";
+import { monthObject } from "../../../constants";
+import {
+  ConvertedMonthObjectMap,
+  MonthDaysMap,
+  MonthIndex,
+  MonthName,
+  MonthNameLower,
+  MonthObjectMap,
+} from "../../../types";
 
 const URL = "http://localhost:5001/";
 
@@ -54,36 +63,41 @@ const AddEditPlankTraining = () => {
   // @ts-ignore
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     //zmienic zeby nie wysylalo czerwiec tylko index, czyli no fubkcja na stowrzenie z tab z ob z month
-    console.log("submitting... edit plak", data);
 
     //tutaj funkcja na be na async/await
-    let newData: any = { ...data };
+    let convertedBodyData: any = { ...data };
 
-    //wspoldzielona
-    newData = {
-      ...data,
-      duration: Object.values(data.duration)
-        .map((duration) => duration.toString().padStart(2, "0"))
-        .join(":"),
+    convertedBodyData = {
+      ...convertedBodyData,
+      duration: convertObjectWithNumbersToString(data.duration),
     };
+
+    //console.log(convertObjectWithNumbersToString(data.duration));
 
     const monthIndex = Object.keys(monthObject)
       .map((month) => {
         if (
           monthObject[month as unknown as keyof typeof monthObject] ===
-          newData?.month
+          convertedBodyData?.month
         ) {
           return month;
         }
       })
       .find((a) => a !== undefined);
 
-    console.log(monthIndex, "month index", data, "data");
+    console.log(
+      monthIndex,
+      "month index",
+      data,
+      "data",
+      convertedBodyData,
+      "newData",
+    );
 
-    newData = {
-      ...newData,
+    convertedBodyData = {
+      ...convertedBodyData,
       month: 3,
-      day: Number(newData.day),
+      day: Number(convertedBodyData.day),
       id: objectData?._id,
     };
 
@@ -107,126 +121,63 @@ const AddEditPlankTraining = () => {
     // }
   });
 
-  const getDays = (year: any, month: any): any => {
+  const getDays = (year: number, month: number): number | undefined => {
     return DateTime.local(year, month).daysInMonth;
   };
 
-  const getDaysByMonth = (): any => {
+  const convertObjectToLowerCase = (
+    months: MonthObjectMap,
+  ): ConvertedMonthObjectMap => {
+    const convertedMonthObject = {} as ConvertedMonthObjectMap;
+    for (const keyString in months) {
+      const key = parseInt(keyString, 10) as MonthIndex;
+      const value = months[key];
+
+      convertedMonthObject[key] = value.toLowerCase() as MonthNameLower;
+    }
+    return convertedMonthObject;
+  };
+
+  const createObjectMonthDays = (): Partial<MonthDaysMap> => {
     const currentDate = DateTime.now();
     const { year } = currentDate.toObject();
-
-    const monthDays: Record<string, number> = {};
+    const monthDays: Partial<MonthDaysMap> = {};
 
     for (let i = 1; i <= 12; i++) {
-      const index = DateTime.local(year, i).monthLong;
-      // @ts-ignore
-      monthDays[index] = getDays(year, i);
+      const monthName = DateTime.local(year, i).monthLong as MonthName;
+      const keyLower = monthName.toLowerCase() as MonthNameLower;
+      monthDays[keyLower] = getDays(year, i);
     }
-    console.log(monthDays, "month days");
+
+    return monthDays;
+  };
+
+  const getDaysByMonth = (): { value: number; name: string }[] => {
     const { month: monthValue } = watch();
-    console.log(monthValue, "vv");
-    // const days =
-    //   monthDays[
-    //     monthValue.length > 0 &&
-    //       monthValue?.map((month: any) => month.name.toLowerCase())
-    //   ];
-    // const days2 = "";
+    const monthKey = parseInt(monthValue, 10);
 
-    //console.log(monthValue);
+    const convertedObjectMonthDays = createObjectMonthDays();
+    const convertedObjectToLowerCase = convertObjectToLowerCase(monthObject);
 
-    // const monthKey = monthValue.startsWith("0")
-    //   ? monthValue.slice(1)
-    //   : monthValue;
-    //
-    // console.log(monthKey, "month key", monthObject[3]);
-    //
-    // // @ts-ignore
-    // const days =
-    //   monthDays[
-    //     // @ts-ignore
-    //     monthObject[monthKey].toLowerCase()
-    //   ];
+    const monthName =
+      convertedObjectToLowerCase[
+        monthKey as keyof typeof convertedObjectToLowerCase
+      ];
 
-    // const rawMonth = monthValue.startsWith("0")
-    //   ? monthValue.slice(1)
-    //   : monthValue;
-    //
-    // const monthName = monthObject[rawMonth];
-    //
-    // // if (!monthName) {
-    // //   console.warn("Niepoprawny monthValue:", monthValue);
-    // // }
-    //
-    // const days = monthName ? monthDays[monthName.toLowerCase()] : [];
+    const days = monthValue ? convertedObjectMonthDays[monthName] : [];
 
-    const monthKey = parseInt(monthValue, 10); // "03" -> 3
-
-    console.log(monthKey, "key");
-    const monthName = monthObject[monthKey as keyof typeof monthObject];
-
-    const days = monthName ? monthDays[monthName.toLowerCase()] : [];
-    //monthDays["styczeń"];
-    const days2 = monthObject[monthKey as keyof typeof monthObject]
-      ? monthDays[
-          monthObject[monthKey as keyof typeof monthObject].toLowerCase()
-        ]
-      : [];
-
-    // const days3 =
-    //   monthDays[monthObject[parseInt(monthValue, 10)].toLowerCase()];
-
-    // console.log(
-    //   "c",
-    //   // @ts-ignore
-    //   monthObject[
-    //     monthValue.slice(0, 1) === "0" ? monthValue.slice(1, 2) : monthValue
-    //   ],
-    // );
-    // console.log(
-    //   "c1",
-    //   // @ts-ignore
-    //   monthObject[
-    //     monthValue.slice(0, 1) === "0" ? monthValue.slice(1, 2) : monthValue
-    //   ].toLowerCase(),
-    // );
-    // console.log(
-    //   "d",
-    //   monthValue.slice(0, 1) === "0" ? monthValue.slice(1, 2) : monthValue,
-    // );
-
-    console.log(days, "days");
-    console.log(days2, "days2");
-    //console.log(days3, "days3");
-
-    //console.log(monthDays, "days", days, monthObject[1]);
-    const x = monthValue
+    return days
       ? Array(days)
           .fill(0)
-          .map((_, number) => {
+          .map((_: any, number: number) => {
             const value = number + 1;
             return {
               value,
               name: String(value),
             };
           })
-      : null;
-
-    console.log(x, "x");
-    return x;
+      : [];
   };
-
-  const { month: monthValue } = watch();
-  // console.log(monthValue);
-  //
-  // console.log(
-  //   Object.entries(monthObject).map(([index, month]) => {
-  //     return {
-  //       value: index.length === 1 ? `0${index}` : index,
-  //       name: month,
-  //     };
-  //   }),
-  //monthObject[objectData?.month as unknown as keyof typeof monthObject],
-  //);
 
   return (
     <>
@@ -270,7 +221,8 @@ const AddEditPlankTraining = () => {
               options={getDaysByMonth()}
               // @ts-ignore
               defaultValue={getDaysByMonth()?.find(
-                (day: number) => day === objectData?.day,
+                (day: { value: number; name: string }) =>
+                  day === objectData?.day,
               )}
             />
             <FormInputDuration<any>

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { TButtons } from "../../../types/app-types";
 import { DateTime } from "luxon";
 import { StyledButton, StyledDayWidth } from "./style";
+import { TButtons } from "../../../types";
 
 const CalendarHeader = ({
   incrementMonth,

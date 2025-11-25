@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import { TDay } from "../../../types/app-types";
-
 import EditTraining from "../../Forms/EditTraining/EditTraining";
 import AddTraining from "../../Forms/AddTraining/AddTraining";
 import { StyledContainerDay } from "./style";
 import useGetApi from "../../../hooks/api/get/useApiGet";
+import { TDay } from "../../../types";
 
 type TCalendarDay = {
   data: TDay[];

@@ -10,7 +10,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { months } from "../../../utils/utils";
+import { months } from "../../../constants";
 
 ChartJS.register(
   CategoryScale,

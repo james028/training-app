@@ -10,8 +10,8 @@ import {
 } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
-import { get } from "../../../utils/utils";
 import TextArea from "./TextArea/TextArea";
+import { get } from "../../../utils";
 
 export type FormTextAreaProps<TFormValues extends FieldValues> = {
   id: string;

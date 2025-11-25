@@ -13,7 +13,14 @@ const useGetApi = (
   paramsObj?: Record<string, string | number>,
   //zmienic
   headers?: Record<string, string | number>,
-) => {
+): {
+  data: any;
+  isLoading: boolean;
+  isError: boolean;
+  status: "error" | "loading" | "success";
+  refetch: any;
+  isRefetching: boolean;
+} => {
   const { linkUrl, user } = useAppContext();
   const token = user?.accessToken ?? {};
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import { useLocalStorage } from "../../../hooks/useLocalStorage/useLocalStorage";
+import PlankSection from "../../PlankSection/PlankSection";
 
 type HeaderItemProps = {
   page: string | null;
@@ -138,6 +139,7 @@ const Navbar = () => {
               })}
             </ul>
           </div>
+          <PlankSection />
         </div>
       </nav>
     </>

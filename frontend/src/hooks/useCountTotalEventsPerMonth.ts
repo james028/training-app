@@ -1,4 +1,4 @@
-import { TCalendarData, TDay, TMonth } from "../types/app-types";
+import { TCalendarData, TDay, TMonth } from "../types";
 
 export const useCountTotalNestedEventsPerMonth = (
   data: TCalendarData,

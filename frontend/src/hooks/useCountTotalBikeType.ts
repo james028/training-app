@@ -1,4 +1,4 @@
-import { TCalendarData } from "../types/app-types";
+import { TCalendarData } from "../types";
 
 export const useCountTotalBikeType = (data: TCalendarData): any => {
   const bikeTypeResults: Record<string, number> = {};

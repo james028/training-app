@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
 import { calendarData } from "../../mock/mock";

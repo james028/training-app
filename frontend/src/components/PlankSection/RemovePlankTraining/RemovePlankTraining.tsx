@@ -1,10 +1,10 @@
 import React from "react";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
-import { monthObject } from "../../../utils/utils";
 import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
 import { useAppContext } from "../../../appContext/appContext";
+import { monthObject } from "../../../constants";
 
 type RemovePlankTrainingProps = {
   closeModal: () => void;

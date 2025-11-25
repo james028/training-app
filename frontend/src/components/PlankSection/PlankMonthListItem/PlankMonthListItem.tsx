@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { monthObject } from "../../../utils/utils";
 import { DateTime } from "luxon";
 import {
   StyledPlankSectionListItem,
@@ -12,6 +11,7 @@ import {
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import Modal from "../../shared/Modal/Modal";
 import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
+import { monthObject } from "../../../constants";
 
 type PlankMonthListItem = {
   itemData: Record<string, any[]>;

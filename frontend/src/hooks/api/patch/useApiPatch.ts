@@ -1,4 +1,9 @@
-import { QueryClient, QueryKey, useMutation } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryKey,
+  useMutation,
+  UseMutationResult,
+} from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 
@@ -9,7 +14,7 @@ const usePatchApi = (
   queryKey: Array<QueryKey> | QueryKey,
   params?: Record<any, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
-) => {
+): UseMutationResult<Promise<any>, Error, any> => {
   const updatePatch = async ({
     paramsObj,
     bodyData,

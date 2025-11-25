@@ -75,7 +75,7 @@ function App() {
         { path: "", element: null },
         { path: "/dashboard", element: <Dashboard /> }, //tu bedzie dashboard
         //...trainingsRoutes,
-        ...pages,
+        //...pages,
         //...trainingsRoutes2,
       ],
     },
