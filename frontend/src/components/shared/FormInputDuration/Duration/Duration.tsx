@@ -15,32 +15,41 @@ type DurationProps = {
 //   value: string;
 // };
 
+type DurationArrayData = {
+  title: string;
+  fieldName: string;
+  value: number;
+};
 const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
   ({ id, name, className = "", rules, ...props }, ref) => {
     // dać do folderu const.ts ///nieee
     const { register, setValue } = useFormContext();
 
-    const durationArrayData: any = [
-      {
-        title: "hr",
-        fieldName: "hour",
-      },
-      {
-        title: "min",
-        fieldName: "minutes",
-      },
-      {
-        title: "s",
-        fieldName: "seconds",
-      },
-    ];
+    const durationArrayData: Pick<DurationArrayData, "title" | "fieldName">[] =
+      [
+        {
+          title: "hr",
+          fieldName: "hour",
+        },
+        {
+          title: "min",
+          fieldName: "minutes",
+        },
+        {
+          title: "s",
+          fieldName: "seconds",
+        },
+      ];
 
     //zmienić typowanie
     const { defaultValue } = props as any;
 
-    //zrobić tak aby w tym inoucie bylo max 2 znaki
+    //zrobić tak aby w tym inoucie bylo max 2 znaki !!!
 
+    console.log(defaultValue, "def");
     const durationArray = defaultValue?.split(":");
+    console.log(durationArray, "arr");
+    ///const durationData: DurationArrayData[] = durationArrayData?.map(
     const durationData = durationArrayData?.map(
       (duration: Record<string, string>, index: string | number) => {
         return {
@@ -50,13 +59,15 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
       },
     );
 
+    console.log(durationData);
+
     useEffect(() => {
-      if (durationData) {
-        durationData.map((data: any) => {
-          const { fieldName, value } = data;
-          setValue(`${id}.${fieldName}`, `${value}`, { shouldDirty: true });
-        });
-      }
+      //if (durationData) {
+      durationData.forEach((data: any) => {
+        const { fieldName, value } = data;
+        setValue(`${id}.${fieldName}`, `${value}`, { shouldDirty: true });
+      });
+      //}
     }, [setValue, id, defaultValue]);
 
     return (
@@ -68,7 +79,7 @@ const Duration: FC<DurationProps> = forwardRef<HTMLInputElement, DurationProps>(
                 <abbr title="hours">{title}</abbr>
               </StyledDurationLabel>
               <input
-                id={id}
+                id={`id-${title}`}
                 aria-label={fieldName}
                 type="number"
                 className={`bg-gray-50 appearance-none border border-gray-300 rounded w-full 

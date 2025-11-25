@@ -1,6 +1,5 @@
 import React from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
-import { RegistrationFormFields } from "../../Forms/EditTrainingForm/EditTrainingForm";
 import { useFormContext } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import { DateTime } from "luxon";
@@ -19,10 +18,12 @@ import {
   MonthNameLower,
   MonthObjectMap,
 } from "../../../types";
-import { MONTH_NAMES_MAP } from "../../../constants";
+import {
+  MONTH_NAMES_MAP,
+  RADIO_INPUT_DIFFERENT_TYPES_PLANK_VALUES,
+  URL,
+} from "../../../constants";
 import toast from "react-hot-toast";
-
-const URL = "http://localhost:5001/";
 
 const AddEditPlankTraining = () => {
   const {
@@ -41,14 +42,14 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutateAsync, mutate } = usePostApi(
+  const { mutateAsync } = usePostApi(
     //`${URL}${link}/create`,
     `${URL}api/plank/create`,
     ["createPlank"],
     null,
     { Authorization: `Bearer ${token}` },
   );
-  const { mutateAsync: updateMutate } = usePatchApi(
+  const { mutateAsync: updateMutateAsync } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
     null,
@@ -60,53 +61,37 @@ const AddEditPlankTraining = () => {
     undefined,
   );
 
-  // poprawic to
-  // @ts-ignore
+  //otypować any
   const onSubmit = handleSubmit(async (data: any) => {
     let convertedBodyData = {
       ...data,
       duration: convertObjectWithNumbersToString(data.duration),
     };
 
-    const handleActionFetch = () => {
-      setTimeout(async () => {
-        setToggleOpenFormPanelTraining(false);
-        reset();
-        await refetchList?.();
-      }, 500);
-    };
-
-    console.log(data, convertedBodyData);
-
     try {
       const isEditing = Object.keys(objectData ?? {}).length > 0;
       if (isEditing) {
-        //to zmienic na async await
-
-        console.log("edycja");
+        //edit
         const editedData = {
-          ...data,
-          day: Number(data.day),
+          ...convertedBodyData,
+          day: Number(convertedBodyData.day),
           id: objectData?._id,
         };
-        await updateMutate({
+        await updateMutateAsync({
           paramsObj: null,
           bodyData: editedData,
         });
       } else {
-        console.log("tworzenie");
+        //create
         await mutateAsync({
           paramsObj: null,
           bodyData: convertedBodyData,
         });
       }
-      //setTimeout(async () => {
       setToggleOpenFormPanelTraining(false);
       reset();
       await refetchList?.();
-      //}, 500);
     } catch (error) {
-      //toast.error(error?.response.message);
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
       //console.log((error && error?.message) || "");
@@ -236,6 +221,7 @@ const AddEditPlankTraining = () => {
               type="radio"
               name="isDifferentExercises"
               label="Czy plank był róznorodny, ze zmienionymi ćwiczeniami?"
+              radioOptions={RADIO_INPUT_DIFFERENT_TYPES_PLANK_VALUES}
               className="mb-2"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}

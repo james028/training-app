@@ -9,6 +9,7 @@ export type FormRadioInputProps<TFormValues extends FieldValues> = {
   id: string;
   label: string;
   name: Path<TFormValues>;
+  radioOptions: any[];
   rules?: RegisterOptions;
   //zmienic
   errors?: any;
@@ -20,6 +21,7 @@ const FormInputRadio = <TFormValues extends Record<string, unknown>>({
   id,
   label,
   name,
+  radioOptions,
   rules,
   errors,
   className,
@@ -37,6 +39,7 @@ const FormInputRadio = <TFormValues extends Record<string, unknown>>({
         id={id}
         name={name}
         label={label}
+        radioOptions={radioOptions}
         rules={rules}
         aria-invalid={hasError}
         className={`${

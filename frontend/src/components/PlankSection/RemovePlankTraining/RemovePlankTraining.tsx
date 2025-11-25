@@ -4,14 +4,9 @@ import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
 import { useAppContext } from "../../../appContext/appContext";
-import { MONTH_NAMES_MAP } from "../../../constants";
-
-type RemovePlankTrainingProps = {
-  closeModal: () => void;
-};
-
-const URL = "http://localhost:5001/";
-//const DELETE_URL = "http://localhost:5001/api/plank/delete";
+import { MONTH_NAMES_MAP, URL } from "../../../constants";
+import { RemovePlankTrainingProps } from "../../../types";
+import toast from "react-hot-toast";
 
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const {
@@ -19,7 +14,7 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   } = usePlankSectionContext();
   const { link } = useAppContext();
 
-  const { mutate } = useDeleteApi(
+  const { mutateAsync } = useDeleteApi(
     `${URL}${link}/delete`,
     ["deletePlank"],
     undefined,
@@ -31,17 +26,21 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
     undefined,
   );
 
-  const submitDeleteRequest = (): void => {
+  const submitDeleteRequest = async (): Promise<void> => {
     const paramsObject = {
       id,
       month,
     };
 
-    mutate({ paramsObj: paramsObject });
-    setTimeout(async () => {
+    try {
+      await mutateAsync({ paramsObj: paramsObject });
       await refetchList?.();
-    }, 500);
-    closeModal();
+      closeModal();
+    } catch (error) {
+      let message = error instanceof Error ? error.message : "Błąd zapisu";
+      console.log(message);
+      toast.error(message);
+    }
   };
 
   return (

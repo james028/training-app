@@ -1,9 +1,3 @@
-// src/
-// ├── constants/
-// │   ├── api.ts           // Ścieżki bazowe API, timeouty
-// │   ├── index.ts         // Zbiorczy eksport
-// │   └── dates.ts         // Wszystkie stałe związane z datami, miesiącami, dniami
-
 import { MonthIndex, MonthName } from "../types";
 import { t } from "i18next";
 
