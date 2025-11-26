@@ -1,16 +1,10 @@
 import { createContext, useContext } from "react";
+import { PlankSectionContextType } from "../../../types";
 
-export type PlankSectionContextProps = {
-  toggleOpenFormPanelTraining: boolean;
-  //zmienic
-  setToggleOpenFormPanelTraining: any;
-  objectData: any;
-  setObjectData: any;
-};
-export const PlankSectionContext = createContext<PlankSectionContextProps>({
+export const PlankSectionContext = createContext<PlankSectionContextType>({
   toggleOpenFormPanelTraining: false, // set a default value
   setToggleOpenFormPanelTraining: () => {},
-  objectData: {},
+  objectData: undefined,
   setObjectData: () => {},
 });
 export const usePlankSectionContext = () => useContext(PlankSectionContext);

@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const PlankDataModel = require("./model");
 
-const data = [
+const data1 = [
   {
     1: [
       {
@@ -67,6 +67,36 @@ const data = [
       },
       {
         duration: "01:01:02",
+        month: "5",
+        day: 18,
+        _id: "6602d89e3339f1f956d48702",
+      },
+    ],
+    6: [],
+    7: [],
+    8: [],
+    9: [],
+    10: [],
+    11: [],
+    12: [],
+  },
+];
+
+const data = [
+  {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [
+      {
+        duration: "01:01:02",
+        month: "5",
+        day: 17,
+        _id: "6602d89e3339f1f956d48701",
+      },
+      {
+        duration: "02:01:02",
         month: "5",
         day: 18,
         _id: "6602d89e3339f1f956d48702",

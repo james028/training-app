@@ -1,43 +1,18 @@
-import React, { useState } from "react";
-import PlankMonthList from "./PlankMonthList/PlankMonthList";
+import React from "react";
 import AddEditPlankTraining from "./AddEditPlankTraining/AddEditPlankTraining";
-import { PlankSectionContext } from "./PlankSectionContext/PlankSectionContext";
-import { FormProvider, useForm } from "react-hook-form";
+import PlankSectionWrapper from "./PlankSectionWrapper/PlankSectionWrapper";
+import PlankMonthList from "./PlankMonthList/PlankMonthList";
 
 const PlankSection = () => {
-  const [toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining] =
-    useState(true);
-  const [objectData, setObjectData] = React.useState();
-
-  const form = useForm<any>({
-    defaultValues: {
-      month: "",
-      day: "",
-      duration: {
-        hour: "",
-        minutes: "",
-        seconds: "",
-      },
-      isDifferentExercises: "",
-    },
-  });
-
   return (
     <div>
       Plank Section
-      <PlankSectionContext.Provider
-        value={{
-          toggleOpenFormPanelTraining,
-          setToggleOpenFormPanelTraining,
-          objectData,
-          setObjectData,
-        }}
-      >
-        <FormProvider {...form}>
-          <AddEditPlankTraining />
-          {/*<PlankMonthList />*/}
-        </FormProvider>
-      </PlankSectionContext.Provider>
+      <PlankSectionWrapper>
+        <div>
+          {/*<AddEditPlankTraining />*/}
+          <PlankMonthList />
+        </div>
+      </PlankSectionWrapper>
     </div>
   );
 };

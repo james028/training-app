@@ -157,6 +157,7 @@ const AddEditPlankTraining = () => {
       : [];
   };
 
+  const isEditing = Object.keys(objectData ?? {}).length > 0;
   return (
     <>
       <button
@@ -176,12 +177,12 @@ const AddEditPlankTraining = () => {
               className="mb-2 w-2/5"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
-              options={Object.entries(MONTH_NAMES_MAP).map(([index, month]) => {
-                return {
+              options={Object.entries(MONTH_NAMES_MAP).map(
+                ([index, month]) => ({
                   value: index.length === 1 ? `0${index}` : index,
                   name: month,
-                };
-              })}
+                }),
+              )}
               // @ts-ignore
               defaultValue={
                 MONTH_NAMES_MAP[
@@ -200,6 +201,7 @@ const AddEditPlankTraining = () => {
               // @ts-ignore
               defaultValue={getDaysByMonth()?.find(
                 (day: { value: number; name: string }) =>
+                  // @ts-ignore
                   day === objectData?.day,
               )}
             />
@@ -232,9 +234,7 @@ const AddEditPlankTraining = () => {
               className="focus:outline-none text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
               type="submit"
             >
-              {Object.keys(objectData ?? {}).length > 0
-                ? "Zaaktualizuj"
-                : "Zapisz"}
+              {isEditing ? "Zaaktualizuj" : "Zapisz"}
             </button>
           </form>
         </>

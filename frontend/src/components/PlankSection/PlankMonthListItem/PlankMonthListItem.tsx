@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { DateTime } from "luxon";
 import {
   StyledPlankSectionListItem,
@@ -12,11 +11,12 @@ import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionConte
 import Modal from "../../shared/Modal/Modal";
 import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
 import { MONTH_NAMES_MAP } from "../../../constants";
+import { MonthIndex, TPlankDayData, TPlankMonthData } from "../../../types";
 
-type PlankMonthListItem = {
-  itemData: Record<string, any[]>;
+interface PlankMonthListItem {
+  itemData: Record<string, TPlankMonthData[] | any[]>;
   item: string;
-};
+}
 
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
@@ -27,16 +27,6 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     setObjectData,
   } = usePlankSectionContext();
 
-  function foo(values: string[], index: number): number {
-    return values
-      ?.map((e: string) =>
-        e.split(":").reverse()[index]
-          ? Number(e.split(":").reverse()[index])
-          : 0,
-      )
-      .reduce((a: any, b: any) => a + b);
-  }
-
   const validate = (time: number) => {
     if (time > 59 || time < 0) {
       throw new Error(
@@ -46,43 +36,63 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     return time;
   };
 
-  function sumMinutes(values: string[]) {
-    const seconds = foo(values, 0);
-    let minutes = foo(values, 1);
-    let hours = foo(values, 2);
+  /**
+   * Konwertuje string czasu ("HH:MM:SS", "MM:SS" lub "SS") na całkowitą liczbę sekund.
+   * Zapewnia bezpieczeństwo przy niekompletnych formatach.
+   */
+  const timeStringToSeconds = (timeString: string): number => {
+    // Rozdzielenie i odwrócenie (daje [SS, MM, HH] lub krótszą tablicę)
+    const parts = timeString.split(":").reverse();
 
-    minutes *= 60;
-    hours *= 3600;
-
-    //tu ogarnąć
-    // console.log(new Date((hours + minutes + seconds) * 1000), "1");
-    // console.log(
-    //   new Date((hours + minutes + seconds) * 1000).toISOString(),
-    //   "2",
-    // );
-    // console.log(
-    //   DateTime.fromISO(String(new Date((hours + minutes + seconds) * 1000))),
-    //   "3",
-    // );
-    //console.log(String(new Date((hours + minutes + seconds) * 1000)), "4");
-    return new Date((hours + minutes + seconds) * 1000)
-      .toISOString()
-      .substr(11, 8);
-    //return result.split(":").reverse()[2] === "00" ? result.slice(3) : result;
-  }
-
-  const displayMonthNames = (monthIndex: string): string => {
-    return (
-      MONTH_NAMES_MAP[monthIndex as unknown as keyof typeof MONTH_NAMES_MAP] ??
-      "-"
+    // Parsowanie poszczególnych części, używając 0 jako domyślnej wartości;
+    const [seconds, minutes, hours] = [0, 1, 2].map(
+      (_, number) => Number(parts[number]) || number,
     );
+
+    return seconds + minutes * 60 + hours * 3600;
   };
-  const displaySumMinutes = (data: any, itemIndex: any): string => {
-    const durations = data[itemIndex].map(
-      (item: Record<string, string>) => item.duration,
-    );
 
-    return durations.length ? sumMinutes(durations) : "-";
+  /**
+   * Bezpiecznie konwertuje całkowitą liczbę sekund na string "HH:MM:SS".
+   * Poprawnie obsługuje sumy > 24h.
+   */
+  const secondsToTimeString = (totalSeconds: number): string => {
+    if (totalSeconds < 0) return "00:00:0ze0";
+
+    // Obliczenia
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+
+    // Funkcja pomocnicza do formatowania (dodaje wiodące zero)
+    const pad = (num: number) => num.toString().padStart(2, "0");
+
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  };
+
+  const sumTimeOptimized = (values: string[]): string => {
+    // Zliczamy całkowitą liczbę sekund za pomocą reduce
+    const totalSeconds = values.reduce((sum, timeString) => {
+      return sum + timeStringToSeconds(timeString);
+    }, 0);
+
+    // Konwersja sumy sekund z powrotem na HH:MM:SS
+    return secondsToTimeString(totalSeconds);
+  };
+
+  const displaySumMinutes = (data: TPlankDayData[] | any[]): string => {
+    const durations = data.map((item: TPlankDayData) => item.duration);
+    return durations.length > 0 ? sumTimeOptimized(durations) : "-";
+  };
+
+  const displayMonthNames = (monthIndex: number): string => {
+    if (monthIndex >= 1 && monthIndex <= 12) {
+      if (monthIndex in MONTH_NAMES_MAP) {
+        return MONTH_NAMES_MAP[monthIndex as MonthIndex];
+      }
+    }
+
+    return "-";
   };
 
   const checkIfMonthIsExist = (monthIndex: string): boolean => {
@@ -98,10 +108,13 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     return referenceMonth <= checkMonth;
   };
 
+  const monthData: TPlankDayData[] | any[] = itemData[item];
+  console.log(monthData, "1");
+
   return (
     <StyledPlankSectionListItemContainer>
       <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">
-        {displayMonthNames(item)}
+        {displayMonthNames(Number(item))}
       </div>
       {checkIfMonthIsExist(item) ? (
         <>
@@ -116,11 +129,12 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
               Rózne
             </StyledColumnWidth10>
           </StyledPlankSectionListItem>
-          {itemData[item].length === 0 ? <div>-</div> : null}
-          {itemData[item].map((t, index) => {
+          {monthData.length === 0 ? <div>-</div> : null}
+          {monthData.map((t, index) => {
+            console.log(t, "t");
             return (
               //zmienić
-              <StyledPlankSectionListItem key={index}>
+              <StyledPlankSectionListItem key={t._id}>
                 <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {String(t.day).length === 1 ? `0${t.day}` : t.day}
                 </StyledColumnWidth20>
@@ -204,16 +218,12 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           <div>
             <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Liczba treningów:{" "}
-              <span className="font-bold">{itemData[item]?.length}</span>
+              <span className="font-bold">{monthData?.length}</span>
             </div>
             <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Suma czasu:{" "}
-              <span className="font-bold">
-                {displaySumMinutes(itemData, item)}
-              </span>
-              {itemData[item]?.length ? (
-                <span className="ml-1">h:min:s</span>
-              ) : null}
+              <span className="font-bold">{displaySumMinutes(monthData)}</span>
+              {monthData?.length ? <span className="ml-1">h:min:s</span> : null}
             </div>
           </div>
         </>

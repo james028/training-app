@@ -6,24 +6,20 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 
 import Loading from "../../shared/Loading/Loading";
 import { useAppContext } from "../../../appContext/appContext";
-
-const URL = "http://localhost:5001/";
+import { URL } from "../../../constants";
+import { TPlankData } from "../../../types";
 
 const PlankMonthList = () => {
-  const { linkUrl, user } = useAppContext();
+  const { user } = useAppContext();
   const token = user?.accessToken ?? {};
-  //temporary, rozwiazac to z globalnego contextu
-  //const link = "plank";
 
-  console.log(linkUrl, "aaaaaaaa");
   const { data, status, isRefetching } = useGetApi(
     //`${URL}${linkUrl}/list`,
     `${URL}api/plank/list`,
     ["plankList"],
     undefined,
     undefined,
-    //{ Authorization: `Bearer ${token}` },
-    { "X-Request-Id": "123456" },
+    { Authorization: `Bearer ${token}`, "X-Request-Id": "123456" },
   );
 
   if (status === "loading" || isRefetching) {
@@ -39,10 +35,11 @@ const PlankMonthList = () => {
   return (
     <>
       {data?.length > 0 ? (
-        data.map((itemData: any, index: number) => {
+        data.map((itemData: TPlankData, index: number) => {
+          console.log(itemData, "itemData", itemData);
           return (
             <StyledPlankSectionContainer key={index}>
-              {Object.keys(itemData).map((item: string, index) => {
+              {Object.keys(itemData).map((item: string, index: number) => {
                 return (
                   <PlankMonthListItem
                     key={index}

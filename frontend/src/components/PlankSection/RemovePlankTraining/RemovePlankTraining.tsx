@@ -9,10 +9,9 @@ import { RemovePlankTrainingProps } from "../../../types";
 import toast from "react-hot-toast";
 
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
-  const {
-    objectData: { month, day, duration, _id: id },
-  } = usePlankSectionContext();
   const { link } = useAppContext();
+  const { objectData } = usePlankSectionContext();
+  const { month, day, duration, _id: id } = objectData ?? {};
 
   const { mutateAsync } = useDeleteApi(
     `${URL}${link}/delete`,
@@ -48,8 +47,10 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
       <div className="shadow rounded-lg bg-white overflow-hidden w-full block p-8">
         <div className="text-base text-neutral-600 dark:text-neutral-200 cursor-default">
           Czy chcesz usunąć trening z miesiąca{" "}
-          {MONTH_NAMES_MAP[month as unknown as keyof typeof MONTH_NAMES_MAP]} z
-          dnia {day} o dlugosci {duration}?
+          <>
+            {MONTH_NAMES_MAP[month as unknown as keyof typeof MONTH_NAMES_MAP]}{" "}
+            z dnia {day} o dlugosci {duration && duration}?
+          </>
         </div>
       </div>
       <SubmitButtons
