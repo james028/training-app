@@ -115,16 +115,21 @@ const data = [
 // @desc    Gets all plank trainings from every month
 // @route   GET /api/plank/list
 exports.getPlank = asyncHandler(async (req, res) => {
-  //const id = req.user.id;
+  const id = req.user.id;
+  console.log(id);
+
+  if (!id) {
+    res.status(401).json({ message: "Nie istnieje id użytkownika" });
+  }
   try {
     //const plankList = await PlankDataModel.find({}, null, null);
 
     //console.log(id);
-    //const plankList = await PlankDataModel.findById({ _id: id }, null, null);
+    const plankList = await PlankDataModel.findById({ _id: id }, null, null);
     //const plankList = await PlankDataModel.findById({}, null, null);
     //const plankList = await PlankDataModel.deleteMany({});
 
-    // console.log(plankList, "planList");
+    console.log(plankList, "planList");
     // if (!plankList) {
     //   res.status(404).json({ message: "Data not found" });
     // }
@@ -203,57 +208,102 @@ exports.createPlank = asyncHandler(async (req, res) => {
 // @desc    Update exist training
 // @route   PATCH /api/plank/update
 exports.updatePlank = asyncHandler(async (req, res) => {
-  const { id, month, duration, day, isDifferentExercises } = req.body;
+  //const { id, month, duration, day, isDifferentExercises } = req.body;
+
+  const { monthKey, recordId, updates } = req.body; // updates = { duration: "180", day: 16 }
+  const userId = req.user.id;
+
+  // Walidacja (upewnij się, że monthKey i recordId istnieją)
+  if (!monthKey || !recordId || !updates || Object.keys(updates).length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Brak wymaganych danych do aktualizacji." });
+  }
 
   try {
-    const findEntryById = async (id) => {
-      try {
-        const docs = await PlankDataModel.find({}, null, null);
-        for (const doc of docs) {
-          for (let month = 1; month <= 12; month++) {
-            const entries = doc[month.toString()];
-            for (const entry of entries) {
-              if (entry._id.toString() === id) {
-                return entry;
-              }
-            }
-          }
-        }
-        return null;
-      } catch (error) {
-        console.error("Error finding entry:", error);
-        return null;
-      }
-    };
-
-    const findData = await findEntryById(id);
-
-    if (!findData) {
-      res.status(404).json({ message: "Data not found" });
-    }
-
-    //po co to ??
-    //usuniecie ?
-    // await PlankDataModel.updateOne(
-    //   { [`${findData?.month}._id`]: findData?._id },
-    //   { $pull: { [findData?.month]: { _id: findData?._id } } },
+    // const findEntryById = async (id) => {
+    //   try {
+    //     const docs = await PlankDataModel.find({}, null, null);
+    //     for (const doc of docs) {
+    //       for (let month = 1; month <= 12; month++) {
+    //         const entries = doc[month.toString()];
+    //         for (const entry of entries) {
+    //           if (entry._id.toString() === id) {
+    //             return entry;
+    //           }
+    //         }
+    //       }
+    //     }
+    //     return null;
+    //   } catch (error) {
+    //     console.error("Error finding entry:", error);
+    //     return null;
+    //   }
+    // };
+    //
+    // const findData = await findEntryById(id);
+    //
+    // if (!findData) {
+    //   res.status(404).json({ message: "Data not found" });
+    // }
+    //
+    // //po co to ??
+    // //usuniecie ?
+    // // await PlankDataModel.updateOne(
+    // //   { [`${findData?.month}._id`]: findData?._id },
+    // //   { $pull: { [findData?.month]: { _id: findData?._id } } },
+    // // );
+    //
+    // const updateData = {
+    //   month: month || findData?.month,
+    //   duration: duration || findData?.duration,
+    //   day: day || findData?.day,
+    //   isDifferentExercises:
+    //     isDifferentExercises || findData?.isDifferentExercises,
+    // };
+    //
+    // const updatedData = await PlankDataModel.updateOne(
+    //   {},
+    //   { $push: { [month]: { _id: id, ...updateData } } },
     // );
+    //
+    // if (updatedData) {
+    //   res.status(200).json({ message: `Zaaktualizowano` });
+    // }
 
-    const updateData = {
-      month: month || findData?.month,
-      duration: duration || findData?.duration,
-      day: day || findData?.day,
-      isDifferentExercises:
-        isDifferentExercises || findData?.isDifferentExercises,
-    };
+    // 1. BUDOWANIE DYNAMICZNEGO BLOKU $SET
+    const setUpdate = Object.keys(updates).reduce((acc, key) => {
+      // Dla każdego klucza (np. 'duration', 'day') budujemy pełną ścieżkę Mongoose:
+      // np. "2.$.duration" : "180"
+      acc[`${monthKey}.$.${key}`] = updates[key];
+      return acc;
+    }, {}); // Inicjujemy jako pusty obiekt, który będzie blokiem $set
 
     const updatedData = await PlankDataModel.updateOne(
-      {},
-      { $push: { [month]: { _id: id, ...updateData } } },
+      // BLOK 1: FILTR (Niezmieniony)
+      {
+        userId: userId,
+        [monthKey]: {
+          $elemMatch: {
+            _id: recordId,
+          },
+        },
+      },
+
+      // BLOK 2: AKTUALIZACJA
+      {
+        $set: setUpdate, // Wstawiamy dynamicznie zbudowany obiekt
+      },
     );
 
-    if (updatedData) {
-      res.status(200).json({ message: `Zaaktualizowano` });
+    // Reszta logiki obsługi odpowiedzi
+    if (updatedData.modifiedCount > 0) {
+      res.status(200).json({ message: "Rekord pomyślnie zaktualizowany." });
+    } else {
+      // Może się zdarzyć, jeśli np. recordId było poprawne, ale dane do zmiany były identyczne
+      res
+        .status(404)
+        .json({ message: "Nie znaleziono rekordu lub dane były identyczne." });
     }
   } catch (error) {
     console.log(error, "err");

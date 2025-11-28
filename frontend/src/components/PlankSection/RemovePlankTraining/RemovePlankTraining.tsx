@@ -19,11 +19,10 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
     undefined,
   );
 
-  const { refetch: refetchList } = useGetApi(
-    `${URL}${link}/list`,
-    ["plankList"],
-    undefined,
-  );
+  const { refetch: refetchList } = useGetApi({
+    url: `${URL}${link}/list`,
+    queryKey: ["plankList"],
+  });
 
   const submitDeleteRequest = async (): Promise<void> => {
     const paramsObject = {

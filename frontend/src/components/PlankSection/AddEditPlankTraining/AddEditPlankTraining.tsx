@@ -33,7 +33,7 @@ const AddEditPlankTraining = () => {
   } = usePlankSectionContext();
 
   const { link, user } = useAppContext();
-  const token = user?.accessToken ?? "";
+  const token = user?.accessToken ?? "691c7f9f7ff1367b95d4037c";
 
   const {
     handleSubmit,
@@ -42,24 +42,21 @@ const AddEditPlankTraining = () => {
     formState: { errors },
   } = useFormContext();
 
-  const { mutateAsync } = usePostApi(
-    //`${URL}${link}/create`,
-    `${URL}api/plank/create`,
-    ["createPlank"],
-    null,
-    { Authorization: `Bearer ${token}` },
-  );
+  const { mutateAsync } = usePostApi({
+    link: `${URL}api/plank/create`,
+    queryKey: ["createPlank"],
+    headers: { Authorization: `Bearer ${token}` },
+  });
   const { mutateAsync: updateMutateAsync } = usePatchApi(
     `${URL}${link}/update`,
     ["updatePlank"],
     null,
   );
-  const { refetch: refetchList } = useGetApi(
-    //`${URL}${link}/list`,
-    `${URL}api/plank/list`,
-    ["plankList"],
-    undefined,
-  );
+  const { refetch: refetchList } = useGetApi({
+    url: `${URL}api/plank/list`,
+    queryKey: ["plankList"],
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
   //otypować any
   const onSubmit = handleSubmit(async (data: any) => {
@@ -78,13 +75,11 @@ const AddEditPlankTraining = () => {
           id: objectData?._id,
         };
         await updateMutateAsync({
-          paramsObj: null,
           bodyData: editedData,
         });
       } else {
         //create
         await mutateAsync({
-          paramsObj: null,
           bodyData: convertedBodyData,
         });
       }

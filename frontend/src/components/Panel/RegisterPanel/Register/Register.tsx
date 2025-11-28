@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { registerSchema } from "../schemas";
 import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
+import { URL } from "../../../../constants";
 
 type RegisterFormFields = {
   email: string;
@@ -12,8 +13,6 @@ type RegisterFormFields = {
   password: string;
   confirmPassword: string;
 };
-
-const URL = "http://localhost:5001/";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -39,11 +38,10 @@ const Register = () => {
   //   ["userRegister"],
   //   null,
   // );
-  const { responseStatus } = usePostApi(
-    `${URL}${linkRegister}`,
-    ["userRegister"],
-    null,
-  );
+  const { responseStatus } = usePostApi({
+    link: `${URL}${linkRegister}`,
+    queryKey: ["userRegister"],
+  });
 
   const onSubmit = handleSubmit((data: any) => {
     try {

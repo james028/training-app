@@ -11,16 +11,14 @@ import { TPlankData } from "../../../types";
 
 const PlankMonthList = () => {
   const { user } = useAppContext();
-  const token = user?.accessToken ?? {};
+  const token = user?.accessToken ?? "691c7f9f7ff1367b95d4037c";
 
-  const { data, status, isRefetching } = useGetApi(
-    //`${URL}${linkUrl}/list`,
-    `${URL}api/plank/list`,
-    ["plankList"],
-    undefined,
-    undefined,
-    { Authorization: `Bearer ${token}`, "X-Request-Id": "123456" },
-  );
+  const { data, status, isRefetching } = useGetApi({
+    url: `${URL}api/plank/list`,
+    queryKey: ["plankList"],
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  console.log("sssssssssssssssssssssssssssssssssssssssssssssssaaaaaaaaaaaaaaa");
 
   if (status === "loading" || isRefetching) {
     return <Loading />;
@@ -32,10 +30,11 @@ const PlankMonthList = () => {
 
   console.log(data);
 
+  const data1: TPlankData[] = [];
   return (
     <>
-      {data?.length > 0 ? (
-        data.map((itemData: TPlankData, index: number) => {
+      {data1?.length > 0 ? (
+        data1.map((itemData: any, index: number) => {
           console.log(itemData, "itemData", itemData);
           return (
             <StyledPlankSectionContainer key={index}>

@@ -5,6 +5,7 @@ exports.authMiddleware = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   console.log(req.headers, "headers");
+  console.log(req.headers.connection, "headers2");
 
   console.log("auth middleware", authHeader);
   if (!authHeader)

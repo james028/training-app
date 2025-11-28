@@ -28,7 +28,7 @@ const Navbar = () => {
   const {
     responseStatus,
     //mutation
-  } = usePostApi(`${URL}${linkLogout}`, ["userLogout"], null);
+  } = usePostApi({ link: `${URL}${linkLogout}`, queryKey: ["userLogout"] });
 
   const handleLogOut = () => {
     console.log("click logout");

@@ -28,7 +28,7 @@ const TrainingsType = () => {
     refetch,
     status,
     isRefetching,
-  } = useGetApi(`${URL}${link}`, ["trainingTypeList"], undefined);
+  } = useGetApi({ url: `${URL}${link}`, queryKey: ["trainingTypeList"] });
 
   // const { mutation } = usePostApi(
   //   `${URL}${linkCreate}`,
@@ -122,7 +122,7 @@ const TrainingsType = () => {
         </form>
       </FormProvider>
       <TrainingTypeList
-        dataTrainingType={dataTrainingType}
+        dataTrainingType={[]}
         status={status}
         isRefetching={isRefetching}
       />

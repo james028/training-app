@@ -51,11 +51,10 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
   const linkTrainingType = "api/training-type/list";
 
   console.log(linkTrainingType);
-  const { data: dataTrainingType } = useGetApi(
-    `${URL}${linkTrainingType}`,
-    ["trainingTypeList"],
-    undefined,
-  );
+  const { data: dataTrainingType } = useGetApi({
+    url: `${URL}${linkTrainingType}`,
+    queryKey: ["trainingTypeList"],
+  });
   // const { mutation } = usePostApi(
   //   `${URL}${linkCreate}`,
   //   ["createNewTraining"],
@@ -96,16 +95,17 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
                 errors={errors}
                 rules={{ required: "Pole jest wymagane" }}
                 options={
-                  dataTrainingType.length > 0 &&
-                  //zmienic typowanie
-                  dataTrainingType?.map((e: any) => {
-                    console.log(e, "e");
-
-                    return {
-                      value: e.value,
-                      name: e.trainingName,
-                    };
-                  })
+                  // dataTrainingType.length > 0 &&
+                  // //zmienic typowanie
+                  // dataTrainingType?.map((e: any) => {
+                  //   console.log(e, "e");
+                  //
+                  //   return {
+                  //     value: e.value,
+                  //     name: e.trainingName,
+                  //   };
+                  // })
+                  []
                 }
               />
               <FormInputDuration<any>

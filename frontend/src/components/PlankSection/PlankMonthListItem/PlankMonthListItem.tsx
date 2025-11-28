@@ -111,6 +111,8 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   const monthData: TPlankDayData[] | any[] = itemData[item];
   console.log(monthData, "1");
 
+  //plank monthItem do innego komp
+
   return (
     <StyledPlankSectionListItemContainer>
       <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">

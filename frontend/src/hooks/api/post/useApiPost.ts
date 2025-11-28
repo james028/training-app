@@ -1,10 +1,4 @@
-import {
-  MutateOptions,
-  QueryClient,
-  QueryKey,
-  useMutation,
-  UseMutationResult,
-} from "@tanstack/react-query";
+import { QueryClient, QueryKey, useMutation } from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import { useState } from "react";
@@ -27,14 +21,20 @@ interface ApiErrorResponse {
   };
 }
 
-interface MutationVariables {
-  //body: TBody; // Zastąp TBody rzeczywistym typem danych wejściowych
-  //body: any; // Zastąp TBody rzeczywistym typem danych wejściowych
+// Zmień interfejs na generyczny i dodaj TParams
+interface MutationVariables<
+  TBody = Record<string, any>,
+  TParams = Record<string, any>,
+> {
+  // Zostawiamy pola opcjonalne, aby obsłużyć mutacje bez body
+  bodyData?: TBody | null;
+
+  // Poprawiamy typ do TParams
+  paramsObject?: TParams | null;
+
+  // Metadane
   successMessage?: string;
   errorMessage?: string;
-
-  paramsObj: Record<any, any> | null | undefined;
-  bodyData: Record<any, any> | null | undefined;
 }
 
 const useSetResponseStatus = (): {
@@ -66,38 +66,40 @@ const useSetResponseStatus = (): {
     setStatus("error");
   };
 
-  //console.log(responseStatus, "1");
   return { responseStatus, setLoading, setSuccess, setError };
 };
 
-const usePostApi = (
-  link: string,
-  queryKey: Array<QueryKey> | QueryKey,
-  params?: Record<any, any> | null | undefined,
-  headers?: RawAxiosRequestHeaders | undefined,
-): {
+const usePostApi = <TData, TBody, TParams extends Record<string, any>>({
+  link,
+  queryKey,
+  params,
+  headers,
+}: {
+  link: string;
+  queryKey: QueryKey;
+  params?: Record<string, any> | null | undefined; // Path params (statyczne)
+  headers?: RawAxiosRequestHeaders | undefined;
+}): {
+  mutate: (variables: MutationVariables<TBody, TParams>) => void;
+  mutateAsync: (variables: MutationVariables<TBody, TParams>) => Promise<TData>;
+  isLoading: boolean;
+  isError: boolean;
+  isSuccess: boolean;
+  error: ApiErrorResponse | null;
+  data: TData | undefined;
   responseStatus: Status;
-  mutate: any;
-  mutateAsync: any;
-  // mutateAsync: (
-  //   variables: any,
-  //   options?: MutateOptions<Promise<any>, Error, any, unknown>,
-  // ) => Promise<Promise<any>>;
 } => {
   const { responseStatus, setLoading, setSuccess, setError } =
     useSetResponseStatus();
 
-  const createPost = async ({
-    paramsObj,
-    bodyData,
-  }: {
-    paramsObj: Record<any, any> | null | undefined;
-    bodyData: Record<any, any> | null | undefined;
-  }): Promise<any> => {
+  const createPost = async (
+    // Używamy zdestrukturyzowanego obiektu, który musi być poprawnie otypowany
+    { paramsObject, bodyData }: MutationVariables<TBody, TParams>,
+  ): Promise<TData> => {
     setLoading();
 
-    const result = await axios.post<string>(
-      endpointWithParams(link, params, getParams(paramsObj)),
+    const result = await axios.post<TData>(
+      endpointWithParams(link, params, getParams(paramsObject)),
       bodyData,
       { headers },
     );
@@ -105,35 +107,40 @@ const usePostApi = (
     return result.data;
   };
 
-  const { mutate, mutateAsync } = useMutation<
-    Promise<any>,
-    ApiErrorResponse,
-    MutationVariables
-  >((body) => createPost(body), {
-    onSuccess: (data, variables) => {
-      //queryClient.invalidateQueries([queryKey, link]);
-      setSuccess();
-      if (variables?.successMessage) {
-        toast.success(variables.successMessage);
-      }
-    },
-    onError: (error: any, variables: any) => {
-      setError();
-      const message =
-        variables.errorMessage ||
-        error?.response?.data?.message ||
-        "Coś poszło nie tak 😢";
-      toast.error(message);
-      // if (variables?.errorMessage) {
-      //   toast.error(variables.errorMessage);
-      // }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries([queryKey, link]);
-    },
-  });
+  const { mutate, mutateAsync, isLoading, isError, isSuccess, error, data } =
+    useMutation<TData, ApiErrorResponse, MutationVariables<TBody, TParams>>(
+      (body) => createPost(body),
+      {
+        onSuccess: (data, variables) => {
+          setSuccess();
+          if (variables?.successMessage) {
+            toast.success(variables.successMessage);
+          }
+        },
+        onError: (error: any, variables: any) => {
+          setError();
+          const message =
+            variables.errorMessage ||
+            error?.response?.data?.message ||
+            "Coś poszło nie tak 😢";
+          toast.error(message);
+        },
+        onSettled: () => {
+          queryClient.invalidateQueries([queryKey, link]);
+        },
+      },
+    );
 
-  return { responseStatus, mutate, mutateAsync };
+  return {
+    mutate,
+    mutateAsync,
+    isLoading,
+    isError,
+    isSuccess,
+    error,
+    data,
+    responseStatus,
+  };
 };
 
 export default usePostApi;

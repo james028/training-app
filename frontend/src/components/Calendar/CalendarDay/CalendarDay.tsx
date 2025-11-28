@@ -26,11 +26,10 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
   const [eventData, setEventData] = useState<Record<any, any>>({});
 
   const link = "api/training-type/list";
-  const { data: dataTrainingType } = useGetApi(
-    `${URL}${link}`,
-    ["trainingTypeList"],
-    undefined,
-  );
+  const { data: dataTrainingType } = useGetApi({
+    url: `${URL}${link}`,
+    queryKey: ["trainingTypeList"],
+  });
 
   const handleEditTraining = (event: TDay): void => {
     setOpenModalEditTraining(true);
@@ -42,16 +41,16 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
   };
 
   //albo to będzie po id, ale to juz jak zrobie nie mockowe dane, wydaje mi sie ze po id
-  const findColor = (eventType: string): string | undefined | null => {
-    //console.log(dataTrainingType, "data");
-    if (!dataTrainingType?.length) return;
-
-    const findData = dataTrainingType.find(
-      (type: any) => type.trainingName === eventType,
-    );
-
-    return findData?.color || null;
-  };
+  //const findColor = (eventType: string): string | undefined | null => {
+  // //console.log(dataTrainingType, "data");
+  // if (!dataTrainingType?.length) return;
+  //
+  // const findData = dataTrainingType.find(
+  //   (type: any) => type.trainingName === eventType,
+  // );
+  //
+  // return findData?.color || null;
+  //};
 
   const renderEvents = () => {
     if (data?.length > 3) {
