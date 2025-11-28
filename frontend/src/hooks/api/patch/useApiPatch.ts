@@ -6,24 +6,53 @@ import {
 } from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
+import toast from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
-const usePatchApi = (
-  link: string,
-  queryKey: Array<QueryKey> | QueryKey,
-  params?: Record<any, any> | null | undefined,
-  headers?: RawAxiosRequestHeaders | undefined,
-): UseMutationResult<Promise<any>, Error, any> => {
+interface ApiErrorResponse {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+}
+
+interface MutationVariables<
+  TBody = Record<string, any>,
+  TParams = Record<string, any>,
+> {
+  bodyData?: TBody | null;
+  paramsObject?: TParams | null;
+  successMessage?: string;
+  errorMessage?: string;
+}
+
+const usePatchApi = <
+  TData,
+  TBody extends Record<string, any>,
+  TParams extends Record<string, any>,
+>({
+  link,
+  queryKey,
+  params,
+  headers,
+}: {
+  link: string;
+  queryKey: QueryKey;
+  params?: Record<string, any> | null | undefined;
+  headers?: RawAxiosRequestHeaders | undefined;
+}): UseMutationResult<
+  TData,
+  ApiErrorResponse,
+  MutationVariables<TBody, TParams>
+> => {
   const updatePatch = async ({
-    paramsObj,
+    paramsObject,
     bodyData,
-  }: {
-    paramsObj: Record<any, any> | null | undefined;
-    bodyData: Record<any, any> | null | undefined;
-  }): Promise<any> => {
-    const result = await axios.patch<string>(
-      endpointWithParams(link, params, getParams(paramsObj)),
+  }: MutationVariables<TBody, TParams>): Promise<TData> => {
+    const result = await axios.patch<TData>(
+      endpointWithParams(link, params, getParams(paramsObject)),
       bodyData,
       { headers },
     );
@@ -31,12 +60,22 @@ const usePatchApi = (
     return result.data;
   };
 
-  return useMutation<Promise<any>, Error, any>((body) => updatePatch(body), {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKey, link]);
+  return useMutation<
+    TData,
+    ApiErrorResponse,
+    MutationVariables<TBody, TParams>
+  >((body) => updatePatch(body), {
+    onSuccess: (data, variables) => {
+      if (variables?.successMessage) {
+        toast.success(variables.successMessage);
+      }
     },
-    onError: () => {
-      console.log("there was an error");
+    onError: (error, variables) => {
+      const message =
+        variables.errorMessage ||
+        error?.response?.data?.message ||
+        "Coś poszło nie tak 😢";
+      toast.error(message);
     },
     onSettled: () => {
       queryClient.invalidateQueries([queryKey, link]);

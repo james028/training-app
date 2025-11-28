@@ -31,7 +31,7 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
     };
 
     try {
-      await mutateAsync({ paramsObj: paramsObject });
+      await mutateAsync({ paramsObject });
       await refetchList?.();
       closeModal();
     } catch (error) {

@@ -6,32 +6,67 @@ import {
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
-const useDeleteApi = (
+interface ApiErrorResponse {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+}
+
+interface MutationVariables<
+  TBody = Record<string, any>,
+  TParams = Record<string, any>,
+> {
+  bodyData?: TBody | null;
+  paramsObject?: TParams | null;
+  successMessage?: string;
+  errorMessage?: string;
+}
+
+const useDeleteApi = <
+  TData,
+  TBody extends Record<string, any>,
+  TParams extends Record<string, any>,
+>(
   link: string,
-  queryKey: Array<QueryKey> | QueryKey,
-  params?: Record<any, any>,
-): UseMutationResult<Promise<any>, Error, any> => {
-  const deleteMethod = async ({
-    paramsObj,
-  }: {
-    paramsObj: Record<any, any> | null | undefined;
-  }): Promise<any> => {
-    const result = await axios.delete<string>(
-      endpointWithParams(link, params, getParams(paramsObj)),
+  queryKey: QueryKey,
+  params?: Record<string, any> | null | undefined,
+): UseMutationResult<
+  TData,
+  ApiErrorResponse,
+  MutationVariables<TBody, TParams>
+> => {
+  const deleteMethod = async (
+    paramsObject: MutationVariables<TBody, TParams>,
+  ): Promise<any> => {
+    const result = await axios.delete<TData>(
+      endpointWithParams(link, params, getParams(paramsObject)),
     );
 
     return result.data;
   };
 
-  return useMutation<Promise<any>, Error, any>(deleteMethod, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKey, link]);
+  return useMutation<
+    TData,
+    ApiErrorResponse,
+    MutationVariables<TBody, TParams>
+  >((body) => deleteMethod(body), {
+    onSuccess: (data, variables) => {
+      if (variables?.successMessage) {
+        toast.success(variables.successMessage);
+      }
     },
-    onError: () => {
-      console.log("there was an error");
+    onError: (error, variables) => {
+      const message =
+        variables.errorMessage ||
+        error?.response?.data?.message ||
+        "Coś poszło nie tak 😢";
+      toast.error(message);
     },
     onSettled: () => {
       queryClient.invalidateQueries([queryKey, link]);

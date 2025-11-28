@@ -117,7 +117,7 @@ const usePostApi = <TData, TBody, TParams extends Record<string, any>>({
             toast.success(variables.successMessage);
           }
         },
-        onError: (error: any, variables: any) => {
+        onError: (error, variables) => {
           setError();
           const message =
             variables.errorMessage ||
