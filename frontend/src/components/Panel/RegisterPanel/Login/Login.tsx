@@ -6,6 +6,7 @@ import { loginSchema } from "../schemas";
 import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../../appContext/appContext";
+import { queryKey } from "@tanstack/react-query/build/lib/__tests__/utils";
 
 type LoginFormFields = {
   email: string;
@@ -33,15 +34,14 @@ const Login = () => {
   } = form;
 
   const linkRegister = "api/auth/login";
-  // const { responseStatus, mutation } = usePostApi(
-  //   `${URL}${linkRegister}`,
-  //   ["userLogin"],
-  //   null,
-  // );
+  const { responseStatus, mutateAsync } = usePostApi({
+    link: `${URL}${linkRegister}`,
+    queryKey: ["userLogin"],
+  });
 
   const onSubmit = handleSubmit(async (data: any) => {
     try {
-      // const { data: responseData } = await mutation.mutateAsync({
+      // const data = await mutateAsync({
       //   paramsObj: null,
       //   bodyData: data,
       //   successMessage: "Zalogowano użytkownika!",
@@ -49,8 +49,8 @@ const Login = () => {
       // });
       // console.log(responseData, "reeeeeeeee");
       //
-      // if (responseData) {
-      //   addUser(responseData);
+      // if (data) {
+      //   addUser(data);
       //   setTimeout(async () => {
       //     reset();
       //   }, 500);

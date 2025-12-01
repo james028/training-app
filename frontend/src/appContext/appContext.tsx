@@ -24,9 +24,7 @@ const ContextProvider = (props: any) => {
     const currentDate = DateTime.now();
     const { month } = currentDate.toObject();
 
-    //return month;
-
-    return 2;
+    return month;
   });
   const [user, setUser] = useLocalStorage("jwt");
   const [linkUrl, setLinkUrl] = useState<string>("");

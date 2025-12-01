@@ -1,7 +1,7 @@
 import React from "react";
 import SumByMonthsChart from "./SumByMonthsChart/SumByMonthsChart";
 import { useCountTotalNestedEventsPerMonth } from "../../hooks/useCountTotalEventsPerMonth";
-import { calendarData } from "../../mock/mock";
+import { calendarData } from "../../mock/mock2";
 import SumAllTrainingsChart from "./SumAllTrainingsChart/SumAllTrainingsChart";
 import { useCountNestedEventsByType } from "../../hooks/useCountEventByType";
 import TrainingByMonthChart from "./TrainingByMonthChart/TrainingByMonthChart";

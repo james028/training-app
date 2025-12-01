@@ -8,7 +8,8 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 import { TDay } from "../../../types";
 
 type TCalendarDay = {
-  data: TDay[];
+  //data: TDay[];
+  data: any[];
   day: string;
 };
 
@@ -52,6 +53,8 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
   // return findData?.color || null;
   //};
 
+  console.log(data, "data");
+
   const renderEvents = () => {
     if (data?.length > 3) {
       return <div className="flex items-center align-items">+3</div>;
@@ -59,6 +62,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
       if (data?.length > 0) {
         return data?.map((event: TDay, index1: any) => {
           //console.log(findColor(event.type), "s", event.type);
+          console.log(event, "event");
           return (
             <StyledTypeContainer
               //zmienic, jak będzie id z danych z TDay z BE
@@ -70,7 +74,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
               onClick={() => handleEditTraining(event)}
             >
               <div className="flex items-center justify-between">
-                <span>{event.type}</span>
+                <span>{event.type}air</span>
                 <svg
                   className="h-6 w-6 inline-flex leading-none text-white"
                   fill="none"

@@ -18,7 +18,6 @@ const PlankMonthList = () => {
     queryKey: ["plankList"],
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log("sssssssssssssssssssssssssssssssssssssssssssssssaaaaaaaaaaaaaaa");
 
   if (status === "loading" || isRefetching) {
     return <Loading />;

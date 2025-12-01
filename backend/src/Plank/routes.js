@@ -16,7 +16,8 @@ const {
 } = require("../UserRegisterLogin/middleware/auth.middleware");
 
 exports.routesConfig = function (app) {
-  app.get("/api/plank/list", authMiddleware, getPlank);
+  //app.get("/api/plank/list", authMiddleware, getPlank);
+  app.get("/api/plank/list", getPlank);
   app.post("/api/plank/create", authMiddleware, createPlank);
   app.patch("/api/plank/update", updatePlank);
   app.delete("/api/plank/delete", deletePlank);

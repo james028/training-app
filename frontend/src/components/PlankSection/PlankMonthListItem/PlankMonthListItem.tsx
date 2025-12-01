@@ -109,7 +109,6 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   };
 
   const monthData: TPlankDayData[] | any[] = itemData[item];
-  console.log(monthData, "1");
 
   //plank monthItem do innego komp
 
@@ -133,7 +132,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           </StyledPlankSectionListItem>
           {monthData.length === 0 ? <div>-</div> : null}
           {monthData.map((t, index) => {
-            console.log(t, "t");
+            //console.log(t, "t");
             return (
               //zmienić
               <StyledPlankSectionListItem key={t._id}>

@@ -115,21 +115,21 @@ const data = [
 // @desc    Gets all plank trainings from every month
 // @route   GET /api/plank/list
 exports.getPlank = asyncHandler(async (req, res) => {
-  const id = req.user.id;
-  console.log(id);
-
-  if (!id) {
-    res.status(401).json({ message: "Nie istnieje id użytkownika" });
-  }
+  // const id = req.user.id;
+  // console.log(id);
+  //
+  // if (!id) {
+  //   res.status(401).json({ message: "Nie istnieje id użytkownika" });
+  // }
   try {
     //const plankList = await PlankDataModel.find({}, null, null);
 
     //console.log(id);
-    const plankList = await PlankDataModel.findById({ _id: id }, null, null);
+    //const plankList = await PlankDataModel.findById({ _id: id }, null, null);
     //const plankList = await PlankDataModel.findById({}, null, null);
     //const plankList = await PlankDataModel.deleteMany({});
 
-    console.log(plankList, "planList");
+    //console.log(plankList, "planList");
     // if (!plankList) {
     //   res.status(404).json({ message: "Data not found" });
     // }
@@ -144,7 +144,7 @@ exports.getPlank = asyncHandler(async (req, res) => {
     //   console.log(item2, "item2");
     //
     // });
-    res.status(200).json(data);
+    res.status(200).json({ data });
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });

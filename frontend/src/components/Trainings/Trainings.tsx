@@ -45,6 +45,7 @@ import { useLoaderData } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useAppContext } from "../../appContext/appContext";
 import PlankSection from "../PlankSection/PlankSection";
+import Calendar from "../Calendar/Calendar";
 
 const Trainings = () => {
   const { linkUrl, setLinkUrl } = useAppContext();
