@@ -29,7 +29,6 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
     let currentDay = DateTime.local(year, month, 1);
 
     if (!currentDay.isValid) {
-      console.error("Błędne dane wejściowe dla roku/miesiąca:", year, month);
       return [];
     }
 
