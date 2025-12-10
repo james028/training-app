@@ -23,7 +23,6 @@ export const StyledTypeContainer = styled.div<{
 const URL = "http://localhost:5001/";
 
 const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
-  console.log(isEmpty);
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
   const [openModalAddTraining, setOpenModalAddTraining] = useState(false);
   const [eventData, setEventData] = useState<Record<any, any>>({});
@@ -92,13 +91,13 @@ const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
 
   return (
     <StyledContainerDay
-      className="px-4 pt-2 border-r border-b relative cursor-pointer"
-      style={{
-        backgroundColor: "#f7f7f7" /* Jasne tło */,
-        border: "1px solid #f0f0f0",
-        /* Opcjonalnie: Możesz ukryć obramowanie, jeśli płynnie łączy się z tłem */
-        /* border: none; */
-      }}
+      className={`px-4 pt-2 border-r border-b relative 
+      ${
+        !isEmpty
+          ? "cursor-pointer bg-white"
+          : "bg-gray-50 border-gray-200 pointer-events-none"
+      }
+    `}
     >
       {!isEmpty ? (
         <div

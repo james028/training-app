@@ -146,11 +146,13 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
     ];
   };
 
-  const getDayNumberFromDateKey = (dateKey: string): string | null => {
+  const getDayNumberFromDateKey = (dateKey: string | null): string | null => {
+    if (!dateKey || dateKey.length < 10) {
+      return null;
+    }
     const dateObject = DateTime.fromISO(dateKey);
 
     if (!dateObject.isValid) {
-      console.error(`Błąd: Nieprawidłowy format daty: ${dateKey}`);
       return null;
     }
     return dateObject.toFormat("dd");
@@ -171,7 +173,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   };
 
   return (
-    <div className="flex flex-wrap border-t border-l">
+    <div className="flex flex-wrap border-t border-l bg-gray-50">
       {daysArray.map((dateKey, index) => {
         const monthPrefix = `${year}-${month}`;
         const stableKey = `${monthPrefix}-${index}`;
