@@ -8,7 +8,8 @@ import { TButtons } from "../../../types";
 const CalendarHeader = ({
   incrementMonth,
   decrementMonth,
-  monthIndex,
+  year,
+  month,
 }: any) => {
   const { t } = useTranslation();
 
@@ -31,7 +32,7 @@ const CalendarHeader = ({
           />
         </svg>
       ),
-      disabled: monthIndex === 1,
+      disabled: month === 1,
       border: <div className="border-r inline-flex h-6"></div>,
     },
     {
@@ -52,7 +53,7 @@ const CalendarHeader = ({
           />
         </svg>
       ),
-      disabled: monthIndex > 11,
+      disabled: month > 11,
       border: null,
     },
   ];
@@ -89,27 +90,27 @@ const CalendarHeader = ({
   const days: string[] = generateWeekdayHeaders();
 
   //potem context
-  const getCurrentDate = (): Record<string, string | number> => {
-    const currentDate = DateTime.now();
-    const { year } = currentDate.toObject();
-
-    //obecny miesiąc tu musy vtc
-    const date = DateTime.fromObject({
-      year,
-      month: monthIndex,
-      day: 1,
-    })
-      .toFormat("MMMM/yyyy")
-      .split("/");
-
-    return { month: date[0], year: date[1] };
-  };
-
-  useEffect(() => {
-    getCurrentDate();
-  }, [monthIndex]);
-
-  const { year, month } = getCurrentDate();
+  // const getCurrentDate = (): Record<string, string | number> => {
+  //   const currentDate = DateTime.now();
+  //   const { year } = currentDate.toObject();
+  //
+  //   //obecny miesiąc tu musy vtc
+  //   const date = DateTime.fromObject({
+  //     year,
+  //     month: monthIndex,
+  //     day: 1,
+  //   })
+  //     .toFormat("MMMM/yyyy")
+  //     .split("/");
+  //
+  //   return { month: date[0], year: date[1] };
+  // };
+  //
+  // useEffect(() => {
+  //   getCurrentDate();
+  // }, [monthIndex]);
+  //
+  // const { year, month } = getCurrentDate();
 
   return (
     <>

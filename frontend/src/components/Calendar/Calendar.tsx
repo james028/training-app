@@ -18,7 +18,7 @@ const Calendar = () => {
 
   const link = "api/training-type/list";
   const link2 = "api/calendar/list";
-  const { data } = useGetApi<CalendarApiResponse>({
+  const { data: calendarData } = useGetApi<CalendarApiResponse>({
     url: `${URL}api/calendar/list`,
     queryKey: ["calendarDataList"],
     //tu bedzie zapytanie z paramsami
@@ -37,14 +37,15 @@ const Calendar = () => {
     setMonthIndex((prev: number) => prev - 1);
   };
 
-  const tasks = data?.tasks || [];
+  const tasks = calendarData?.tasks ?? [];
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <CalendarHeader
           incrementMonth={incrementMonth}
           decrementMonth={decrementMonth}
-          monthIndex={monthIndex}
+          year={2025}
+          month={12}
         />
         <CalendarDays calendarData={tasks} year={2025} month={12} />
       </div>

@@ -4,8 +4,8 @@ import styled from "styled-components";
 import EditTraining from "../../Forms/EditTraining/EditTraining";
 import AddTraining from "../../Forms/AddTraining/AddTraining";
 import { StyledContainerDay } from "./style";
-import useGetApi from "../../../hooks/api/get/useApiGet";
 import { TDay } from "../../../types";
+import { URL } from "../../../constants";
 
 type TCalendarDay = {
   //data: TDay[];
@@ -19,8 +19,6 @@ export const StyledTypeContainer = styled.div<{
 }>`
   background-color: ${(props) => (props.hexcolor ? `${props.hexcolor}` : null)};
 `;
-
-const URL = "http://localhost:5001/";
 
 const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
@@ -53,21 +51,17 @@ const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
       return <div className="flex items-center align-items">+3</div>;
     } else {
       if (data?.length > 0) {
-        return data?.map((event: TDay, index1: any) => {
-          //console.log(findColor(event.type), "s", event.type);
-
+        return data?.map((event: TDay) => {
           return (
             <StyledTypeContainer
-              //zmienic, jak będzie id z danych z TDay z BE
-              key={index1}
+              key={event.id}
               hexcolor={null}
               //hexcolor={findColor(event.type)}
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
-              //className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-white cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >
               <div className="flex items-center justify-between">
-                <span>{event.type}air</span>
+                <span>{event.type}</span>
                 <svg
                   className="h-6 w-6 inline-flex leading-none text-white"
                   fill="none"

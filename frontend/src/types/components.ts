@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { TDay } from "./types";
 
 export type RemovePlankTrainingProps = {
   closeModal: () => void;
@@ -6,4 +7,10 @@ export type RemovePlankTrainingProps = {
 
 export interface PlankSectionWrapperProps {
   children: ReactNode;
+}
+
+export interface CalendarDaysProps {
+  calendarData: TDay[];
+  year: number;
+  month: number;
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { date } from "yup";
 
 export type TCalendarData = {
   [key: string]: TYear[];
@@ -12,11 +13,15 @@ export type TMonth = {
   [key: string]: TDay[];
 };
 
+//tu lepsze otypowanie
 export type TDay = {
+  //dokladnie dobrze zrobic czy string czy number
+  id: number;
   type: string;
   bikeType: string;
   bikeKilometers: number;
   duration: string; // potem jakis moze data
+  fullDateTime: string;
 };
 
 export type TPlankData = {
@@ -92,3 +97,7 @@ export interface PlankSectionContextType {
   objectData: PlankTrainingObjectData;
   setObjectData: React.Dispatch<React.SetStateAction<PlankTrainingObjectData>>;
 }
+
+export type DailyTasksMap = {
+  [dateKey: string]: TDay[];
+};
