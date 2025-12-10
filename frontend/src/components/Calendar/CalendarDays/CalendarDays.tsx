@@ -1,119 +1,115 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import CalendarDay from "../CalendarDay/CalendarDay";
 
 import { DateTime } from "luxon";
 import { TMonth, TYear } from "../../../types";
 import { calendarDataForCurrentMonth } from "../../../mock/mock";
 
-const CalendarDays = ({
-  dataMonths,
-  monthIndex,
-  year,
-  month,
-}: {
-  dataMonths: any;
-  monthIndex: number;
+interface CalendarDaysProps {
+  //otyp
+  calendarData: any;
   year: number;
   month: number;
-}) => {
-  //zmienic nazwe zmiennej
-  const [monthsData, setMonthsData] = useState<any[]>([]);
+}
 
-  const getBlankDaysInMonth = (): number => {
-    // z context
-    const weekDays: string[] = [
-      "Sun",
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat",
-    ];
+const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
+  console.log(calendarData);
+  // const getBlankDaysInMonth = (year: number, month: number): number => {
+  //   // z utils importować
+  //   const weekDays: string[] = [
+  //     "Sun",
+  //     "Mon",
+  //     "Tue",
+  //     "Wed",
+  //     "Thu",
+  //     "Fri",
+  //     "Sat",
+  //   ];
+  //
+  //   const firstDayOfMonth = DateTime.fromObject({
+  //     year,
+  //     month,
+  //     day: 1,
+  //   })
+  //     .toFormat("EEE, M/d/yyyy")
+  //     .split(",")[0];
+  //
+  //   return weekDays.indexOf(firstDayOfMonth);
+  // };
 
-    const currentDate = DateTime.now();
-    const { year } = currentDate.toObject();
-
-    const firstDayOfMonth = DateTime.fromObject({
-      year,
-      month: monthIndex,
-      day: 1,
-    })
-      .toFormat("EEE, M/d/yyyy")
-      .split(",")[0];
-
-    return weekDays.indexOf(firstDayOfMonth);
+  const getBlankDaysInMonth = (year: number, month: number): number => {
+    const firstDayOfMonth = DateTime.local(year, month, 1);
+    const weekdayIndex = firstDayOfMonth.weekday; // np. 5 dla piątku
+    // 3. Obliczenie pustych dni:
+    // - Jeśli miesiąc zaczyna się w poniedziałek (weekdayIndex = 1), pustych dni jest 0. (1 - 1 = 0)
+    // - Jeśli miesiąc zaczyna się w piątek (weekdayIndex = 5), pustych dni jest 4. (5 - 1 = 4)
+    return weekdayIndex - 1;
   };
+  getBlankDaysInMonth(year, month);
 
-  const createBlankDaysArray = (): any[] => {
-    const getBlankDaysInMonthLength = getBlankDaysInMonth();
-
-    return Array(getBlankDaysInMonthLength)
-      .fill({})
-      .map((day) => {
-        return {
-          "00": {},
-        };
-      });
+  const createBlankDaysInMonth = (length: number): string[] => {
+    return Array.from({ length }).map((_) => "");
   };
+  //
+  // const createBlankDaysArray = (): any[] => {
+  //   const getBlankDaysInMonthLength = getBlankDaysInMonth();
+  //
+  //   return Array(getBlankDaysInMonthLength)
+  //     .fill({})
+  //     .map((day) => {
+  //       return {
+  //         "00": {},
+  //       };
+  //     });
+  // };
+  //
+  // const createDaysInMonth = (): void => {
+  //   const blankDaysArray = createBlankDaysArray();
+  //
+  //   const newBlankDaysArray = [...blankDaysArray];
+  //   const newDataMonths = [...dataMonths];
+  //   const results: any[] = [];
+  //
+  //   console.log(newDataMonths, "new");
+  //
+  //   newDataMonths.forEach((item) => {
+  //     for (const val of Object.values(item)) {
+  //       results.push(val);
+  //     }
+  //   });
+  //
+  //   console.log(results[0], "results");
+  //
+  //   setMonthsData([
+  //     ...newBlankDaysArray,
+  //     //...results[0]
+  //   ]);
+  // };
+  //
+  // useEffect(() => {
+  //   getBlankDaysInMonth();
+  //   createBlankDaysArray();
+  //   createDaysInMonth();
+  // }, [monthIndex]);
 
-  const createDaysInMonth = (): void => {
-    const blankDaysArray = createBlankDaysArray();
-
-    const newBlankDaysArray = [...blankDaysArray];
-    const newDataMonths = [...dataMonths];
-    const results: any[] = [];
-
-    console.log(newDataMonths, "new");
-
-    newDataMonths.forEach((item) => {
-      for (const val of Object.values(item)) {
-        results.push(val);
-      }
-    });
-
-    console.log(results[0], "results");
-
-    setMonthsData([
-      ...newBlankDaysArray,
-      //...results[0]
-    ]);
-  };
-
-  useEffect(() => {
-    getBlankDaysInMonth();
-    createBlankDaysArray();
-    createDaysInMonth();
-  }, [monthIndex]);
-
-  console.log(monthsData, "monthsData");
+  //console.log(monthsData, "monthsData");
 
   type DailyTasksMap = {
     [dateKey: string]: any[];
   };
 
-  const normalizeTasksForCalendar = (tasks: any[]): DailyTasksMap => {
+  const normalizeTasksForCalendar = (tasks: any[]): any => {
     if (!tasks || tasks.length === 0) {
       return {};
     }
 
-    //console.log(tasks && (tasks as any)?.(tasks as any), "w normalize" + "");
-    //console.log(tasks && (tasks as any)?.(tasks as any), "w normalize" + "");
-    //@ts-ignore
-    //const tasksData = (tasks && (tasks as any)?.(tasks as any)) || [];
-
-    // Używamy metody reduce do iteracji i budowania mapy
     return tasks.reduce((acc: any, task: any) => {
-      // 1. Ekstrakcja klucza dnia: YYYY-MM-DD
-      // Używamy substring, aby wyciąć tylko datę (bez czasu 'T' i strefy czasowej 'Z')
-      const dateKey = task.fullDateTime.substring(0, 10); // np. "2025-11-28"
+      const dateKey = task.fullDateTime.substring(0, 10);
 
-      // 2. Grupowanie
       if (!acc[dateKey]) {
         acc[dateKey] = [];
       }
 
-      // Opcjonalnie: Można tu posortować zadania po czasie
       acc[dateKey].push(task);
 
       return acc;
@@ -125,7 +121,6 @@ const CalendarDays = ({
 
     let currentDay = DateTime.local(year, month, 1);
 
-    // Jeśli miesiąc jest poza zakresem (np. 13), Luxon tworzy nieprawidłowy obiekt
     if (!currentDay.isValid) {
       console.error("Błędne dane wejściowe dla roku/miesiąca:", year, month);
       return [];
@@ -145,49 +140,46 @@ const CalendarDays = ({
       currentDay = currentDay.plus({ days: 1 });
     }
 
-    return daysArray;
+    return [
+      ...createBlankDaysInMonth(getBlankDaysInMonth(2025, 11)),
+      ...daysArray,
+    ];
+  };
+
+  const getDayNumberFromDateKey = (dateKey: string): string | null => {
+    const dateObject = DateTime.fromISO(dateKey);
+
+    if (!dateObject.isValid) {
+      console.error(`Błąd: Nieprawidłowy format daty: ${dateKey}`);
+      return null;
+    }
+    return dateObject.toFormat("dd");
   };
 
   const daysArray = generateDaysForMonth(year, month);
 
-  const tasks = calendarDataForCurrentMonth || [];
-  // 2. Normalizujemy dane API do mapy (O(1) lookup)
   const tasksByDay = useMemo(() => {
-    return normalizeTasksForCalendar(tasks.tasks);
-  }, [tasks]);
+    return normalizeTasksForCalendar(calendarData);
+  }, [calendarData]);
 
   const renderDay = (date: string) => {
-    // date np. '2025-11-28'
-    const tasks = tasksByDay[date] || []; // Pobranie zadań na dany dzień
+    const tasksData = tasksByDay[date] || [];
 
-    console.log(tasks);
+    const day = getDayNumberFromDateKey(date);
 
-    return (
-      <React.Fragment>
-        {/*{tasks.map((task, index) => (*/}
-        <CalendarDay data={tasks} day={String(1)} />
-        {/*))}*/}
-      </React.Fragment>
-    );
+    return <CalendarDay data={tasksData} day={day} isEmpty={!date} />;
   };
 
   return (
     <div className="flex flex-wrap border-t border-l">
-      {daysArray.map((dateKey, index) => (
-        <React.Fragment key={dateKey}>
-          {/*{Object.keys(month ?? {}).map((day: string) => {*/}
-          {/*  return <CalendarDay key={day} data={month[day]} day={day} />;*/}
-          {/*})}*/}
-          <React.Fragment>{renderDay(dateKey)}</React.Fragment>
-        </React.Fragment>
-      ))}
-      {/*{Array.from({ length: 12 }, (_, a) => {*/}
-      {/*  return { a: "1S" };*/}
-      {/*}).map((month: any, index: number) => {*/}
-      {/*  return (*/}
+      {daysArray.map((dateKey, index) => {
+        const monthPrefix = `${year}-${month}`;
+        const stableKey = `${monthPrefix}-${index}`;
 
-      {/*  );*/}
-      {/*})}*/}
+        return (
+          <React.Fragment key={stableKey}>{renderDay(dateKey)}</React.Fragment>
+        );
+      })}
     </div>
   );
 };

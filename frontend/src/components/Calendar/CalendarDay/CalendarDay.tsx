@@ -10,7 +10,8 @@ import { TDay } from "../../../types";
 type TCalendarDay = {
   //data: TDay[];
   data: any[];
-  day: string;
+  day: string | null;
+  isEmpty: boolean;
 };
 
 export const StyledTypeContainer = styled.div<{
@@ -21,16 +22,11 @@ export const StyledTypeContainer = styled.div<{
 
 const URL = "http://localhost:5001/";
 
-const CalendarDay = ({ data, day }: TCalendarDay) => {
+const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
+  console.log(isEmpty);
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
   const [openModalAddTraining, setOpenModalAddTraining] = useState(false);
   const [eventData, setEventData] = useState<Record<any, any>>({});
-
-  const link = "api/training-type/list";
-  const { data: dataTrainingType } = useGetApi({
-    url: `${URL}${link}`,
-    queryKey: ["trainingTypeList"],
-  });
 
   const handleEditTraining = (event: TDay): void => {
     setOpenModalEditTraining(true);
@@ -53,8 +49,6 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
   // return findData?.color || null;
   //};
 
-  console.log(data, "data");
-
   const renderEvents = () => {
     if (data?.length > 3) {
       return <div className="flex items-center align-items">+3</div>;
@@ -62,7 +56,7 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
       if (data?.length > 0) {
         return data?.map((event: TDay, index1: any) => {
           //console.log(findColor(event.type), "s", event.type);
-          console.log(event, "event");
+
           return (
             <StyledTypeContainer
               //zmienic, jak będzie id z danych z TDay z BE
@@ -97,8 +91,16 @@ const CalendarDay = ({ data, day }: TCalendarDay) => {
   };
 
   return (
-    <StyledContainerDay className="px-4 pt-2 border-r border-b relative cursor-pointer">
-      {day !== "00" ? (
+    <StyledContainerDay
+      className="px-4 pt-2 border-r border-b relative cursor-pointer"
+      style={{
+        backgroundColor: "#f7f7f7" /* Jasne tło */,
+        border: "1px solid #f0f0f0",
+        /* Opcjonalnie: Możesz ukryć obramowanie, jeśli płynnie łączy się z tłem */
+        /* border: none; */
+      }}
+    >
+      {!isEmpty ? (
         <div
           className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500"
           onClick={handleAddTraining}

@@ -15,7 +15,7 @@ const AddTraining = ({
   closeModal: any;
   modalTitle: string;
   eventData?: Record<any, any>;
-  day: string;
+  day: string | null;
 }) => {
   //eventData w dół dla testu
   return (

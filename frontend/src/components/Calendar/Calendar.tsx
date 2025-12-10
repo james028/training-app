@@ -3,54 +3,41 @@ import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
 import { calendarDataForCurrentMonth } from "../../mock/mock";
 import { useAppContext } from "../../appContext/appContext";
-import { calendarData } from "../../mock/mock2";
+import useGetApi from "../../hooks/api/get/useApiGet";
+import { URL } from "../../constants";
+import { TDay } from "../../types";
 
-const daysArray = [
-  "2025-11-01",
-  "2025-11-02",
-  "2025-11-03",
-  "2025-11-04",
-  "2025-11-05",
-  "2025-11-06",
-  "2025-11-07",
-  "2025-11-08",
-  "2025-11-09",
-  "2025-11-10",
-  "2025-11-11",
-  "2025-11-12",
-  "2025-11-13",
-  "2025-11-14",
-  "2025-11-15",
-  "2025-11-16",
-  "2025-11-17",
-  "2025-11-18",
-  "2025-11-19",
-  "2025-11-20",
-  "2025-11-21",
-  "2025-11-22",
-  "2025-11-23",
-  "2025-11-24",
-  "2025-11-25",
-  "2025-11-26",
-  "2025-11-27",
-  "2025-11-28", // Dziś (przykład)
-  "2025-11-29",
-  "2025-11-30",
-];
+interface CalendarApiResponse {
+  year: number;
+  month: number;
+  tasks: TDay[];
+}
 
 const Calendar = () => {
   const { monthIndex, setMonthIndex } = useAppContext();
 
+  const link = "api/training-type/list";
+  const link2 = "api/calendar/list";
+  const { data } = useGetApi<CalendarApiResponse>({
+    url: `${URL}api/calendar/list`,
+    queryKey: ["calendarDataList"],
+    //tu bedzie zapytanie z paramsami
+    //params: { year, month },
+  });
+
+  //console.log(calendarData);
+
   const incrementMonth = () => {
+    //tu bedzie zapytanie
     setMonthIndex((prev: number) => prev + 1);
   };
 
   const decrementMonth = () => {
+    //tu bedzie zapytanie
     setMonthIndex((prev: number) => prev - 1);
   };
 
-  //console.log(Object.values(calendarData ?? {}));
-
+  const tasks = data?.tasks || [];
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -59,20 +46,7 @@ const Calendar = () => {
           decrementMonth={decrementMonth}
           monthIndex={monthIndex}
         />
-        {/*{Array.from({ length: 12 }, (_, a) => {*/}
-        {/*  return { number: a };*/}
-        {/*}).map((months: any) => {*/}
-        {/*  console.log(months, "monthIndex");*/}
-        {/*  return (*/}
-        <CalendarDays
-          key={`calendar-${1}`}
-          dataMonths={Object.values(calendarData)}
-          monthIndex={11}
-          year={2025}
-          month={12}
-        />
-        {/*  );*/}
-        {/*})}*/}
+        <CalendarDays calendarData={tasks} year={2025} month={12} />
       </div>
     </div>
   );

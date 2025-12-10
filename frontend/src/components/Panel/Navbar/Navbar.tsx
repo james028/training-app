@@ -140,7 +140,7 @@ const Navbar = () => {
             </ul>
           </div>
           <Calendar />
-          {/*<PlankSection />*/}
+          <PlankSection />
         </div>
       </nav>
     </>

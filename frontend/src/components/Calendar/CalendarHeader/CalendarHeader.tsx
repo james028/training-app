@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DateTime } from "luxon";
+import { DateTime, WeekdayNumbers } from "luxon";
 import { StyledButton, StyledDayWidth } from "./style";
 import { TButtons } from "../../../types";
 
@@ -57,8 +57,36 @@ const CalendarHeader = ({
     },
   ];
 
+  // **
+  // * Generuje posortowaną tablicę skróconych nazw dni tygodnia (np. "pon", "wt", "śr").
+  // * Kolejność jest zgodna ze standardem ISO (Poniedziałek = 1).
+  //   * @param locale Opcjonalny język (np. 'pl-PL', 'en-US'). Jeśli nie podano, używa systemowego.
+  //   * @returns Tablica nazw dni tygodnia.
+  //   */
+  const generateWeekdayHeaders = (locale?: string): string[] => {
+    const dayNames: string[] = [];
+
+    // Zaczynamy od pierwszego dnia tygodnia ISO (poniedziałek, indeks 1)
+    const ISO_WEEKDAYS: WeekdayNumbers[] = [1, 2, 3, 4, 5, 6, 7];
+    for (const i of ISO_WEEKDAYS) {
+      // Tworzymy tymczasowy obiekt daty, ustawiając go na dzień tygodnia 'i'.
+      // Używamy DateTime.local() i ustawiamy jego dzień tygodnia na 'i'.
+      const tempDay = DateTime.local().set({ weekday: i });
+
+      // Formatujemy dzień:
+      // "EEE" -> Skrócona nazwa dnia (np. Mon, Pon)
+      // "E" -> Najkrótsza nazwa (np. M, P)
+      const dayName = tempDay.toFormat("EEE", { locale: locale });
+
+      dayNames.push(dayName);
+    }
+
+    return dayNames;
+  };
+
   //zrobic z context api //hmm
-  const days: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const days1: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const days: string[] = generateWeekdayHeaders();
 
   //potem context
   const getCurrentDate = (): Record<string, string | number> => {
