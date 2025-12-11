@@ -1,1 +1,1 @@
-export enum TrainingType {}
+export enum TrainingTypeEnum {}

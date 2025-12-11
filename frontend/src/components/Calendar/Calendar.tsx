@@ -1,11 +1,11 @@
 import React from "react";
 import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
-import { calendarDataForCurrentMonth } from "../../mock/mock";
-import { useAppContext } from "../../appContext/appContext";
+//import { useAppContext } from "../../appContext/appContext";
 import useGetApi from "../../hooks/api/get/useApiGet";
 import { URL } from "../../constants";
 import { TDay } from "../../types";
+import { useToastError } from "../../hooks/useToastError/useToastError";
 
 interface CalendarApiResponse {
   year: number;
@@ -14,30 +14,34 @@ interface CalendarApiResponse {
 }
 
 const Calendar = () => {
-  const { monthIndex, setMonthIndex } = useAppContext();
+  //const { monthIndex, setMonthIndex } = useAppContext();
 
-  const link = "api/training-type/list";
-  const link2 = "api/calendar/list";
-  const { data: calendarData } = useGetApi<CalendarApiResponse>({
-    url: `${URL}api/calendar/list`,
+  const link = "api/calendar/list";
+  const {
+    data: calendarData,
+    //dorobić
+    //isLoading,
+    isError,
+    error,
+  } = useGetApi<CalendarApiResponse>({
+    url: `${URL}${link}`,
     queryKey: ["calendarDataList"],
     //tu bedzie zapytanie z paramsami
     //params: { year, month },
   });
-
-  //console.log(calendarData);
+  useToastError(isError, error);
+  const tasks = calendarData?.tasks ?? [];
 
   const incrementMonth = () => {
     //tu bedzie zapytanie
-    setMonthIndex((prev: number) => prev + 1);
+    //setMonthIndex((prev: number) => prev + 1);
   };
 
   const decrementMonth = () => {
     //tu bedzie zapytanie
-    setMonthIndex((prev: number) => prev - 1);
+    //setMonthIndex((prev: number) => prev - 1);
   };
 
-  const tasks = calendarData?.tasks ?? [];
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">

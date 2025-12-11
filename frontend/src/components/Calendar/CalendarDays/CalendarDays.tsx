@@ -1,9 +1,30 @@
 import React, { useMemo } from "react";
 import CalendarDay from "../CalendarDay/CalendarDay";
 import { DateTime } from "luxon";
-import { CalendarDaysProps, DailyTasksMap, TDay } from "../../../types";
+import {
+  CalendarDaysProps,
+  DailyTasksMap,
+  TDay,
+  TrainingTypeResponse,
+} from "../../../types";
+import useGetApi from "../../../hooks/api/get/useApiGet";
+import { URL } from "../../../constants";
+import { useToastError } from "../../../hooks/useToastError/useToastError";
 
 const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
+  const link = "api/training-type/list";
+  const {
+    data: trainingTypeData,
+    isError,
+    error,
+  } = useGetApi<TrainingTypeResponse>({
+    url: `${URL}${link}`,
+    queryKey: ["trainingTypeList"],
+  });
+
+  const trainingDataColor = trainingTypeData?.data ?? [];
+  useToastError(isError, error);
+
   const getBlankDaysBeforeMonth = (year: number, month: number): number => {
     const firstDayOfMonth = DateTime.local(year, month, 1);
     const weekdayIndex = firstDayOfMonth.weekday; // np. 5 dla piątku
@@ -93,11 +114,17 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
 
   const renderDay = (date: string) => {
     const tasksData = tasksByDay[date] || [];
-    console.log(tasksData);
 
     const day = getDayNumberFromDateKey(date);
 
-    return <CalendarDay data={tasksData} day={day} isEmpty={!date} />;
+    return (
+      <CalendarDay
+        data={tasksData}
+        day={day}
+        isEmpty={!date}
+        trainingDataColor={trainingDataColor}
+      />
+    );
   };
 
   return (

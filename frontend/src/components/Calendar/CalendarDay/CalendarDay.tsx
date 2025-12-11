@@ -1,18 +1,10 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import EditTraining from "../../Forms/EditTraining/EditTraining";
 import AddTraining from "../../Forms/AddTraining/AddTraining";
 import { StyledContainerDay } from "./style";
-import { TDay } from "../../../types";
-import { URL } from "../../../constants";
-
-type TCalendarDay = {
-  //data: TDay[];
-  data: any[];
-  day: string | null;
-  isEmpty: boolean;
-};
+import { TCalendarDay, TDay } from "../../../types";
 
 export const StyledTypeContainer = styled.div<{
   hexcolor: string | undefined | null;
@@ -20,7 +12,12 @@ export const StyledTypeContainer = styled.div<{
   background-color: ${(props) => (props.hexcolor ? `${props.hexcolor}` : null)};
 `;
 
-const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
+const CalendarDay = ({
+  data,
+  day,
+  isEmpty,
+  trainingDataColor,
+}: TCalendarDay) => {
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
   const [openModalAddTraining, setOpenModalAddTraining] = useState(false);
   const [eventData, setEventData] = useState<Record<any, any>>({});
@@ -34,17 +31,23 @@ const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
     setOpenModalAddTraining(true);
   };
 
-  //albo to będzie po id, ale to juz jak zrobie nie mockowe dane, wydaje mi sie ze po id
-  //const findColor = (eventType: string): string | undefined | null => {
-  // //console.log(dataTrainingType, "data");
-  // if (!dataTrainingType?.length) return;
-  //
-  // const findData = dataTrainingType.find(
-  //   (type: any) => type.trainingName === eventType,
-  // );
-  //
-  // return findData?.color || null;
-  //};
+  const colorLookup = useMemo(() => {
+    if (!trainingDataColor?.length) {
+      return { default: "#3b82f6" };
+    }
+
+    return trainingDataColor.reduce(
+      (acc, type) => {
+        acc[type.type] = type.color;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+  }, [trainingDataColor]);
+
+  const getColor = (eventType: string): string => {
+    return colorLookup[eventType] || colorLookup.default;
+  };
 
   const renderEvents = () => {
     if (data?.length > 3) {
@@ -52,11 +55,12 @@ const CalendarDay = ({ data, day, isEmpty }: TCalendarDay) => {
     } else {
       if (data?.length > 0) {
         return data?.map((event: TDay) => {
+          const { type } = event;
+
           return (
             <StyledTypeContainer
               key={event.id}
-              hexcolor={null}
-              //hexcolor={findColor(event.type)}
+              hexcolor={getColor(type)}
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >

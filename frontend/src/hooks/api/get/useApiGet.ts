@@ -4,8 +4,14 @@ import { endpointWithParams, getParams } from "../apiUtils";
 
 type GetApiResult<TData> = Pick<
   UseQueryResult<TData>,
-  "data" | "isLoading" | "isError" | "status" | "refetch" | "isRefetching"
-> & { data: TData | undefined }; // Dodajemy TData | undefined
+  | "data"
+  | "isLoading"
+  | "isError"
+  | "status"
+  | "refetch"
+  | "isRefetching"
+  | "error"
+> & { data: TData | undefined };
 
 const useGetApi = <TData>({
   url,
@@ -31,7 +37,7 @@ const useGetApi = <TData>({
 
   const queryKeyArray = [queryKey, url, params, paramsObject];
 
-  const { isRefetching, isLoading, isError, data, status, refetch } =
+  const { isRefetching, isLoading, isError, data, status, refetch, error } =
     useQuery<TData>({
       queryKey: queryKeyArray,
       queryFn: getList,
@@ -44,6 +50,7 @@ const useGetApi = <TData>({
     status,
     refetch,
     isRefetching,
+    error,
   } as GetApiResult<TData>;
 };
 export default useGetApi;

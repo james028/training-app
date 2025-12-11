@@ -1,5 +1,4 @@
 import React from "react";
-import { date } from "yup";
 
 export type TCalendarData = {
   [key: string]: TYear[];
@@ -100,4 +99,17 @@ export interface PlankSectionContextType {
 
 export type DailyTasksMap = {
   [dateKey: string]: TDay[];
+};
+
+export type TrainingTypeColor = {
+  _id: string;
+  trainingName: string;
+  type: string;
+  color: string;
+};
+
+export type TrainingTypeResponse = {
+  success: boolean;
+  count: number;
+  data: TrainingTypeColor[];
 };

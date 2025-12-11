@@ -1,27 +1,27 @@
 const asyncHandler = require("express-async-handler");
-const CalendarDataModel = require("./model");
+//const CalendarDataModel = require("./model");
 
 const calendarDataForCurrentMonth = {
   year: 2025,
   month: 12,
   tasks: [
     {
-      id: "a1b2c3d4",
-      type: "Spotkanie projektowe",
+      id: "a1b2c3d3",
+      type: "rower",
       bikeKilometers: "pending",
       bikeType: "high",
       fullDateTime: "2025-12-05T09:00:00Z", // Zadanie na 5 listopada
     },
     {
       id: "a1b2c3d4",
-      type: "Spotkanie projektowe2",
+      type: "airbike",
       bikeKilometers: "pending",
       bikeType: "high",
       fullDateTime: "2025-12-05T09:00:00Z", // Zadanie na 5 listopada
     },
     {
-      id: "e5f6g7h8",
-      type: "Wysłanie raportu",
+      id: "e5f6g7h9",
+      type: "rower",
       bikeKilometers: "completed",
       bikeType: "medium",
       fullDateTime: "2025-12-10T14:30:00Z", // Zadanie na 10 listopada

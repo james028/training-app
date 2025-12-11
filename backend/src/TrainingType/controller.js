@@ -4,19 +4,20 @@ const TrainingTypeDataModel = require("./model");
 // @desc    Get all training types
 // @route   GET /api/training-type/list
 exports.getListTrainingType = asyncHandler(async (req, res) => {
-  try {
-    const trainingTypeList = await TrainingTypeDataModel.find({}, null, null);
-    //const trainingTypeList = await TrainingTypeDataModel.deleteMany({});
+  const trainingTypeList = await TrainingTypeDataModel.find({});
 
-    if (!trainingTypeList) {
-      res.status(404).json({ message: "Data not found" });
-    }
-
-    res.status(200).json(trainingTypeList);
-  } catch (error) {
-    console.log(error, "err");
-    res.status(404).json({ error: "Not found!" });
+  if (trainingTypeList.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "No training types found",
+    });
   }
+
+  res.status(200).json({
+    success: true,
+    count: trainingTypeList.length,
+    data: trainingTypeList,
+  });
 });
 
 // @desc    Create new training type
