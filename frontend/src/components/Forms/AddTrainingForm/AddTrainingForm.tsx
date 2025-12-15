@@ -6,8 +6,10 @@ import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import FormTextArea from "../../shared/FormTextArea/FormTextArea";
 import usePostApi from "../../../hooks/api/post/useApiPost";
-import useGetApi from "../../../hooks/api/get/useApiGet";
-import { useAppContext } from "../../../appContext/appContext";
+import { URL } from "../../../constants";
+import { convertObjectWithNumbersToString } from "../../../utils";
+import toast from "react-hot-toast";
+import { DateTime } from "luxon";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -16,16 +18,18 @@ export type RegistrationFormFields = {
     minutes: string;
     seconds: string;
   };
+  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;
   description?: string;
 };
 
-const URL = "http://localhost:5001/";
+const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
+  //const { monthIndex } = useAppContext();
 
-const AddTrainingForm = ({ closeModal, day }: any) => {
-  const { monthIndex } = useAppContext();
+  console.log(day, "day");
+  console.log(day, "month");
 
   const form = useForm<RegistrationFormFields>({
     defaultValues: {
@@ -35,6 +39,7 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
         minutes: "",
         seconds: "",
       },
+      dateTime: DateTime.now(),
       bikeType: "",
       bikeKilometers: 0,
       title: "",
@@ -48,37 +53,26 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
   } = form;
 
   const linkCreate = "api/calendar/create";
-  const linkTrainingType = "api/training-type/list";
-
-  console.log(linkTrainingType);
-  const { data: dataTrainingType } = useGetApi({
-    url: `${URL}${linkTrainingType}`,
-    queryKey: ["trainingTypeList"],
+  const { mutateAsync } = usePostApi({
+    link: `${URL}${linkCreate}`,
+    queryKey: ["createNewTraining"],
   });
-  // const { mutation } = usePostApi(
-  //   `${URL}${linkCreate}`,
-  //   ["createNewTraining"],
-  //   null,
-  // );
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
-    const sendData = {
+    let convertedBodyData = {
       ...data,
-      //to do utils
-      duration: Object.values(data.duration)
-        .map((duration) => duration.toString().padStart(2, "0"))
-        .join(":"),
-      month: monthIndex,
+      duration: convertObjectWithNumbersToString(data.duration),
       day,
+      month: 12,
     };
 
-    //mutation.mutate({ paramsObj: null, bodyData: sendData });
-
-    setTimeout(async () => {
+    try {
+      await mutateAsync({ bodyData: convertedBodyData });
       closeModal();
-      //refetch funkcji calendar-list
-      //await refetch?.();
-    }, 500);
+    } catch (error) {
+      console.log(error instanceof Error ? error.message : "Błąd zapisu");
+      toast.error(error instanceof Error ? error.message : "Błąd zapisu");
+    }
   });
 
   return (
@@ -94,19 +88,12 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
                 className="mb-2"
                 errors={errors}
                 rules={{ required: "Pole jest wymagane" }}
-                options={
-                  // dataTrainingType.length > 0 &&
-                  // //zmienic typowanie
-                  // dataTrainingType?.map((e: any) => {
-                  //   console.log(e, "e");
-                  //
-                  //   return {
-                  //     value: e.value,
-                  //     name: e.trainingName,
-                  //   };
-                  // })
-                  []
-                }
+                options={trainingDataType.map((item: any) => {
+                  return {
+                    value: item.trainingType,
+                    name: item.type,
+                  };
+                })}
               />
               <FormInputDuration<any>
                 id="duration"
@@ -131,13 +118,12 @@ const AddTrainingForm = ({ closeModal, day }: any) => {
                 className="mb-2"
                 errors={errors}
                 rules={{ required: "Pole jest wymagane" }}
-                //options={["one", "two"]}
                 options={[
-                  { type: "rower", trainingType: "Rower" },
-                  { type: "airbike", trainingType: "Airbike" },
-                ].map((e) => ({
-                  value: e.type,
-                  name: e.trainingType,
+                  { type: "road", name: "Road bike" },
+                  { type: "mtb", name: "Mtb bike" },
+                ].map((item) => ({
+                  value: item.type,
+                  name: item.name,
                 }))}
               />
               <FormInput<any>

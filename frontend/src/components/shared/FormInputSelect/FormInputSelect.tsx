@@ -18,6 +18,7 @@ export type FormInputSelectProps<TFormValues extends FieldValues> = {
   rules?: RegisterOptions;
   errors?: Partial<DeepMap<TFormValues, FieldError>>;
   className: string;
+  //tu zmienić
   options: any[] | null;
 };
 

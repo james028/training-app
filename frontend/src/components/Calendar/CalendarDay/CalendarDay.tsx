@@ -45,16 +45,18 @@ const CalendarDay = ({
     );
   }, [trainingDataColor]);
 
+  //console.log(colorLookup);
+
   const getColor = (eventType: string): string => {
     return colorLookup[eventType] || colorLookup.default;
   };
 
   const renderEvents = () => {
-    if (data?.length > 3) {
-      return <div className="flex items-center align-items">+3</div>;
+    if (data.length > 3) {
+      return <div className="flex items-center">+3</div>;
     } else {
-      if (data?.length > 0) {
-        return data?.map((event: TDay) => {
+      if (data.length > 0) {
+        return data.map((event: TDay) => {
           const { type } = event;
 
           return (
@@ -122,6 +124,7 @@ const CalendarDay = ({
           closeModal={() => setOpenModalAddTraining(false)}
           modalTitle={"Dodaj trening"}
           day={day}
+          trainingDataType={trainingDataColor}
         />
       ) : null}
     </StyledContainerDay>

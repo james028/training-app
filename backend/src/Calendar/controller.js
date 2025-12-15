@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-//const CalendarDataModel = require("./model");
+const CalendarDataModel = require("./model");
 
 const calendarDataForCurrentMonth = {
   year: 2025,
@@ -61,11 +61,12 @@ const calendarDataForCurrentMonth = {
 // @route   GET /api/calendar/list
 exports.getCalendarDataList = asyncHandler(async (req, res) => {
   try {
-    //const calendarDataList = await CalendarDataModel.find({}, null, null);
+    const calendarDataList = await CalendarDataModel.find({}, null, null);
 
+    console.log(calendarDataList);
     //console.log(calendarDataList, calendarDataList);
 
-    res.status(200).json(calendarDataForCurrentMonth);
+    res.status(200).json(calendarDataList);
   } catch (error) {
     console.log(error, "err");
     res.status(404).json({ error: "Not found!" });
@@ -77,10 +78,80 @@ exports.getCalendarDataList = asyncHandler(async (req, res) => {
 exports.createNewTraining = asyncHandler(async (req, res) => {
   console.log(req.body, " body creaate");
 
-  //req.body.month = 1,2,3,4...
-  try {
-  } catch (error) {
-    console.log(error, "err");
-    res.status(404).json({ error: "Not found!" });
+  // const userId = req.user.id;
+  const userId = "1234";
+  const {
+    trainingType,
+    duration,
+    bikeType,
+    bikeKilometers,
+    title,
+    description,
+    dateTime,
+    day,
+    month,
+  } = req.body;
+
+  if (!dateTime || !trainingType || !duration) {
+    return res.status(400).json({
+      error: "Brak wymaganych pól: title, dateTime",
+    });
   }
+
+  const date = new Date(dateTime);
+
+  if (isNaN(date.getTime())) {
+    return res.status(400).json({
+      error: "Nieprawidłowy format daty",
+    });
+  }
+
+  //const date = new Date(dateTime);
+  const year = date.getFullYear();
+  // const month = date.getMonth() + 1;
+  //const dayNumber = date.getDate();
+  const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
+
+  const newObject = {
+    trainingType,
+    duration,
+    bikeType,
+    bikeKilometers,
+    title,
+    description,
+    dateTime: date,
+  };
+  const monthDoc = await CalendarDataModel.findOneAndUpdate(
+    {
+      userId: userId,
+      yearMonthKey: yearMonthKey,
+      "days.dayNumber": day,
+    },
+    {
+      $push: { "days.$.tasks": newObject },
+    },
+    { new: true, upsert: false },
+  );
+
+  // Jeśli dzień nie istnieje
+  if (!monthDoc) {
+    await CalendarDataModel.findOneAndUpdate(
+      { userId: userId, yearMonthKey: yearMonthKey },
+      {
+        $push: {
+          days: {
+            dayNumber: day,
+            tasks: [newObject],
+          },
+        },
+      },
+      { new: true, upsert: true },
+    );
+  }
+
+  return res.status(201).json({
+    success: true,
+    message: "Zadanie utworzone pomyślnie",
+    activity: newObject,
+  });
 });

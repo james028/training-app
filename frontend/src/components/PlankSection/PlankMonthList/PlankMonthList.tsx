@@ -19,6 +19,7 @@ const PlankMonthList = () => {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  //zmienic
   if (status === "loading" || isRefetching) {
     return <Loading />;
   }

@@ -6,6 +6,7 @@ import useGetApi from "../../hooks/api/get/useApiGet";
 import { URL } from "../../constants";
 import { TDay } from "../../types";
 import { useToastError } from "../../hooks/useToastError/useToastError";
+import Loading from "../shared/Loading/Loading";
 
 interface CalendarApiResponse {
   year: number;
@@ -19,8 +20,7 @@ const Calendar = () => {
   const link = "api/calendar/list";
   const {
     data: calendarData,
-    //dorobić
-    //isLoading,
+    isLoading,
     isError,
     error,
   } = useGetApi<CalendarApiResponse>({
@@ -41,6 +41,10 @@ const Calendar = () => {
     //tu bedzie zapytanie
     //setMonthIndex((prev: number) => prev - 1);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">

@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../../shared/Modal/Modal";
 import AddTrainingForm from "../AddTrainingForm/AddTrainingForm";
+import { TrainingTypeColor } from "../../../types";
 
 const AddTraining = ({
   isOpenModal,
@@ -9,6 +10,7 @@ const AddTraining = ({
   modalTitle,
   eventData,
   day,
+  trainingDataType,
 }: {
   isOpenModal: boolean;
   setOpenModal: any;
@@ -16,8 +18,8 @@ const AddTraining = ({
   modalTitle: string;
   eventData?: Record<any, any>;
   day: string | null;
+  trainingDataType: TrainingTypeColor[];
 }) => {
-  //eventData w dół dla testu
   return (
     <>
       {isOpenModal ? (
@@ -26,7 +28,11 @@ const AddTraining = ({
           closeModal={closeModal}
           modalTitle={modalTitle}
         >
-          <AddTrainingForm closeModal={closeModal} day={day} />
+          <AddTrainingForm
+            closeModal={closeModal}
+            day={day}
+            trainingDataType={trainingDataType}
+          />
         </Modal>
       ) : null}
     </>
