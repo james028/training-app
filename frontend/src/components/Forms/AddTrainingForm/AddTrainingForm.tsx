@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { DateTime } from "luxon";
 import { useQueryClient } from "@tanstack/react-query";
 import useGetApi from "../../../hooks/api/get/useApiGet";
+import { useAppContext } from "../../../appContext/appContext";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -27,14 +28,8 @@ export type RegistrationFormFields = {
   description?: string;
 };
 
-// ...
-//const queryClient = useQueryClient();
-
 const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
-  //const { monthIndex } = useAppContext();
-
-  console.log(day, "day");
-  console.log(day, "month");
+  const { year, month } = useAppContext();
 
   const form = useForm<RegistrationFormFields>({
     defaultValues: {
@@ -67,8 +62,8 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
   const link = "api/calendar/list";
   const { refetch } = useGetApi<any>({
     url: `${URL}${link}`,
-    queryKey: ["calendarDataList"],
-    paramsObject: { year: 2025, month: 12 },
+    queryKey: ["calendarDataList", year, month],
+    paramsObject: { year, month },
   });
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
@@ -76,7 +71,8 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
       ...data,
       duration: convertObjectWithNumbersToString(data.duration),
       day,
-      month: 12,
+      month,
+      year,
     };
 
     try {

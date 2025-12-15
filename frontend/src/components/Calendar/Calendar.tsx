@@ -7,6 +7,7 @@ import { URL } from "../../constants";
 import { TDay } from "../../types";
 import { useToastError } from "../../hooks/useToastError/useToastError";
 import Loading from "../shared/Loading/Loading";
+import { useAppContext } from "../../appContext/appContext";
 
 interface CalendarApiResponse {
   year: number;
@@ -89,23 +90,16 @@ export const convertCalendarDataToFlatTasks = (
 
     // Mapowanie każdego zadania z danego dnia
     return dayEntry.tasks.map((task: any) => {
-      // Tworzymy kopię zadania, usuwając oryginalne 'dateTime'
-      // i dodając 'fullDateTime'
-
-      console.log(task, "!!!!!!!!!!!");
       const { dateTime, ...restOfTask } = task;
 
       return {
         ...restOfTask,
         id: task._id,
-        fullDateTime: fullDateKey, // Dodajemy '2025-12-15'
-      } as any;
+        fullDateTime: fullDateKey,
+      };
     });
   });
 
-  console.log(flatTasks, "flat");
-
-  // 3. Zwrócenie oczekiwanej struktury
   return {
     year,
     month,
@@ -114,10 +108,8 @@ export const convertCalendarDataToFlatTasks = (
 };
 
 const Calendar = () => {
-  //const { monthIndex, setMonthIndex } = useAppContext();
+  const { year, month, changeMonth } = useAppContext();
 
-  const month = 12;
-  const year = 2025;
   const link = "api/calendar/list";
   const {
     data: calendarData,
@@ -126,28 +118,15 @@ const Calendar = () => {
     error,
   } = useGetApi<any>({
     url: `${URL}${link}`,
-    queryKey: ["calendarDataList"],
-    //tu bedzie zapytanie z paramsami
+    queryKey: ["calendarDataList", year, month],
     paramsObject: { year, month },
   });
-  useToastError(isError, error);
+
   const data = calendarData ?? [];
   const convertedCalendarData = convertCalendarDataToFlatTasks(data);
-
-  console.log(convertedCalendarData);
   const { tasks } = convertedCalendarData;
 
-  console.log(tasks);
-
-  const incrementMonth = () => {
-    //tu bedzie zapytanie
-    //setMonthIndex((prev: number) => prev + 1);
-  };
-
-  const decrementMonth = () => {
-    //tu bedzie zapytanie
-    //setMonthIndex((prev: number) => prev - 1);
-  };
+  useToastError(isError, error);
 
   if (isLoading) {
     return <Loading />;
@@ -157,12 +136,12 @@ const Calendar = () => {
     <div className="container mx-auto px-4 py-2 md:py-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <CalendarHeader
-          incrementMonth={incrementMonth}
-          decrementMonth={decrementMonth}
-          year={2025}
-          month={12}
+          incrementMonth={() => changeMonth(1)}
+          decrementMonth={() => changeMonth(-1)}
+          year={year}
+          month={month}
         />
-        <CalendarDays calendarData={tasks} year={2025} month={12} />
+        <CalendarDays calendarData={tasks} year={year} month={month} />
       </div>
     </div>
   );

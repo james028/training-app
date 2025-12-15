@@ -32,7 +32,7 @@ const CalendarHeader = ({
           />
         </svg>
       ),
-      disabled: month === 1,
+      disabled: null,
       border: <div className="border-r inline-flex h-6"></div>,
     },
     {
@@ -53,7 +53,7 @@ const CalendarHeader = ({
           />
         </svg>
       ),
-      disabled: month > 11,
+      disabled: null,
       border: null,
     },
   ];

@@ -57,12 +57,12 @@ const CalendarDay = ({
     } else {
       if (data.length > 0) {
         return data.map((event: any) => {
-          const { type } = event;
+          const { trainingType } = event;
 
           return (
             <StyledTypeContainer
               key={event.id}
-              hexcolor={getColor(type)}
+              hexcolor={getColor(trainingType)}
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >

@@ -60,9 +60,6 @@ const calendarDataForCurrentMonth = {
 // @desc    Gets all months with workouts on a given day
 // @route   GET /api/calendar/list
 exports.getCalendarDataList = asyncHandler(async (req, res) => {
-  console.log(req.query);
-  console.log(req.params);
-
   const { year, month } = req.query;
   //const userId = req.user.id;
   const userId = "1234";
@@ -81,16 +78,12 @@ exports.getCalendarDataList = asyncHandler(async (req, res) => {
   //     error: "Nieprawidłowe wartości: year (2000-2100), month (1-12)",
   //   });
   // }
-
-  //const yearMonthKey = `${yearNum}-${String(monthNum).padStart(2, "0")}`;
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
   const monthlyData = await CalendarDataModel.findOne({
     userId: userId,
     yearMonthKey: yearMonthKey,
   }).lean();
-
-  console.log(monthlyData);
 
   if (!monthlyData) {
     return res.status(200).json({
@@ -111,6 +104,7 @@ exports.createNewTraining = asyncHandler(async (req, res) => {
   console.log(req.body, " body creaate");
 
   // const userId = req.user.id;
+  //to pózniej zrobie
   const userId = "1234";
   const {
     trainingType,
@@ -122,11 +116,13 @@ exports.createNewTraining = asyncHandler(async (req, res) => {
     dateTime,
     day,
     month,
+    year,
   } = req.body;
 
-  if (!dateTime || !trainingType || !duration) {
+  if (!dateTime || !trainingType || !duration || !day || !month || !year) {
     return res.status(400).json({
-      error: "Brak wymaganych pól: title, dateTime",
+      error:
+        "Brak wymaganych pól: trainingType, duration, dateTime, day, month, year.",
     });
   }
 
@@ -138,10 +134,6 @@ exports.createNewTraining = asyncHandler(async (req, res) => {
     });
   }
 
-  //const date = new Date(dateTime);
-  const year = date.getFullYear();
-  // const month = date.getMonth() + 1;
-  //const dayNumber = date.getDate();
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
   const newObject = {

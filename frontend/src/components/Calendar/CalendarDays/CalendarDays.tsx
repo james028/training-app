@@ -89,8 +89,6 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
         acc[dateKey] = [];
       }
 
-      console.log(task, "2234");
-
       acc[dateKey].push(task as any);
 
       return acc;
