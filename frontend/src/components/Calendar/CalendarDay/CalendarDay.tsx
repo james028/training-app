@@ -56,7 +56,7 @@ const CalendarDay = ({
       return <div className="flex items-center">+3</div>;
     } else {
       if (data.length > 0) {
-        return data.map((event: TDay) => {
+        return data.map((event: any) => {
           const { type } = event;
 
           return (
@@ -67,7 +67,7 @@ const CalendarDay = ({
               onClick={() => handleEditTraining(event)}
             >
               <div className="flex items-center justify-between">
-                <span>{event.type}</span>
+                <span>{event.trainingType}</span>
                 <svg
                   className="h-6 w-6 inline-flex leading-none text-white"
                   fill="none"

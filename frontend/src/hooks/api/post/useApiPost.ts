@@ -74,11 +74,13 @@ const usePostApi = <TData, TBody, TParams extends Record<string, any>>({
   queryKey,
   params,
   headers,
+  invalidateKeys,
 }: {
   link: string;
   queryKey: QueryKey;
   params?: Record<string, any> | null | undefined; // Path params (statyczne)
   headers?: RawAxiosRequestHeaders | undefined;
+  invalidateKeys?: any;
 }): {
   mutate: (variables: MutationVariables<TBody, TParams>) => void;
   mutateAsync: (variables: MutationVariables<TBody, TParams>) => Promise<TData>;
@@ -111,8 +113,13 @@ const usePostApi = <TData, TBody, TParams extends Record<string, any>>({
     useMutation<TData, ApiErrorResponse, MutationVariables<TBody, TParams>>(
       (body) => createPost(body),
       {
+        mutationKey: queryKey,
         onSuccess: (data, variables) => {
           setSuccess();
+          invalidateKeys.forEach((key: any) => {
+            console.log(key, "key");
+            queryClient.invalidateQueries({ queryKey: key });
+          });
           if (variables?.successMessage) {
             toast.success(variables.successMessage);
           }

@@ -60,17 +60,49 @@ const calendarDataForCurrentMonth = {
 // @desc    Gets all months with workouts on a given day
 // @route   GET /api/calendar/list
 exports.getCalendarDataList = asyncHandler(async (req, res) => {
-  try {
-    const calendarDataList = await CalendarDataModel.find({}, null, null);
+  console.log(req.query);
+  console.log(req.params);
 
-    console.log(calendarDataList);
-    //console.log(calendarDataList, calendarDataList);
+  const { year, month } = req.query;
+  //const userId = req.user.id;
+  const userId = "1234";
 
-    res.status(200).json(calendarDataList);
-  } catch (error) {
-    console.log(error, "err");
-    res.status(404).json({ error: "Not found!" });
+  if (!year || !month) {
+    return res.status(400).json({
+      error: "Brak wymaganych parametrów: year i month",
+    });
   }
+
+  // const yearNum = parseInt(year);
+  // const monthNum = parseInt(month);
+  //
+  // if (yearNum < 2000 || yearNum > 2100 || monthNum < 1 || monthNum > 12) {
+  //   return res.status(400).json({
+  //     error: "Nieprawidłowe wartości: year (2000-2100), month (1-12)",
+  //   });
+  // }
+
+  //const yearMonthKey = `${yearNum}-${String(monthNum).padStart(2, "0")}`;
+  const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
+
+  const monthlyData = await CalendarDataModel.findOne({
+    userId: userId,
+    yearMonthKey: yearMonthKey,
+  }).lean();
+
+  console.log(monthlyData);
+
+  if (!monthlyData) {
+    return res.status(200).json({
+      _id: null,
+      userId: userId,
+      yearMonthKey: yearMonthKey,
+      days: [],
+    });
+  }
+
+  // Zwróć dane
+  return res.status(200).json(monthlyData);
 });
 
 // @desc    Create new training

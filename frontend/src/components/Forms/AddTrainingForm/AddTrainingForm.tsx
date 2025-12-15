@@ -10,6 +10,8 @@ import { URL } from "../../../constants";
 import { convertObjectWithNumbersToString } from "../../../utils";
 import toast from "react-hot-toast";
 import { DateTime } from "luxon";
+import { useQueryClient } from "@tanstack/react-query";
+import useGetApi from "../../../hooks/api/get/useApiGet";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -24,6 +26,9 @@ export type RegistrationFormFields = {
   title?: string;
   description?: string;
 };
+
+// ...
+//const queryClient = useQueryClient();
 
 const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
   //const { monthIndex } = useAppContext();
@@ -56,6 +61,14 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
   const { mutateAsync } = usePostApi({
     link: `${URL}${linkCreate}`,
     queryKey: ["createNewTraining"],
+    invalidateKeys: ["calendarDataList"],
+  });
+
+  const link = "api/calendar/list";
+  const { refetch } = useGetApi<any>({
+    url: `${URL}${link}`,
+    queryKey: ["calendarDataList"],
+    paramsObject: { year: 2025, month: 12 },
   });
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
@@ -69,6 +82,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
     try {
       await mutateAsync({ bodyData: convertedBodyData });
       closeModal();
+      await refetch();
     } catch (error) {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");

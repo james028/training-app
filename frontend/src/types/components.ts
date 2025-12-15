@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { TDay, TrainingTypeColor } from "./types";
+import { TDay, TDay2, TrainingTypeColor } from "./types";
+import { FlattenedTask } from "../components/Calendar/Calendar";
 
 export type RemovePlankTrainingProps = {
   closeModal: () => void;
@@ -10,7 +11,7 @@ export interface PlankSectionWrapperProps {
 }
 
 export interface CalendarDaysProps {
-  calendarData: TDay[];
+  calendarData: FlattenedTask[];
   year: number;
   month: number;
 }

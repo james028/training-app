@@ -10,6 +10,7 @@ import {
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { URL } from "../../../constants";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
+import { FlattenedTask } from "../Calendar";
 
 const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   const link = "api/training-type/list";
@@ -76,7 +77,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
     return [...daysBefore, ...daysArray, ...daysAfter];
   };
 
-  const normalizeTasksForCalendar = (tasks: TDay[]) => {
+  const normalizeTasksForCalendar = (tasks: FlattenedTask[]) => {
     if (!tasks || tasks.length === 0) {
       return {};
     }
@@ -88,7 +89,9 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
         acc[dateKey] = [];
       }
 
-      acc[dateKey].push(task);
+      console.log(task, "2234");
+
+      acc[dateKey].push(task as any);
 
       return acc;
     }, {} as DailyTasksMap);
@@ -109,7 +112,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   const daysArray = generateDaysForMonth(year, month);
 
   const tasksByDay = useMemo(() => {
-    return normalizeTasksForCalendar(calendarData);
+    return normalizeTasksForCalendar(calendarData.map((item) => ({ ...item })));
   }, [calendarData]);
 
   const renderDay = (date: string) => {

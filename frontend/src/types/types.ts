@@ -23,6 +23,19 @@ export type TDay = {
   fullDateTime: string;
 };
 
+export type TDay2 = {
+  //dokladnie dobrze zrobic czy string czy number
+  id: number;
+  trainingType: string;
+  title: string;
+  description: string;
+  type: string;
+  bikeType: string;
+  bikeKilometers: number;
+  duration: string; // potem jakis moze data
+  fullDateTime: string;
+};
+
 export type TPlankData = {
   [key: string]: TPlankMonthData[];
 };

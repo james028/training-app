@@ -26,6 +26,7 @@ const useGetApi = <TData>({
   paramsObject?: Record<string, any>;
   headers?: RawAxiosRequestHeaders;
 }): GetApiResult<TData> => {
+  console.log(params);
   const getList = async (): Promise<TData> => {
     const result = await axios.get<TData>(
       endpointWithParams(url, params, getParams(paramsObject)),
