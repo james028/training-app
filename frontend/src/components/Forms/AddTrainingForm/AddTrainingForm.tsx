@@ -66,6 +66,8 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
     }
   });
 
+  const d = [{ type: "rower" }];
+
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit}>
@@ -78,7 +80,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               className="mb-2"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
-              options={trainingDataType.map((item: any) => {
+              options={d.map((item: any) => {
                 return {
                   value: item.trainingType,
                   name: item.type,
