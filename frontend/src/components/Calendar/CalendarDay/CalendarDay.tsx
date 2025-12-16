@@ -115,6 +115,8 @@ const CalendarDay = ({
           closeModal={() => setOpenModalEditTraining(false)}
           modalTitle={"Trening z dnia: "}
           eventData={eventData}
+          day={day}
+          trainingDataType={trainingDataColor}
         />
       ) : null}
       {openModalAddTraining ? (

@@ -5,6 +5,7 @@ import usePostApi from "../../../hooks/api/post/useApiPost";
 import { useLocalStorage } from "../../../hooks/useLocalStorage/useLocalStorage";
 import PlankSection from "../../PlankSection/PlankSection";
 import Calendar from "../../Calendar/Calendar";
+import TrainingsType from "../../TrainingsType/TrainingsType";
 
 type HeaderItemProps = {
   page: string | null;
@@ -140,6 +141,7 @@ const Navbar = () => {
             </ul>
           </div>
           <Calendar />
+          <TrainingsType />
           <PlankSection />
         </div>
       </nav>

@@ -179,3 +179,129 @@ exports.createNewTraining = asyncHandler(async (req, res) => {
     activity: newObject,
   });
 });
+
+// @desc    Edit added activity
+// @route   PATCH /api/calendar/edit
+exports.editAddedTraining = asyncHandler(async (req, res) => {
+  // 1. Walidacja Użytkownika i Danych
+  //const userId = req.user.id; // Zakładamy autentykację
+  const userId = "1234";
+
+  // Dane lokalizacyjne i ID zadania muszą przyjść z frontendu
+  const { year, month, day, taskId, ...updatedFields } = req.body;
+
+  // Oczekujemy, że front-end prześle zaktualizowane pola (np. title, duration, bikeType)
+  if (
+    !taskId ||
+    !day ||
+    !month ||
+    !year ||
+    Object.keys(updatedFields).length === 0
+  ) {
+    return res.status(400).json({ error: "Brak wymaganych danych do edycji." });
+  }
+
+  // Zbudowanie klucza grupowania
+  const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
+
+  console.log(taskId, day, month, yearMonthKey, year, updatedFields);
+
+  if (updatedFields.dateTime) {
+    updatedFields.dateTime = new Date(updatedFields.dateTime);
+  }
+
+  // Używamy $set do zaktualizowania konkretnych pól
+  const update = {};
+  for (const key in updatedFields) {
+    // Klucz dynamiczny: "days.$.tasks.$[task].title"
+    // Wskazuje ścieżkę do pola 'key' w zadaniu 'task'
+    update[`days.$.tasks.$[task].${key}`] = updatedFields[key];
+  }
+
+  // 4. Wykonanie Zapytania Mongoose
+  const monthDoc = await CalendarDataModel.findOneAndUpdate(
+    {
+      // A. Lokalizacja Głównego Dokumentu (Miesiąc/Użytkownik)
+      userId: userId,
+      yearMonthKey: yearMonthKey,
+      // B. Lokalizacja Dnia (W tablicy 'days')
+      "days.dayNumber": day,
+      // C. Warunek upewniający się, że zadanie istnieje, ale nie używamy go w warunku,
+      // tylko jako część ArrayFilters dla optymalizacji
+    },
+    { $set: update },
+    {
+      new: true,
+      arrayFilters: [
+        // To jest kluczowe! Wskazuje, który element tablicy 'tasks' ma być zmieniony
+        { "task._id": taskId },
+      ],
+    },
+  );
+
+  // 5. Obsługa Wyniku
+  if (!monthDoc) {
+    return res
+      .status(404)
+      .json({ error: "Nie znaleziono zadania do aktualizacji." });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Zadanie zaktualizowane pomyślnie",
+  });
+});
+
+// @desc    Remove exist training
+// @route   DELETE /api/calendar/remove/:id
+exports.deleteExistTraining = asyncHandler(async (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+
+  // 1. Walidacja Użytkownika i Danych
+  // /const userId = req.user.id; // Zakładamy autentykację
+  const userId = "1234";
+  const { id: taskId } = req.params; // ID treningu z URL
+  //const taskId =
+
+  const { year, month, day } = req.body;
+  //
+  if (!taskId || !day || !month || !year) {
+    return res
+      .status(400)
+      .json({ error: "Brak wymaganych danych (taskId, day, month, year)." });
+  }
+
+  const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
+
+  // 2. Budowanie Zapytania Mongoose (Użycie $pull)
+
+  const monthDoc = await CalendarDataModel.findOneAndUpdate(
+    {
+      userId: userId,
+      yearMonthKey: yearMonthKey,
+      // B. Lokalizacja Dnia (w tablicy 'days')
+      "days.dayNumber": day,
+    },
+    {
+      // Operator $pull: usuwa elementy z tablicy na podstawie warunku
+      $pull: {
+        "days.$.tasks": {
+          _id: taskId,
+        },
+      },
+    },
+    { new: true },
+  );
+
+  if (!monthDoc) {
+    return res.status(404).json({
+      error: "Nie znaleziono zadania do usunięcia w podanej lokalizacji.",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Zadanie usunięte pomyślnie",
+  });
+});

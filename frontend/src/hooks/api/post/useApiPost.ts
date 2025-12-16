@@ -116,10 +116,7 @@ const usePostApi = <TData, TBody, TParams extends Record<string, any>>({
         mutationKey: queryKey,
         onSuccess: (data, variables) => {
           setSuccess();
-          invalidateKeys.forEach((key: any) => {
-            console.log(key, "key");
-            queryClient.invalidateQueries({ queryKey: key });
-          });
+
           if (variables?.successMessage) {
             toast.success(variables.successMessage);
           }

@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../../shared/Modal/Modal";
 import EditTrainingForm from "../EditTrainingForm/EditTrainingForm";
+import { TrainingTypeColor } from "../../../types";
 
 const EditTraining = ({
   isOpenModal,
@@ -8,12 +9,16 @@ const EditTraining = ({
   closeModal,
   modalTitle,
   eventData,
+  day,
+  trainingDataType,
 }: {
   isOpenModal: any;
   setOpenModal: any;
   closeModal: any;
   modalTitle: string;
   eventData?: Record<any, any>;
+  day: any;
+  trainingDataType: TrainingTypeColor[];
 }) => {
   return (
     <>
@@ -23,7 +28,12 @@ const EditTraining = ({
           closeModal={closeModal}
           modalTitle={modalTitle}
         >
-          <EditTrainingForm eventData={eventData} closeModal={closeModal} />
+          <EditTrainingForm
+            eventData={eventData}
+            day={day}
+            trainingDataType={trainingDataType}
+            closeModal={closeModal}
+          />
         </Modal>
       ) : null}
     </>

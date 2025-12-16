@@ -7,6 +7,12 @@ import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
 import EditButtons from "../EditButtons/EditButtons";
 import FormTextArea from "../../shared/FormTextArea/FormTextArea";
+import { useAppContext } from "../../../appContext/appContext";
+import toast from "react-hot-toast";
+import usePostApi from "../../../hooks/api/post/useApiPost";
+import { URL } from "../../../constants";
+import { DateTime } from "luxon";
+import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -15,13 +21,20 @@ export type RegistrationFormFields = {
     minutes: string;
     seconds: string;
   };
+  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;
   description?: string;
 };
 
-const EditTrainingForm = ({ eventData, closeModal }: any) => {
+const EditTrainingForm = ({
+  eventData,
+  closeModal,
+  day,
+  trainingDataType,
+}: any) => {
+  const { year, month } = useAppContext();
   const [isEdit, setIsEdit] = useState(false);
 
   const form = useForm<RegistrationFormFields>({
@@ -32,6 +45,7 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
         minutes: "",
         seconds: "",
       },
+      dateTime: DateTime.now(),
       bikeKilometers: 0,
       bikeType: "",
       title: "",
@@ -43,23 +57,43 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
     formState: { errors },
   } = form;
 
-  const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
-    console.log("submitting... edit", data);
-
-    //tutaj funkcja na be na async/await
-    let newData: any = { ...data };
-
-    //wspoldzielona
-    newData = {
-      ...data,
-      duration: Object.values(data.duration)
-        .map((duration) => duration.toString().padStart(2, "0"))
-        .join(":"),
-    };
-
-    console.log(newData);
-    closeModal();
+  const linkRemove = "api/calendar/delete";
+  const { mutateAsync: mutateAsyncRemove } = usePostApi({
+    link: `${URL}${linkRemove}/${eventData.id}`,
+    queryKey: ["removeExistTraining"],
   });
+
+  const { handleSubmitForm } = useAddEditFormService(
+    { year, month, day },
+    "edit",
+    eventData,
+  );
+
+  const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
+    try {
+      await handleSubmitForm(data);
+      toast.success("Edycja zapisana pomyślnie!");
+      setIsEdit(false);
+      closeModal();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd.";
+
+      toast.error(errorMessage);
+    }
+  });
+
+  const handleRemove = async () => {
+    try {
+      await mutateAsyncRemove({
+        bodyData: {
+          year,
+          month,
+          day,
+        },
+      });
+    } catch (error) {}
+  };
 
   return (
     <FormProvider {...form}>
@@ -80,11 +114,16 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
-                  options={["Siłownia", "Rower"]}
-                  defaultValue={eventData?.type}
+                  options={trainingDataType.map((item: any) => {
+                    return {
+                      value: item.trainingType,
+                      name: item.type,
+                    };
+                  })}
+                  defaultValue={eventData?.trainingType}
                 />
               }
-              eventDataField={eventData?.type}
+              eventDataField={eventData?.trainingType}
             />
             <EditLabelInput
               label={"Długość treningu"}
@@ -119,7 +158,13 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
-                  options={["one", "two", "race80"]}
+                  options={[
+                    { type: "road", name: "Road bike" },
+                    { type: "mtb", name: "Mtb bike" },
+                  ].map((item) => ({
+                    value: item.type,
+                    name: item.name,
+                  }))}
                   defaultValue={eventData?.bikeType}
                 />
               }
@@ -191,6 +236,9 @@ const EditTrainingForm = ({ eventData, closeModal }: any) => {
               eventDataField={eventData?.description}
             />
           </div>
+          <button type="button" onClick={() => handleRemove()}>
+            Usuń
+          </button>
           <EditButtons
             isEdit={isEdit}
             endEdit={() => setIsEdit(false)}
