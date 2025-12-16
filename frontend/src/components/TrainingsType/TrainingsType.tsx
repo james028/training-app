@@ -6,8 +6,7 @@ import useGetApi from "../../hooks/api/get/useApiGet";
 import TrainingTypeList from "./TrainingTypeList/TrainingTypeList";
 import usePostApi from "../../hooks/api/post/useApiPost";
 import { StyledColorRectangle } from "./style";
-
-const URL = "http://localhost:5001/";
+import { URL } from "../../constants";
 
 const TrainingsType = () => {
   const [color, setColor] = useState<string>("");

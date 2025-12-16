@@ -6,14 +6,13 @@ import { useLocalStorage } from "../../../hooks/useLocalStorage/useLocalStorage"
 import PlankSection from "../../PlankSection/PlankSection";
 import Calendar from "../../Calendar/Calendar";
 import TrainingsType from "../../TrainingsType/TrainingsType";
+import { URL } from "../../../constants";
 
 type HeaderItemProps = {
   page: string | null;
   label: string;
   handleClick?: () => void;
 };
-
-const URL = "http://localhost:5001/";
 
 const Navbar = () => {
   const [openMenu, setOpenMenu] = useState(false);

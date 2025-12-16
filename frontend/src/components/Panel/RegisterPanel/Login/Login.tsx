@@ -6,14 +6,12 @@ import { loginSchema } from "../schemas";
 import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../../appContext/appContext";
-import { queryKey } from "@tanstack/react-query/build/lib/__tests__/utils";
+import { URL } from "../../../../constants";
 
 type LoginFormFields = {
   email: string;
   password: string;
 };
-
-const URL = "http://localhost:5001/";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -34,10 +32,10 @@ const Login = () => {
   } = form;
 
   const linkRegister = "api/auth/login";
-  const { responseStatus, mutateAsync } = usePostApi({
-    link: `${URL}${linkRegister}`,
-    queryKey: ["userLogin"],
-  });
+  // const { responseStatus, mutateAsync } = usePostApi({
+  //   link: `${URL}${linkRegister}`,
+  //   queryKey: ["userLogin"],
+  // });
 
   const onSubmit = handleSubmit(async (data: any) => {
     try {
