@@ -51,8 +51,6 @@ const CalendarDay = ({
     return colorLookup[eventType] || colorLookup.default;
   };
 
-  console.log("day");
-
   const renderEvents = () => {
     if (data.length > 3) {
       return <div className="flex items-center">+3</div>;
