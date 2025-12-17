@@ -132,6 +132,8 @@ const Calendar = () => {
     return <Loading />;
   }
 
+  console.log(data);
+
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
