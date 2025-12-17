@@ -126,3 +126,9 @@ export type TrainingTypeResponse = {
   count: number;
   data: TrainingTypeColor[];
 };
+
+export type HeaderItemProps = {
+  page: string | null;
+  label: string;
+  handleClick?: () => void;
+};

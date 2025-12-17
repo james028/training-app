@@ -63,8 +63,7 @@ exports.handleLogin = asyncHandler(async (req, res) => {
       res.status(401).json({ message: "Nie znaleziono użytkownika" });
     }
 
-    const match = await bcrypt.compare(password, user.password);
-    console.log(match, password, user.password);
+    const match = await comparePassword(password, user.password);
     if (!match) {
       return res.status(404).json({ message: "Niepoprawne hasło" });
     }
@@ -118,5 +117,5 @@ exports.handleLogout = asyncHandler(async (req, res) => {
     path: "/",
   });
 
-  res.sendStatus(204);
+  res.status(200).json({ message: "Successfully logged out" });
 });
