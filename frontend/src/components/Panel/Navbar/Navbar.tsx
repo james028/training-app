@@ -21,6 +21,7 @@ const Navbar = () => {
 
   const [, , removeValue] = useLocalStorage("jwt");
 
+  console.log("a");
   //zmienić nazwę
   const { user, addUser } = useAppContext();
   const isAuth = Object.keys(user ?? {}).length > 0;
