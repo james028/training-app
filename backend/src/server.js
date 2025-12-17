@@ -6,14 +6,6 @@ const debug = require("debug");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 
-dotenv.config();
-
-//import crypto from "crypto";
-const crypto = require("crypto");
-
-//const secret = crypto.randomBytes(64).toString("hex");
-//console.log(secret);
-
 const app = express();
 const server = http.createServer(app);
 const port = 5001;
@@ -23,6 +15,9 @@ const CalendarRouter = require("./Calendar/routes");
 const PlankRouter = require("./Plank/routes");
 const TrainingTypeRouter = require("./TrainingType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
+
+dotenv.config();
+console.log("test");
 
 const loggerOptions = {
   transports: [new winston.transports.Console()],
@@ -52,7 +47,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-//app.use(cors());
 
 const corsOptions = {
   origin: true,
