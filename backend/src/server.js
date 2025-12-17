@@ -1,15 +1,12 @@
 const express = require("express");
 const http = require("http");
 const winston = require("winston");
-const cors = require("cors");
-const debug = require("debug");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 
 const app = express();
 const server = http.createServer(app);
 const port = 5001;
-const debugLog = debug("app");
 
 const CalendarRouter = require("./Calendar/routes");
 const PlankRouter = require("./Plank/routes");
@@ -17,7 +14,6 @@ const TrainingTypeRouter = require("./TrainingType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
 
 dotenv.config();
-console.log("test");
 
 const loggerOptions = {
   transports: [new winston.transports.Console()],
