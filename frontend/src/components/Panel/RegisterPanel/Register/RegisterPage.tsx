@@ -14,7 +14,7 @@ type RegisterFormFields = {
   confirmPassword: string;
 };
 
-const Register = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
 
   const form = useForm<RegisterFormFields>({
@@ -171,4 +171,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterPage;

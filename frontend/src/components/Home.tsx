@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import Navbar from "./Panel/Navbar/Navbar";
 import PlankSection from "./PlankSection/PlankSection";
 
-const Home = () => {
+const RootLayout = () => {
   return (
     <div
       style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
@@ -30,4 +30,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default RootLayout;

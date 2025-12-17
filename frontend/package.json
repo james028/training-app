@@ -19,6 +19,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-colorful": "^5.2.1",
     "react-dom": "^18.2.0",
+    "react-error-boundary": "^6.0.0",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^14.0.0",

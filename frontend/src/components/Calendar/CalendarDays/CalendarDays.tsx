@@ -110,6 +110,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   const daysArray = generateDaysForMonth(year, month);
 
   const tasksByDay = useMemo(() => {
+    //poprawić, tu od poczatku
     return normalizeTasksForCalendar(calendarData.map((item) => ({ ...item })));
   }, [calendarData]);
 

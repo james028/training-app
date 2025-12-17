@@ -4,5 +4,5 @@
 const isDevelopment = process.env.NODE_ENV === "development";
 
 export const URL = isDevelopment
-  ? "http://localhost:5001"
+  ? "http://localhost:5001/"
   : "https://training-app-l28l.onrender.com/";

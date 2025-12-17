@@ -51,11 +51,14 @@ exports.handleRegister = asyncHandler(async (req, res) => {
 });
 
 exports.handleLogin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email: userEmail, password } = req.body;
+
+  console.log(userEmail);
 
   try {
-    const user = await UserModel.findOne({ email }, null, null);
+    const user = await UserModel.findOne({ email: userEmail }, null, null);
 
+    console.log(user);
     if (!user) {
       res.status(401).json({ message: "Nie znaleziono użytkownika" });
     }
