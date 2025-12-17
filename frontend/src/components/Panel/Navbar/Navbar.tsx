@@ -139,9 +139,6 @@ const Navbar = () => {
               })}
             </ul>
           </div>
-          <Calendar />
-          <TrainingsType />
-          <PlankSection />
         </div>
       </nav>
     </>
