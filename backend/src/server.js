@@ -17,6 +17,7 @@ const TrainingTypeRouter = require("./TrainingType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
 
 dotenv.config();
+console.log("test");
 
 const loggerOptions = {
   transports: [new winston.transports.Console()],
