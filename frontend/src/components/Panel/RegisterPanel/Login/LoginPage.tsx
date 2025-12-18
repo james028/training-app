@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import FormInput from "../../../shared/FormInput/FormInput";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
@@ -17,7 +17,7 @@ type LoginFormFields = {
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const { addUser } = useAppContext();
+  const { handleChangeAuth } = useAppContext();
 
   const form = useForm<LoginFormFields>({
     defaultValues: {
@@ -45,13 +45,10 @@ const LoginPage = () => {
         successMessage: "Zalogowano użytkownika!",
         errorMessage: "nie udało się zalogować",
       });
-      console.log(responseData, "reeeeeeeee");
 
       if (responseData) {
-        addUser(responseData);
-        setTimeout(async () => {
-          reset();
-        }, 500);
+        handleChangeAuth(responseData);
+        reset();
         navigate("/dashboard");
       }
     } catch (error) {
@@ -59,14 +56,6 @@ const LoginPage = () => {
       console.log(error);
     }
   });
-
-  // useEffect(() => {
-  //   if (responseStatus === Status.SUCCESS) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [responseStatus]);
-
-  console.log("login mount comp");
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8">
@@ -81,7 +70,7 @@ const LoginPage = () => {
                 <FormInput<any>
                   id="email"
                   // @ts-ignore
-                  type="text"
+                  type="email"
                   name="email"
                   label="Email"
                   className="mb-2"
@@ -91,7 +80,7 @@ const LoginPage = () => {
                 <FormInput<any>
                   id="password"
                   // @ts-ignore
-                  type="text"
+                  type="password"
                   name="password"
                   label="Hasło"
                   className="mb-2"

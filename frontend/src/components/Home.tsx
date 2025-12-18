@@ -6,11 +6,9 @@ const RootLayout = () => {
   return (
     <>
       <Navbar />
-
       <main style={{ padding: "1rem", flex: 1 }}>
         <Outlet />
       </main>
-
       <footer style={{ padding: "1rem", background: "#eee" }}>
         &copy; 2025 My App
       </footer>

@@ -15,11 +15,11 @@ const Navbar = () => {
   const [, , removeValue] = useLocalStorage("jwt");
 
   //zmienić nazwę
-  const { user, addUser } = useAppContext();
-  const isAuth = Object.keys(user ?? {}).length > 0;
-  const isAuth2 = user?.data?.id;
+  const { auth, handleChangeAuth } = useAppContext();
+  const isAuth = Object.keys(auth ?? {}).length > 0;
+  //const isAuth2 = auth?.data?.id;
 
-  const linkLogout = "api/auth/logout1";
+  const linkLogout = "api/auth/logout";
   const { mutateAsync: mutateAsyncLogout } = usePostApi({
     link: `${URL}${linkLogout}`,
     queryKey: ["userLogout"],
@@ -35,9 +35,9 @@ const Navbar = () => {
       toast.error(errorMessage);
     } finally {
       removeValue();
-      addUser(null);
+      handleChangeAuth(null);
       toast.success("Wylogowano");
-      navigate("/register");
+      navigate("/login");
     }
   };
 
@@ -67,8 +67,6 @@ const Navbar = () => {
   const headerItems: HeaderItemProps[] = isAuth
     ? headerItemsLogIn
     : headerItemsLogOut;
-
-  console.log(user, isAuth2, isAuth);
 
   return (
     <>

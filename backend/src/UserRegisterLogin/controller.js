@@ -90,7 +90,6 @@ exports.handleLogin = asyncHandler(async (req, res) => {
 
     const { _id: id, username, email } = user;
     res.json({
-      accessToken,
       data: {
         accessToken,
         id,
