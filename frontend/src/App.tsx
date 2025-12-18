@@ -20,9 +20,9 @@ import Loading from "./components/shared/Loading/Loading";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Panel/Navbar/Navbar";
 import PrivateRoute from "./components/shared/PrivateRoute/PrivateRoute";
+import PublicRoute from "./components/shared/PublicRoute/PublicRoute";
 
 const ErrorPage = lazy(() => import("./pages/ErrorPage"));
-const Trainings = lazy(() => import("./components/Trainings/Trainings"));
 
 const PublicLayout = () => {
   return (
@@ -47,7 +47,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/login",
-        element: <LoginPage />,
+        element: (
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        ),
       },
       {
         path: "/register",

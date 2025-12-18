@@ -48,19 +48,19 @@ import PlankSection from "../PlankSection/PlankSection";
 import Calendar from "../Calendar/Calendar";
 
 const Trainings = () => {
-  const { linkUrl, setLinkUrl } = useAppContext();
+  //const { linkUrl, setLinkUrl } = useAppContext();
   //const { link } = useLoaderData() as { link: string };
 
   const didMount = useRef(false);
 
-  useEffect(() => {
-    //if (!didMount.current) {
-    //setLinkUrl("aa");
-    //didMount.current = true;
-    //}
-  }, [linkUrl, setLinkUrl]);
+  //useEffect(() => {
+  //if (!didMount.current) {
+  //setLinkUrl("aa");
+  //didMount.current = true;
+  //}
+  //}//, [linkUrl, setLinkUrl]);
 
-  console.log("mounted");
+  //console.log("mounted");
 
   return (
     <div>

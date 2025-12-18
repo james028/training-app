@@ -1,49 +1,47 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import { useLocalStorage } from "../../../hooks/useLocalStorage/useLocalStorage";
-import PlankSection from "../../PlankSection/PlankSection";
-import Calendar from "../../Calendar/Calendar";
-import TrainingsType from "../../TrainingsType/TrainingsType";
 import { URL } from "../../../constants";
-
-type HeaderItemProps = {
-  page: string | null;
-  label: string;
-  handleClick?: () => void;
-};
+import toast from "react-hot-toast";
+import { HeaderItemProps } from "../../../types";
 
 const Navbar = () => {
-  const [openMenu, setOpenMenu] = useState(false);
+  //const [openMenu, setOpenMenu] = useState(false);
 
   const navigate = useNavigate();
 
   const [, , removeValue] = useLocalStorage("jwt");
 
-  console.log("a");
   //zmienić nazwę
-  const { user, addUser } = useAppContext();
-  const isAuth = Object.keys(user ?? {}).length > 0;
+  const { auth, handleChangeAuth } = useAppContext();
+  const isAuth = Object.keys(auth ?? {}).length > 0;
+  //const isAuth2 = auth?.data?.id;
 
   const linkLogout = "api/auth/logout";
-  const {
-    responseStatus,
-    //mutation
-  } = usePostApi({ link: `${URL}${linkLogout}`, queryKey: ["userLogout"] });
+  const { mutateAsync: mutateAsyncLogout } = usePostApi({
+    link: `${URL}${linkLogout}`,
+    queryKey: ["userLogout"],
+  });
 
-  const handleLogOut = () => {
-    console.log("click logout");
-    removeValue();
-    // mutation.mutateAsync({
-    //   paramsObj: null,
-    //   bodyData: null,
-    // });
-    addUser(null);
-    navigate("/register");
+  const handleLogOut = async () => {
+    try {
+      await mutateAsyncLogout({});
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd.";
+
+      toast.error(errorMessage);
+    } finally {
+      removeValue();
+      handleChangeAuth(null);
+      toast.success("Wylogowano");
+      navigate("/login");
+    }
   };
 
-  const headerItemsLogOut: HeaderItemProps[] = [
+  const headerItemsLogOut = [
     { page: "", label: "Home" },
     {
       page: "/register",
@@ -57,7 +55,7 @@ const Navbar = () => {
     },
   ];
 
-  const headerItemsLogIn: HeaderItemProps[] = [
+  const headerItemsLogIn = [
     {
       page: "/dashboard",
       label: "Dashboard",
@@ -66,9 +64,9 @@ const Navbar = () => {
     { page: null, label: "Wyloguj się", handleClick: handleLogOut },
   ];
 
-  const headerItems = isAuth ? headerItemsLogIn : headerItemsLogOut;
-
-  console.log(headerItems, "headeritems", isAuth);
+  const headerItems: HeaderItemProps[] = isAuth
+    ? headerItemsLogIn
+    : headerItemsLogOut;
 
   return (
     <>
@@ -86,7 +84,6 @@ const Navbar = () => {
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
               Flowbite
             </span>
-            {user?.email}
           </a>
           <button
             data-collapse-toggle="navbar-solid-bg"
@@ -112,9 +109,7 @@ const Navbar = () => {
               />
             </svg>
           </button>
-          <div>
-            Użytkownik: {user?.email} {user?.username}
-          </div>
+
           <div
             className="hidden w-full md:block md:w-auto"
             id="navbar-solid-bg"
@@ -124,14 +119,6 @@ const Navbar = () => {
                 console.log(page);
                 return (
                   <li key={label}>
-                    {/*<a*/}
-                    {/*  href=""*/}
-                    {/*  className="block py-2 px-3 md:p-0 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"*/}
-                    {/*  aria-current="page"*/}
-                    {/*  onClick={handleClick}*/}
-                    {/*>*/}
-                    {/*  {label}*/}
-                    {/*</a>*/}
                     <Link to={page as string} onClick={handleClick}>
                       {label}
                     </Link>
