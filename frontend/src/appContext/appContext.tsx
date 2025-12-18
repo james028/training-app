@@ -64,12 +64,12 @@ const ContextProvider = ({ children }: { children: any }) => {
 
   const [auth, setAuth, removeAuth] = useLocalStorage("jwt");
 
-  const handleChangeAuth = useCallback(() => {
-    return (user: AuthResponse | null) => {
+  const handleChangeAuth = useCallback(
+    (user: AuthResponse | null) => {
       setAuth(user);
-    };
-  }, [setAuth]);
-
+    },
+    [setAuth],
+  );
   useSyncStorage(handleChangeAuth, removeAuth);
 
   const value = useMemo(() => {
@@ -80,7 +80,7 @@ const ContextProvider = ({ children }: { children: any }) => {
       month: selectedMonth,
       changeMonth,
     };
-  }, [auth, handleChangeAuth, selectedYear, selectedMonth, changeMonth]);
+  }, [auth, selectedYear, selectedMonth, changeMonth, handleChangeAuth]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
