@@ -6,7 +6,6 @@ import { loginSchema } from "../schemas";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../../appContext/appContext";
 import usePostApi from "../../../../hooks/api/post/useApiPost";
-
 import { URL } from "../../../../constants";
 
 type LoginFormFields = {
@@ -43,7 +42,7 @@ const LoginPage = () => {
       const responseData = await mutateAsyncLogin({
         bodyData: data,
         successMessage: "Zalogowano użytkownika!",
-        errorMessage: "nie udało się zalogować",
+        errorMessage: "Nie udało się zalogować",
       });
 
       if (responseData) {

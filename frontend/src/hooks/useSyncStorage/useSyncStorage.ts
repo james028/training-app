@@ -7,7 +7,7 @@ export const useSyncStorage = (
 ) => {
   useEffect(() => {
     if (!setAuth || typeof setAuth !== "function") {
-      console.error("useSync: addUser nie jest funkcją!", setAuth);
+      console.error("useSyncStorage: addUser nie jest funkcją!", setAuth);
       return;
     }
 

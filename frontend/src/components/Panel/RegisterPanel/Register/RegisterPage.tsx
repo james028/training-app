@@ -4,8 +4,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useYupValidationResolver } from "../../../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { registerSchema } from "../schemas";
-import usePostApi, { Status } from "../../../../hooks/api/post/useApiPost";
+import usePostApi from "../../../../hooks/api/post/useApiPost";
 import { URL } from "../../../../constants";
+import toast from "react-hot-toast";
 
 type RegisterFormFields = {
   email: string;
@@ -24,48 +25,49 @@ const RegisterPage = () => {
       password: "",
       confirmPassword: "",
     },
+    //to nie działa
     resolver: useYupValidationResolver(registerSchema),
   });
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
   } = form;
 
   const linkRegister = "api/auth/register";
-  // const { mutation, responseStatus } = usePostApi(
-  //   `${URL}${linkRegister}`,
-  //   ["userRegister"],
-  //   null,
-  // );
-  const { responseStatus } = usePostApi({
+  const {
+    mutateAsync: mutateAsyncRegister,
+    isLoading,
+    isSuccess,
+  } = usePostApi<any, any, any>({
     link: `${URL}${linkRegister}`,
     queryKey: ["userRegister"],
   });
 
-  const onSubmit = handleSubmit((data: any) => {
+  const onSubmit = handleSubmit(async (data: any) => {
     try {
-      const { confirmPassword, ...restObjectData } = data;
-      //mutation.mutate({ paramsObj: null, bodyData: restObjectData });
+      const { confirmPassword, ...registerData } = data;
 
-      setTimeout(async () => {
-        reset();
-      }, 500);
+      await mutateAsyncRegister({
+        bodyData: registerData,
+        successMessage: "Zarejestrowano użytkownika!",
+        errorMessage: "Nie udało się zarejestrować użytkownika",
+      });
+
+      reset();
     } catch (error) {
-      console.log(error);
-      //pozniej tutaj toast ze nie udalo sie zarejestrować
+      const errorMessage =
+        error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd.";
+
+      toast.error(errorMessage);
     }
   });
-
-  const isAfterRegisteredPanel = responseStatus === Status.SUCCESS;
-
-  //zrobić przycisk disabled na button jesli walidacja nie przeszla i pola nie sa wypelnione
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-          {!isAfterRegisteredPanel ? (
+          {!isSuccess ? (
             <>
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Zarejestruj się
@@ -96,7 +98,7 @@ const RegisterPage = () => {
                     <FormInput<any>
                       id="password"
                       // @ts-ignore
-                      type="text"
+                      type="password"
                       name="password"
                       label="Hasło"
                       className="mb-2"
@@ -106,7 +108,7 @@ const RegisterPage = () => {
                     <FormInput<any>
                       id="confirmPassword"
                       // @ts-ignore
-                      type="text"
+                      type="password"
                       name="confirmPassword"
                       label="Potwierdź hasło"
                       className="mb-2"
@@ -116,9 +118,43 @@ const RegisterPage = () => {
                   </div>
                   <button
                     type="submit"
-                    className=" bg-blue-500 md:bg-green-500 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    className={`
+                      relative w-full py-3 px-6 rounded-xl font-bold text-white tracking-wide
+                      transition-all duration-200 shadow-md
+                      ${
+                        isValid
+                          ? "bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-200 active:scale-[0.98] cursor-pointer"
+                          : "bg-emerald-900/20 text-emerald-900/40 cursor-not-allowed shadow-none"
+                      }
+                    `}
+                    disabled={!isValid}
                   >
-                    Zarejestruj się
+                    {isLoading ? (
+                      <span className="flex items-center justify-center">
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Rejestrowanie...
+                      </span>
+                    ) : (
+                      "Zarejestruj się"
+                    )}
                   </button>
                   <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                     Masz już konto?{" "}
