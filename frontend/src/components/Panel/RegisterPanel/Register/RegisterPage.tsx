@@ -15,6 +15,12 @@ type RegisterFormFields = {
   confirmPassword: string;
 };
 
+interface RegisterPayload {
+  email: string;
+  username: string;
+  password: string;
+}
+
 const RegisterPage = () => {
   const navigate = useNavigate();
 
@@ -25,8 +31,8 @@ const RegisterPage = () => {
       password: "",
       confirmPassword: "",
     },
-    //to nie działa
-    resolver: useYupValidationResolver(registerSchema),
+    resolver: useYupValidationResolver<RegisterFormFields>(registerSchema),
+    mode: "onTouched",
   });
   const {
     handleSubmit,
@@ -39,7 +45,7 @@ const RegisterPage = () => {
     mutateAsync: mutateAsyncRegister,
     isLoading,
     isSuccess,
-  } = usePostApi<any, any, any>({
+  } = usePostApi<RegisterPayload, any, any>({
     link: `${URL}${linkRegister}`,
     queryKey: ["userRegister"],
   });

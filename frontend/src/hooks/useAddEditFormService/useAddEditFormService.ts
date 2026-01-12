@@ -37,7 +37,6 @@ export const useAddEditFormService = (
   const { mutateAsync: addMutateAsync } = usePostApi({
     link: `${URL}${linkCreate}`,
     queryKey: ["createNewTraining"],
-    invalidateKeys: ["calendarDataList"],
   });
 
   const linkEdit = "api/calendar/edit";

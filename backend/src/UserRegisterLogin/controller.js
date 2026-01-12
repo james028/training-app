@@ -1,26 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const UserModel = require("./model");
-const { body, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-export const registerValidators = [
-  body("email")
-    .trim()
-    .isEmail()
-    .withMessage("Nieprawidłowy adres email")
-    .normalizeEmail(),
-
-  body("password")
-    .isLength({ min: 8 })
-    .withMessage("Hasło musi mieć minimum 8 znaków")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage("Hasło musi zawierać małą literę, wielką literę i cyfrę"),
-
-  body("confirmPassword")
-    .custom((value, { req }) => value === req.body.password)
-    .withMessage("Hasła nie są identyczne"),
-];
 
 function comparePassword(password, existPassword) {
   return bcrypt.compare(password, existPassword);
@@ -45,8 +27,6 @@ exports.handleRegister = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Wszystkie pola są wymagane" });
   }
 
-  //try {
-  //console.log(username, email, password);
   const existingUser = await UserModel.findOne(
     { email: email.toLowerCase() },
     null,
@@ -80,11 +60,6 @@ exports.handleRegister = asyncHandler(async (req, res) => {
       createdAt: newUser.createdAt,
     },
   });
-  // } catch (error) {
-  //   res
-  //     .status(500)
-  //     .json({ message: "Błąd serwera. Spróbuj ponownie później." });
-  // }
 });
 
 exports.handleLogin = asyncHandler(async (req, res) => {

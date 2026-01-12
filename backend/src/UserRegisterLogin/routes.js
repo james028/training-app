@@ -1,9 +1,5 @@
-const {
-  handleRegister,
-  handleLogin,
-  handleLogout,
-  registerValidators,
-} = require("./controller");
+const { handleRegister, handleLogin, handleLogout } = require("./controller");
+const { registerValidators } = require("./validators/registerValidators");
 
 exports.routesConfig = function (app) {
   app.post("/api/auth/register", registerValidators, handleRegister);

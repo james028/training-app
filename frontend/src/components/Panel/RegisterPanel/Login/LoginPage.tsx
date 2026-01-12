@@ -13,6 +13,12 @@ type LoginFormFields = {
   password: string;
 };
 
+interface LoginPayload {
+  email: string;
+  username: string;
+  password: string;
+}
+
 const LoginPage = () => {
   const navigate = useNavigate();
 
@@ -23,16 +29,17 @@ const LoginPage = () => {
       email: "",
       password: "",
     },
-    resolver: useYupValidationResolver(loginSchema),
+    resolver: useYupValidationResolver<LoginFormFields>(loginSchema),
+    mode: "onTouched",
   });
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
   } = form;
 
   const linkRegister = "api/auth/login";
-  const { mutateAsync: mutateAsyncLogin } = usePostApi({
+  const { mutateAsync: mutateAsyncLogin } = usePostApi<LoginPayload, any, any>({
     link: `${URL}${linkRegister}`,
     queryKey: ["userLogin"],
   });
@@ -89,7 +96,16 @@ const LoginPage = () => {
               </div>
               <button
                 type="submit"
-                className=" bg-blue-500 md:bg-green-500 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className={`
+                      relative w-full py-3 px-6 rounded-xl font-bold text-white tracking-wide
+                      transition-all duration-200 shadow-md
+                      ${
+                        isValid
+                          ? "bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-200 active:scale-[0.98] cursor-pointer"
+                          : "bg-emerald-900/20 text-emerald-900/40 cursor-not-allowed shadow-none"
+                      }
+                    `}
+                disabled={!isValid}
               >
                 Zaloguj
               </button>
