@@ -8,14 +8,8 @@ import { useAppContext } from "../../../../appContext/appContext";
 import usePostApi from "../../../../hooks/api/post/useApiPost";
 import { URL } from "../../../../constants";
 
-type LoginFormFields = {
+interface LoginFormFields {
   email: string;
-  password: string;
-};
-
-interface LoginPayload {
-  email: string;
-  username: string;
   password: string;
 }
 
@@ -39,12 +33,16 @@ const LoginPage = () => {
   } = form;
 
   const linkRegister = "api/auth/login";
-  const { mutateAsync: mutateAsyncLogin } = usePostApi<LoginPayload, any, any>({
+  const { mutateAsync: mutateAsyncLogin } = usePostApi<
+    LoginFormFields,
+    any,
+    any
+  >({
     link: `${URL}${linkRegister}`,
     queryKey: ["userLogin"],
   });
 
-  const onSubmit = handleSubmit(async (data: any) => {
+  const onSubmit = handleSubmit(async (data: LoginFormFields) => {
     try {
       const responseData = await mutateAsyncLogin({
         bodyData: data,

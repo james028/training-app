@@ -1,6 +1,7 @@
 import React from "react";
 //import { useNavigate } from "react-router-dom";
 import Calendar from "../../Calendar/Calendar";
+//import TrainingsType from "../../TrainingsType/TrainingsType";
 
 const Dashboard = () => {
   //const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Dashboard = () => {
       {/*<br />*/}
       {/*<PlankSection />*/}
       <Calendar />
+      {/*<TrainingsType />*/}
     </div>
   );
 };

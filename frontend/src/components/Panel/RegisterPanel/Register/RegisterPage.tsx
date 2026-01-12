@@ -8,17 +8,11 @@ import usePostApi from "../../../../hooks/api/post/useApiPost";
 import { URL } from "../../../../constants";
 import toast from "react-hot-toast";
 
-type RegisterFormFields = {
+interface RegisterFormFields {
   email: string;
   username: string;
   password: string;
   confirmPassword: string;
-};
-
-interface RegisterPayload {
-  email: string;
-  username: string;
-  password: string;
 }
 
 const RegisterPage = () => {
@@ -45,17 +39,15 @@ const RegisterPage = () => {
     mutateAsync: mutateAsyncRegister,
     isLoading,
     isSuccess,
-  } = usePostApi<RegisterPayload, any, any>({
+  } = usePostApi<RegisterFormFields, any, any>({
     link: `${URL}${linkRegister}`,
     queryKey: ["userRegister"],
   });
 
-  const onSubmit = handleSubmit(async (data: any) => {
+  const onSubmit = handleSubmit(async (data: RegisterFormFields) => {
     try {
-      const { confirmPassword, ...registerData } = data;
-
       await mutateAsyncRegister({
-        bodyData: registerData,
+        bodyData: data,
         successMessage: "Zarejestrowano użytkownika!",
         errorMessage: "Nie udało się zarejestrować użytkownika",
       });
