@@ -80,6 +80,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               className="mb-2"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
+              //do zrobienia
               options={d.map((item: any) => {
                 return {
                   value: item.trainingType,

@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage/useLocalStorage";
 import { DateTime } from "luxon";
-import { useSyncStorage } from "../hooks/useSync/useSync";
+import { useSyncStorage } from "../hooks/useSyncStorage/useSyncStorage";
 
 // interface AppContextType {
 //   //url: string;
@@ -37,10 +37,11 @@ const AppContext = createContext<any | undefined>(undefined);
 const ContextProvider = ({ children }: { children: any }) => {
   const getCurrentYearAndMonth = (): { year: number; month: number } => {
     const now = DateTime.local();
+    const { year, month } = now;
 
     return {
-      year: now.year, // np. 2025
-      month: now.month, // np. 12 (Grudzień)
+      year,
+      month,
     };
   };
 

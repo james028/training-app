@@ -69,18 +69,16 @@ const useSetResponseStatus = (): {
   return { responseStatus, setLoading, setSuccess, setError };
 };
 
-const usePostApi = <TData, TBody, TParams extends Record<string, any>>({
+const usePostApi = <TBody, TData, TParams extends Record<string, any>>({
   link,
   queryKey,
   params,
   headers,
-  invalidateKeys,
 }: {
   link: string;
   queryKey: QueryKey;
   params?: Record<string, any> | null | undefined; // Path params (statyczne)
   headers?: RawAxiosRequestHeaders | undefined;
-  invalidateKeys?: any;
 }): {
   mutate: (variables: MutationVariables<TBody, TParams>) => void;
   mutateAsync: (variables: MutationVariables<TBody, TParams>) => Promise<TData>;

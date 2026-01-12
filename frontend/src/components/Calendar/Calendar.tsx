@@ -116,6 +116,7 @@ const Calendar = () => {
     isLoading,
     isError,
     error,
+    //any to musi być zmienione
   } = useGetApi<any>({
     url: `${URL}${link}`,
     queryKey: ["calendarDataList", year, month],
