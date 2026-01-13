@@ -20,7 +20,7 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   );
 
   const { refetch: refetchList } = useGetApi({
-    url: `${URL}${link}/list`,
+    link: `${URL}${link}/list`,
     queryKey: ["plankList"],
   });
 

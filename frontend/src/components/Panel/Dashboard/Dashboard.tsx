@@ -1,7 +1,7 @@
 import React from "react";
 //import { useNavigate } from "react-router-dom";
 import Calendar from "../../Calendar/Calendar";
-//import TrainingsType from "../../TrainingsType/TrainingsType";
+import ActivityType from "../../TrainingsType/ActivityType";
 
 const Dashboard = () => {
   //const navigate = useNavigate();
@@ -17,8 +17,8 @@ const Dashboard = () => {
       {/*<button onClick={() => navigate(`/trainings`)}>Treningi</button>*/}
       {/*<br />*/}
       {/*<PlankSection />*/}
-      <Calendar />
-      {/*<TrainingsType />*/}
+      {/*<Calendar />*/}
+      <ActivityType />
     </div>
   );
 };
