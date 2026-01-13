@@ -19,7 +19,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
     isError,
     error,
   } = useGetApi<TrainingTypeResponse>({
-    url: `${URL}${link}`,
+    link: `${URL}${link}`,
     queryKey: ["trainingTypeList"],
   });
 

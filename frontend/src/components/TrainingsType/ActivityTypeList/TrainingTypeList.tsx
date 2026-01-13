@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../shared/Loading/Loading";
 import { StyledColorContainer } from "../style";
 
-type TrainingTypeList = {
+//zmienić nazwę
+export type TrainingTypeList = {
   _id: string;
   type: string;
   trainingName: string;
@@ -25,7 +26,7 @@ enum TrainingTypeEnum {
   color = "Kolor",
 }
 
-const TrainingTypeList: React.FC<TrainingTypeListProps> = ({
+const ActivityTypeList: React.FC<TrainingTypeListProps> = ({
   dataTrainingType,
   status,
   isRefetching,
@@ -124,4 +125,4 @@ const TrainingTypeList: React.FC<TrainingTypeListProps> = ({
   );
 };
 
-export default TrainingTypeList;
+export default ActivityTypeList;

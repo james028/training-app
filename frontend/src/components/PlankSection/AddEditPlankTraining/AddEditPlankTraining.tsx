@@ -52,7 +52,7 @@ const AddEditPlankTraining = () => {
     queryKey: ["updatePlank"],
   });
   const { refetch: refetchList } = useGetApi({
-    url: `${URL}api/plank/list`,
+    link: `${URL}api/plank/list`,
     queryKey: ["plankList"],
     headers: { Authorization: `Bearer ${token}` },
   });

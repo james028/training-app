@@ -118,7 +118,7 @@ const Calendar = () => {
     error,
     //any to musi być zmienione
   } = useGetApi<any>({
-    url: `${URL}${link}`,
+    link: `${URL}${link}`,
     queryKey: ["calendarDataList", year, month],
     paramsObject: { year, month },
   });
