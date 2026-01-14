@@ -51,7 +51,7 @@ const ActivityType = () => {
   const {
     data: activityTypeData,
     refetch,
-    status,
+    isLoading,
     isRefetching,
     error,
     isError,
@@ -184,7 +184,8 @@ const ActivityType = () => {
 
       <ActivityTypeList
         dataTrainingType={activityData}
-        status={status}
+        isLoading={isLoading}
+        isError={isError}
         isRefetching={isRefetching}
         onEdit={handleEdit}
       />

@@ -122,12 +122,11 @@ const Calendar = () => {
     queryKey: ["calendarDataList", year, month],
     paramsObject: { year, month },
   });
+  useToastError(isError, error);
 
   const data = calendarData ?? [];
   const convertedCalendarData = convertCalendarDataToFlatTasks(data);
   const { tasks } = convertedCalendarData;
-
-  useToastError(isError, error);
 
   if (isLoading) {
     return <Loading />;

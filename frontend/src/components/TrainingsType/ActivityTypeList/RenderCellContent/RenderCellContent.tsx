@@ -1,9 +1,9 @@
 import React from "react";
 import { TrainingTypeList } from "../TrainingTypeList";
+import { StyledColorContainer } from "../../style";
 
 interface TableCellProps {
   columnKey: keyof TrainingTypeList | string;
-  //columnKey: string;
   value: string | number | boolean | null | undefined;
   row: TrainingTypeList;
   onEdit: (row: TrainingTypeList) => void;
@@ -17,20 +17,32 @@ const RenderCellContent = ({
 }: TableCellProps) => {
   switch (columnKey) {
     case "color":
-      return <td>color</td>;
+      return (
+        <td className="flex items-center pt-1">
+          <div className="w-16">{value || "-"}</div>
+          <StyledColorContainer color={row.color}></StyledColorContainer>
+        </td>
+      );
     case "type":
       return <td>type</td>;
-    default:
+    case "action":
       return (
         <td>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => onEdit(row)}
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+              title="Edytuj"
+            >
+              Edytuj
+            </button>
+          </div>
+        </td>
+      );
+    default:
+      return (
+        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
           {String(value ?? "")}
-          <button
-            onClick={() => onEdit(row)} // Wywołanie edycji
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-            title="Edytuj"
-          >
-            Edit
-          </button>
         </td>
       );
   }
