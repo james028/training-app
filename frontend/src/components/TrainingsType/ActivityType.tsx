@@ -12,8 +12,8 @@ import usePostApi from "../../hooks/api/post/useApiPost";
 import toast from "react-hot-toast";
 import { hexToRgba, stringToCamelCaseString } from "../../utils";
 import { useToastError } from "../../hooks/useToastError/useToastError";
-import * as yup from "yup";
 import { useYupValidationResolver } from "../../hooks/useYupValidationResolver/useYupValidationResolver";
+import { activitySchema } from "./schemas";
 
 interface ActivityTypeFormProps {
   activityName: string;
@@ -26,23 +26,9 @@ interface ApiResponse<T> {
   count: number;
 }
 
-export const activitySchema = yup
-  .object({
-    activityName: yup
-      .string()
-      .required("Nazwa treningu jest wymagana")
-      .min(3, "Nazwa musi mieć przynajmniej 3 znaki")
-      .max(50, "Nazwa jest za długa"),
-
-    color: yup
-      .string()
-      .required("Musisz wybrać kolor")
-      // Opcjonalnie: regex sprawdzający poprawność formatu HEX
-      .matches(/^#[0-9A-F]{6}$/i, "Niepoprawny format koloru"),
-  })
-  .required();
-
 const ActivityType = () => {
+  const [editingId, setEditingId] = React.useState<string | null>(null);
+
   const form = useForm<ActivityTypeFormProps>({
     defaultValues: {
       activityName: "",
@@ -67,13 +53,13 @@ const ActivityType = () => {
     refetch,
     status,
     isRefetching,
-    error: geterr,
-    isError: getError,
+    error,
+    isError,
   } = useGetApi<ApiResponse<TrainingTypeList[]>>({
     link: `${URL}${link}`,
     queryKey: ["trainingTypeList"],
   });
-  useToastError(getError, geterr, "test message");
+  useToastError(isError, error, "test message");
   const activityData = activityTypeData?.data ?? [];
 
   const linkCreate = "api/trainingw-type/cre1ate";
@@ -90,10 +76,16 @@ const ActivityType = () => {
         ...data,
         type: stringToCamelCaseString(activityName),
       };
-      await mutateAsync({ bodyData });
 
-      toast.success("Dodano nowy typ aktywności!");
-      reset();
+      if (editingId) {
+        //await mutateUpdate({ id: editingId, bodyData });
+        toast.success("Zaktualizowano pomyślnie");
+      } else {
+        await mutateAsync({ bodyData });
+        toast.success("Dodano nowy typ aktywności!");
+      }
+
+      handleCancelEdit();
       await refetch?.();
     } catch (error) {
       const errorMessage =
@@ -103,6 +95,19 @@ const ActivityType = () => {
     }
   };
 
+  const handleEdit = (item: TrainingTypeList) => {
+    setEditingId(item._id);
+    setValue("activityName", item.trainingName);
+    setValue("color", item.color);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    reset();
+  };
+
+  const isEditing = Boolean(editingId);
+  const isBtnDisabled = !isValid || isSubmitting;
   return (
     <>
       <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -144,19 +149,36 @@ const ActivityType = () => {
             ) : null}
           </div>
           <button
-            disabled={!isValid || isSubmitting}
+            disabled={isBtnDisabled}
             className={`
-    mt-3 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 transition-all
-    ${
-      isValid
-        ? "bg-orange-500 hover:bg-orange-600 text-white shadow-md active:scale-95"
-        : "bg-orange-300 cursor-not-allowed text-orange-100 shadow-none"
-    }
-  `}
+              mt-3 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 transition-all
+              ${
+                !isBtnDisabled
+                  ? isEditing
+                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md active:scale-95" // Kolor dla edycji
+                    : "bg-orange-500 hover:bg-orange-600 text-white shadow-md active:scale-95" // Twój kolor dla dodawania
+                  : "bg-gray-300 cursor-not-allowed text-gray-100 shadow-none" // Stan wyłączony (neutralny)
+              }
+            `}
             type="submit"
           >
-            {isSubmitting ? "Dodawanie..." : "Dodaj"}
+            {isSubmitting
+              ? isEditing
+                ? "Zapisywanie..."
+                : "Dodawanie..."
+              : isEditing
+                ? "Zapisz zmiany"
+                : "Dodaj typ"}
           </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="bg-gray-500 text-white px-4 py-2 rounded-sm"
+            >
+              Anuluj
+            </button>
+          )}
         </form>
       </FormProvider>
 
@@ -164,6 +186,7 @@ const ActivityType = () => {
         dataTrainingType={activityData}
         status={status}
         isRefetching={isRefetching}
+        onEdit={handleEdit}
       />
     </>
   );

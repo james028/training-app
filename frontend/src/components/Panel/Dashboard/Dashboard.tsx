@@ -17,7 +17,7 @@ const Dashboard = () => {
       {/*<button onClick={() => navigate(`/trainings`)}>Treningi</button>*/}
       {/*<br />*/}
       {/*<PlankSection />*/}
-      {/*<Calendar />*/}
+      <Calendar />
       <ActivityType />
     </div>
   );
