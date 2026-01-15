@@ -118,16 +118,15 @@ const Calendar = () => {
     error,
     //any to musi być zmienione
   } = useGetApi<any>({
-    url: `${URL}${link}`,
+    link: `${URL}${link}`,
     queryKey: ["calendarDataList", year, month],
     paramsObject: { year, month },
   });
+  useToastError(isError, error);
 
   const data = calendarData ?? [];
   const convertedCalendarData = convertCalendarDataToFlatTasks(data);
   const { tasks } = convertedCalendarData;
-
-  useToastError(isError, error);
 
   if (isLoading) {
     return <Loading />;

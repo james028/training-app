@@ -49,10 +49,8 @@ const ContextProvider = ({ children }: { children: any }) => {
   const [selectedYear, setSelectedYear] = useState(initialYear);
   const [selectedMonth, setSelectedMonth] = useState(initialMonth);
 
-  const changeMonth = useCallback(() => {
-    return (offset: number) => {
-      // Tworzymy datę Luxon z aktualnie wybranego stanu
-      console.log(offset);
+  const changeMonth = useCallback(
+    (offset: number) => {
       const current = DateTime.local(selectedYear, selectedMonth, 1);
 
       // Dodajemy lub odejmujemy miesiące
@@ -60,8 +58,9 @@ const ContextProvider = ({ children }: { children: any }) => {
 
       setSelectedYear(nextDate.year);
       setSelectedMonth(nextDate.month);
-    };
-  }, [selectedMonth, selectedYear]);
+    },
+    [selectedMonth, selectedYear],
+  );
 
   const [auth, setAuth, removeAuth] = useLocalStorage("jwt");
 

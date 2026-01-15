@@ -45,8 +45,6 @@ const CalendarDay = ({
     );
   }, [trainingDataColor]);
 
-  //console.log(colorLookup);
-
   const getColor = (eventType: string): string => {
     return colorLookup[eventType] || colorLookup.default;
   };

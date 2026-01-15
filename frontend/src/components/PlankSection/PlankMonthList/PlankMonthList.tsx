@@ -14,7 +14,7 @@ const PlankMonthList = () => {
   const token = user?.accessToken ?? "691c7f9f7ff1367b95d4037c";
 
   const { data, status, isRefetching } = useGetApi({
-    url: `${URL}api/plank/list`,
+    link: `${URL}api/plank/list`,
     queryKey: ["plankList"],
     headers: { Authorization: `Bearer ${token}` },
   });

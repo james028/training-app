@@ -2,7 +2,6 @@
 // import Calendar from "../Calendar/Calendar";
 // import Charts from "../Charts/Charts";
 // import PlankSection from "../PlankSection/PlankSection";
-// import TrainingsType from "../TrainingsType/TrainingsType";
 // import { useAppContext } from "../../appContext/appContext";
 // import { useLoaderData } from "react-router-dom";
 //

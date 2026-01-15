@@ -47,7 +47,7 @@ export const useAddEditFormService = (
 
   const link = "api/calendar/list";
   const { refetch: refetchCalendarData } = useGetApi<any>({
-    url: `${URL}${link}`,
+    link: `${URL}${link}`,
     queryKey: ["calendarDataList", year, month],
     paramsObject: { year, month },
   });
