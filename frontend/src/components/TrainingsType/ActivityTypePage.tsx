@@ -131,7 +131,12 @@ const ActivityTypePage = () => {
           <div className="flex">
             <HexColorPicker
               color={currentColor}
-              onChange={(newColor) => setValue("color", newColor)}
+              onChange={(newColor) =>
+                setValue("color", newColor, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
             />
             {currentColor ? (
               <div className=" flex flex-col ml-3">
