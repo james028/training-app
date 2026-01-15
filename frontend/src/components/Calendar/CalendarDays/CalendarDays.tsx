@@ -4,22 +4,20 @@ import { DateTime } from "luxon";
 import {
   CalendarDaysProps,
   DailyTasksMap,
-  TDay,
   TrainingTypeResponse,
 } from "../../../types";
 import useGetApi from "../../../hooks/api/get/useApiGet";
-import { URL } from "../../../constants";
+import { API_ENDPOINTS, URL } from "../../../constants";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
 import { FlattenedTask } from "../Calendar";
 
 const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
-  const link = "api/training-type/list";
   const {
     data: trainingTypeData,
     isError,
     error,
   } = useGetApi<TrainingTypeResponse>({
-    link: `${URL}${link}`,
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
     queryKey: ["trainingTypeList"],
   });
 
