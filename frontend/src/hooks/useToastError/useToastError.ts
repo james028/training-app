@@ -14,7 +14,7 @@ export const useToastError = (
       errorShownRef.current = true;
 
       const errorMessage =
-        error instanceof Error ? null : message ?? "An error occurred";
+        error instanceof Error ? error.message : message ?? "An error occurred";
 
       toast.error(errorMessage, {
         id: `error-${Date.now()}`,

@@ -2,12 +2,10 @@ import React from "react";
 import Loading from "../../shared/Loading/Loading";
 import RenderCellContent from "./RenderCellContent/RenderCellContent";
 
-//zmienić nazwę
-//zmieniać własciwosci na be
-export type TrainingTypeList = {
-  _id: string;
+export type ActivityType = {
+  id: string;
   type: string;
-  trainingName: string;
+  activityName: string;
   color: string;
 };
 
@@ -16,31 +14,32 @@ type Columns = {
   label: string;
 };
 
-type TrainingTypeListProps = {
-  dataTrainingType: TrainingTypeList[];
+type ActivityTypeListProps = {
+  dataActivityType: ActivityType[];
   isLoading: boolean;
   isError: boolean;
   isRefetching: boolean;
-  onEdit: (item: TrainingTypeList) => void;
+  onEdit: (item: ActivityType) => void;
 };
 
 const COLUMN_NAMES: Record<string, string> = {
   type: "Typ",
-  trainingName: "Nazwa aktywności",
+  activityName: "Nazwa aktywności",
   color: "Kolor",
   createdAt: "Data utworzenia",
+  updatedAt: "Data aktualizacji",
 };
 
 const HIDDE_FIELDS = ["_id", "type"];
 
-const ActivityTypeList: React.FC<TrainingTypeListProps> = ({
-  dataTrainingType,
+const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
+  dataActivityType,
   isLoading,
   isError,
   isRefetching,
   onEdit,
 }) => {
-  const getTableColumns = (data: TrainingTypeList[]) => {
+  const getTableColumns = (data: ActivityType[]) => {
     if (!data || !Array.isArray(data) || data.length === 0) {
       return [];
     }
@@ -57,7 +56,7 @@ const ActivityTypeList: React.FC<TrainingTypeListProps> = ({
 
     return [...labels, { key: "action", label: "Akcje" }];
   };
-  const columns = getTableColumns(dataTrainingType);
+  const columns = getTableColumns(dataActivityType);
 
   if (isLoading || isRefetching) {
     return <Loading />;
@@ -67,7 +66,7 @@ const ActivityTypeList: React.FC<TrainingTypeListProps> = ({
     return <div>Wystąpił błąd...</div>;
   }
 
-  if (dataTrainingType?.length === 0) {
+  if (dataActivityType?.length === 0) {
     return <div className="mt-3">Brak danych</div>;
   }
 
@@ -84,14 +83,14 @@ const ActivityTypeList: React.FC<TrainingTypeListProps> = ({
           </tr>
         </thead>
         <tbody>
-          {dataTrainingType.map((row: TrainingTypeList) => (
-            <tr key={row._id}>
+          {dataActivityType.map((row) => (
+            <tr key={row.id}>
               {columns.map((col: Columns) => {
                 return (
                   <RenderCellContent
                     key={col.key}
                     columnKey={col.key}
-                    value={row[col.key as unknown as keyof TrainingTypeList]}
+                    value={row[col.key as unknown as keyof ActivityType]}
                     row={row}
                     onEdit={onEdit}
                   />

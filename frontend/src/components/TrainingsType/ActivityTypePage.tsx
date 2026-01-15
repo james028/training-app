@@ -1,19 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import FormInput from "../shared/FormInput/FormInput";
 import { HexColorPicker } from "react-colorful";
 import { FormProvider, useForm } from "react-hook-form";
 import useGetApi from "../../hooks/api/get/useApiGet";
 import { StyledColorRectangle } from "./style";
-import { URL } from "../../constants";
+import { API_ENDPOINTS, URL } from "../../constants";
 import ActivityTypeList, {
-  TrainingTypeList,
-} from "./ActivityTypeList/TrainingTypeList";
+  ActivityType,
+} from "./ActivityTypeList/ActivityTypeList";
 import usePostApi from "../../hooks/api/post/useApiPost";
 import toast from "react-hot-toast";
 import { hexToRgba, stringToCamelCaseString } from "../../utils";
 import { useToastError } from "../../hooks/useToastError/useToastError";
 import { useYupValidationResolver } from "../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { activitySchema } from "./schemas";
+import usePatchApi from "../../hooks/api/patch/useApiPatch";
 
 interface ActivityTypeFormProps {
   activityName: string;
@@ -26,8 +27,8 @@ interface ApiResponse<T> {
   count: number;
 }
 
-const ActivityType = () => {
-  const [editingId, setEditingId] = React.useState<string | null>(null);
+const ActivityTypePage = () => {
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const form = useForm<ActivityTypeFormProps>({
     defaultValues: {
@@ -47,7 +48,6 @@ const ActivityType = () => {
   } = form;
   const currentColor = watch("color");
 
-  const link = "api/training-type/list";
   const {
     data: activityTypeData,
     refetch,
@@ -55,17 +55,23 @@ const ActivityType = () => {
     isRefetching,
     error,
     isError,
-  } = useGetApi<ApiResponse<TrainingTypeList[]>>({
-    link: `${URL}${link}`,
-    queryKey: ["trainingTypeList"],
+  } = useGetApi<ApiResponse<ActivityType[]>>({
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
+    queryKey: ["activityTypeList"],
   });
-  useToastError(isError, error, "test message");
+  useToastError(isError, error);
+
   const activityData = activityTypeData?.data ?? [];
 
-  const linkCreate = "api/trainingw-type/cre1ate";
   const { mutateAsync } = usePostApi({
-    link: `${URL}${linkCreate}`,
-    queryKey: ["createTrainingTypeList"],
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.CREATE}`,
+    queryKey: ["createActivityTypeList"],
+  });
+
+  const { mutateAsync: mutateEdit } = usePatchApi<any, any, any>({
+    // @ts-ignore
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId)}`,
+    queryKey: ["editActivityTypeList"],
   });
 
   const onSubmit = async (data: ActivityTypeFormProps) => {
@@ -78,7 +84,7 @@ const ActivityType = () => {
       };
 
       if (editingId) {
-        //await mutateUpdate({ id: editingId, bodyData });
+        await mutateEdit({ bodyData });
         toast.success("Zaktualizowano pomyślnie");
       } else {
         await mutateAsync({ bodyData });
@@ -95,9 +101,9 @@ const ActivityType = () => {
     }
   };
 
-  const handleEdit = (item: TrainingTypeList) => {
-    setEditingId(item._id);
-    setValue("activityName", item.trainingName);
+  const handleEdit = (item: ActivityType) => {
+    setEditingId(item.id);
+    setValue("activityName", item.activityName);
     setValue("color", item.color);
   };
 
@@ -127,11 +133,6 @@ const ActivityType = () => {
               color={currentColor}
               onChange={(newColor) => setValue("color", newColor)}
             />
-            {errors.color && (
-              <span className="text-red-500 text-xs mt-2 font-medium">
-                {errors.color.message}
-              </span>
-            )}
             {currentColor ? (
               <div className=" flex flex-col ml-3">
                 <StyledColorRectangle
@@ -155,9 +156,9 @@ const ActivityType = () => {
               ${
                 !isBtnDisabled
                   ? isEditing
-                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md active:scale-95" // Kolor dla edycji
-                    : "bg-orange-500 hover:bg-orange-600 text-white shadow-md active:scale-95" // Twój kolor dla dodawania
-                  : "bg-gray-300 cursor-not-allowed text-gray-100 shadow-none" // Stan wyłączony (neutralny)
+                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md active:scale-95"
+                    : "bg-orange-500 hover:bg-orange-600 text-white shadow-md active:scale-95"
+                  : "bg-gray-300 cursor-not-allowed text-gray-100 shadow-none"
               }
             `}
             type="submit"
@@ -183,7 +184,7 @@ const ActivityType = () => {
       </FormProvider>
 
       <ActivityTypeList
-        dataTrainingType={activityData}
+        dataActivityType={activityData}
         isLoading={isLoading}
         isError={isError}
         isRefetching={isRefetching}
@@ -193,4 +194,4 @@ const ActivityType = () => {
   );
 };
 
-export default ActivityType;
+export default ActivityTypePage;

@@ -1,7 +1,6 @@
 import React from "react";
-//import { useNavigate } from "react-router-dom";
 import Calendar from "../../Calendar/Calendar";
-import ActivityType from "../../TrainingsType/ActivityType";
+import ActivityTypePage from "../../TrainingsType/ActivityTypePage";
 
 const Dashboard = () => {
   //const navigate = useNavigate();
@@ -18,7 +17,7 @@ const Dashboard = () => {
       {/*<br />*/}
       {/*<PlankSection />*/}
       <Calendar />
-      <ActivityType />
+      <ActivityTypePage />
     </div>
   );
 };

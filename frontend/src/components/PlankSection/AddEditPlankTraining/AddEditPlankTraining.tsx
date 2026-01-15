@@ -67,7 +67,6 @@ const AddEditPlankTraining = () => {
     try {
       const isEditing = Object.keys(objectData ?? {}).length > 0;
       if (isEditing) {
-        //edit
         const editedData = {
           ...convertedBodyData,
           day: Number(convertedBodyData.day),
@@ -77,7 +76,6 @@ const AddEditPlankTraining = () => {
           bodyData: editedData,
         });
       } else {
-        //create
         await mutateAsync({
           bodyData: convertedBodyData,
         });
