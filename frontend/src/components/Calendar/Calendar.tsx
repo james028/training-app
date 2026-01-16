@@ -65,10 +65,6 @@ export const convertCalendarDataToFlatTasks = (
   const yearMonthKey = apiData.yearMonthKey;
   // 1. Rozbicie yearMonthKey na rok i miesiąc
   if (!yearMonthKey || !yearMonthKey.includes("-")) {
-    console.error(
-      "Błąd danych: brak lub nieprawidłowy format yearMonthKey",
-      apiData,
-    );
     // Zwróć bezpieczny, pusty obiekt, aby uniknąć awarii aplikacji
     return {
       year: new Date().getFullYear(),
@@ -131,8 +127,6 @@ const Calendar = () => {
   if (isLoading) {
     return <Loading />;
   }
-
-  console.log(data);
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">
