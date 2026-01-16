@@ -10,15 +10,17 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
 import { FlattenedTask } from "../Calendar";
+import { ACTIVITY_KEYS } from "../../../constants/query-keys";
 
 const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
+  //tu zmieniać
   const {
     data: trainingTypeData,
     isError,
     error,
   } = useGetApi<TrainingTypeResponse>({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
-    queryKey: ["trainingTypeList"],
+    queryKey: ACTIVITY_KEYS.activityTypeList(),
   });
 
   const trainingDataColor = trainingTypeData?.data ?? [];

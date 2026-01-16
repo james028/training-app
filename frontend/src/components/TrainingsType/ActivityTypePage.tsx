@@ -18,6 +18,7 @@ import usePatchApi from "../../hooks/api/patch/useApiPatch";
 import Modal from "../shared/Modal/Modal";
 import SubmitButtons from "../Forms/SubmitButtons/SubmitButtons";
 import useDeleteApi from "../../hooks/api/delete/useApiDelete";
+import { ACTIVITY_KEYS } from "../../constants/query-keys";
 
 interface ActivityTypeFormProps {
   activityName: string;
@@ -62,7 +63,7 @@ const ActivityTypePage = () => {
     isError,
   } = useGetApi<ApiResponse<ActivityType[]>>({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
-    queryKey: ["activityTypeList"],
+    queryKey: ACTIVITY_KEYS.activityTypeList(),
   });
   useToastError(isError, error);
 
@@ -70,19 +71,19 @@ const ActivityTypePage = () => {
 
   const { mutateAsync: mutateAsyncCreate } = usePostApi({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.CREATE}`,
-    queryKey: ["createActivityTypeList"],
+    queryKey: ACTIVITY_KEYS.createActivityType(),
   });
 
   const editId = editingId ?? "";
   const { mutateAsync: mutateAsyncEdit } = usePatchApi<any, any, any>({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editId)}`,
-    queryKey: ["editActivityTypeList"],
+    queryKey: ACTIVITY_KEYS.editActivity(editId),
   });
 
   const removeId = removingId ?? "";
   const { mutateAsync: mutateAsyncRemove } = useDeleteApi<any, any, any>(
     `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removeId)}`,
-    ["removeActivityTypeList"],
+    ACTIVITY_KEYS.removeActivity(removeId),
   );
 
   const onSubmit = async (data: ActivityTypeFormProps): Promise<void> => {
