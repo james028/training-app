@@ -58,6 +58,7 @@ const EditTrainingForm = ({
   } = form;
 
   const linkRemove = "api/calendar/delete";
+  //pozmieniać
   const { mutateAsync: mutateAsyncRemove } = usePostApi({
     link: `${URL}${linkRemove}/${eventData.id}`,
     queryKey: ["removeExistTraining"],

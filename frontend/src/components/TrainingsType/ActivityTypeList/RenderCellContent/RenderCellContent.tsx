@@ -7,6 +7,7 @@ interface TableCellProps {
   value: string | number | boolean | null | undefined;
   row: ActivityType;
   onEdit: (row: ActivityType) => void;
+  onDelete: (item: ActivityType) => void;
 }
 
 const RenderCellContent = ({
@@ -14,6 +15,7 @@ const RenderCellContent = ({
   value,
   row,
   onEdit,
+  onDelete,
 }: TableCellProps) => {
   switch (columnKey) {
     case "color":
@@ -39,7 +41,7 @@ const RenderCellContent = ({
           </div>
           <div className="flex justify-end gap-2">
             <button
-              onClick={() => null}
+              onClick={() => onDelete(row)}
               className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
               title="Usuń"
             >

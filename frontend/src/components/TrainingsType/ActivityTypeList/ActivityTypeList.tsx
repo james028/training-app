@@ -20,6 +20,7 @@ type ActivityTypeListProps = {
   isError: boolean;
   isRefetching: boolean;
   onEdit: (item: ActivityType) => void;
+  onDelete: (item: ActivityType) => void;
 };
 
 const COLUMN_NAMES: Record<string, string> = {
@@ -38,6 +39,7 @@ const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
   isError,
   isRefetching,
   onEdit,
+  onDelete,
 }) => {
   const getTableColumns = (data: ActivityType[]) => {
     if (!data || !Array.isArray(data) || data.length === 0) {
@@ -93,6 +95,7 @@ const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
                     value={row[col.key as unknown as keyof ActivityType]}
                     row={row}
                     onEdit={onEdit}
+                    onDelete={onDelete}
                   />
                 );
               })}

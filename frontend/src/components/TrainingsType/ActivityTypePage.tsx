@@ -4,7 +4,7 @@ import { HexColorPicker } from "react-colorful";
 import { FormProvider, useForm } from "react-hook-form";
 import useGetApi from "../../hooks/api/get/useApiGet";
 import { StyledColorRectangle } from "./style";
-import { API_ENDPOINTS, URL } from "../../constants";
+import { API_ENDPOINTS, MONTH_NAMES_MAP, URL } from "../../constants";
 import ActivityTypeList, {
   ActivityType,
 } from "./ActivityTypeList/ActivityTypeList";
@@ -15,6 +15,9 @@ import { useToastError } from "../../hooks/useToastError/useToastError";
 import { useYupValidationResolver } from "../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { activitySchema } from "./schemas";
 import usePatchApi from "../../hooks/api/patch/useApiPatch";
+import Modal from "../shared/Modal/Modal";
+import SubmitButtons from "../Forms/SubmitButtons/SubmitButtons";
+import useDeleteApi from "../../hooks/api/delete/useApiDelete";
 
 interface ActivityTypeFormProps {
   activityName: string;
@@ -29,6 +32,8 @@ interface ApiResponse<T> {
 
 const ActivityTypePage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
 
   const form = useForm<ActivityTypeFormProps>({
     defaultValues: {
@@ -63,18 +68,24 @@ const ActivityTypePage = () => {
 
   const activityData = activityTypeData?.data ?? [];
 
-  const { mutateAsync } = usePostApi({
+  const { mutateAsync: mutateAsyncCreate } = usePostApi({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.CREATE}`,
     queryKey: ["createActivityTypeList"],
   });
 
-  const { mutateAsync: mutateEdit } = usePatchApi<any, any, any>({
-    // @ts-ignore
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId)}`,
+  const editId = editingId ?? "";
+  const { mutateAsync: mutateAsyncEdit } = usePatchApi<any, any, any>({
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editId)}`,
     queryKey: ["editActivityTypeList"],
   });
 
-  const onSubmit = async (data: ActivityTypeFormProps) => {
+  const removeId = removingId ?? "";
+  const { mutateAsync: mutateAsyncRemove } = useDeleteApi<any, any, any>(
+    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removeId)}`,
+    ["removeActivityTypeList"],
+  );
+
+  const onSubmit = async (data: ActivityTypeFormProps): Promise<void> => {
     try {
       const { activityName } = data;
 
@@ -84,10 +95,10 @@ const ActivityTypePage = () => {
       };
 
       if (editingId) {
-        await mutateEdit({ bodyData });
+        await mutateAsyncEdit({ bodyData });
         toast.success("Zaktualizowano pomyślnie");
       } else {
-        await mutateAsync({ bodyData });
+        await mutateAsyncCreate({ bodyData });
         toast.success("Dodano nowy typ aktywności!");
       }
 
@@ -101,6 +112,18 @@ const ActivityTypePage = () => {
     }
   };
 
+  const onSubmitDelete = async (): Promise<void> => {
+    try {
+      await mutateAsyncRemove({});
+      await refetch?.();
+      setIsOpenRemoveModal(false);
+    } catch (error) {
+      let message = error instanceof Error ? error.message : "Błąd zapisu";
+      console.log(message);
+      toast.error(message);
+    }
+  };
+
   const handleEdit = (item: ActivityType) => {
     setEditingId(item.id);
     setValue("activityName", item.activityName);
@@ -110,6 +133,11 @@ const ActivityTypePage = () => {
   const handleCancelEdit = () => {
     setEditingId(null);
     reset();
+  };
+
+  const handleDelete = (item: ActivityType) => {
+    setIsOpenRemoveModal(true);
+    setRemovingId(item.id);
   };
 
   const isEditing = Boolean(editingId);
@@ -194,7 +222,26 @@ const ActivityTypePage = () => {
         isError={isError}
         isRefetching={isRefetching}
         onEdit={handleEdit}
+        onDelete={handleDelete}
       />
+
+      {isOpenRemoveModal ? (
+        <Modal
+          openModal={() => setIsOpenRemoveModal(true)}
+          closeModal={() => setIsOpenRemoveModal(false)}
+          modalTitle={"Usuwanie aktywności"}
+        >
+          <div className="shadow rounded-lg bg-white overflow-hidden w-full block p-8">
+            <div className="text-base text-neutral-600 dark:text-neutral-200 cursor-default">
+              Czy napewno chcesz usunąć aktywność?
+            </div>
+          </div>
+          <SubmitButtons
+            closeModal={() => setIsOpenRemoveModal(false)}
+            saveChanges={() => onSubmitDelete()}
+          />
+        </Modal>
+      ) : null}
     </>
   );
 };
