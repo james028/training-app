@@ -1,145 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 import FormInput from "../shared/FormInput/FormInput";
 import { HexColorPicker } from "react-colorful";
-import { FormProvider, useForm } from "react-hook-form";
-import useGetApi from "../../hooks/api/get/useApiGet";
+import { FormProvider } from "react-hook-form";
 import { StyledColorRectangle } from "./style";
-import { API_ENDPOINTS, MONTH_NAMES_MAP, URL } from "../../constants";
-import ActivityTypeList, {
-  ActivityType,
-} from "./ActivityTypeList/ActivityTypeList";
-import usePostApi from "../../hooks/api/post/useApiPost";
-import toast from "react-hot-toast";
-import { hexToRgba, stringToCamelCaseString } from "../../utils";
-import { useToastError } from "../../hooks/useToastError/useToastError";
-import { useYupValidationResolver } from "../../hooks/useYupValidationResolver/useYupValidationResolver";
-import { activitySchema } from "./schemas";
-import usePatchApi from "../../hooks/api/patch/useApiPatch";
+import ActivityTypeList from "./ActivityTypeList/ActivityTypeList";
+import { hexToRgba } from "../../utils";
 import Modal from "../shared/Modal/Modal";
 import SubmitButtons from "../Forms/SubmitButtons/SubmitButtons";
-import useDeleteApi from "../../hooks/api/delete/useApiDelete";
-import { ACTIVITY_KEYS } from "../../constants/query-keys";
-
-interface ActivityTypeFormProps {
-  activityName: string;
-  color: string;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  count: number;
-}
+import { useActivityType } from "./hooks/useActivityType";
 
 const ActivityTypePage = () => {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-  const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
-
-  const form = useForm<ActivityTypeFormProps>({
-    defaultValues: {
-      activityName: "",
-      color: "",
-    },
-    resolver: useYupValidationResolver<ActivityTypeFormProps>(activitySchema),
-    mode: "onTouched",
-  });
-
+  const {
+    form,
+    getList,
+    handleEdit,
+    handleDelete,
+    handleCancelEdit,
+    onSubmitCreate,
+    onSubmitDelete,
+    editingId,
+    isOpenRemoveModal,
+    setIsOpenRemoveModal,
+  } = useActivityType();
+  const { data: activityData, isLoading, isRefetching, isError } = getList;
   const {
     handleSubmit,
-    setValue,
-    reset,
     watch,
+    setValue,
     formState: { isSubmitting, errors, isValid },
   } = form;
   const currentColor = watch("color");
-
-  const {
-    data: activityTypeData,
-    refetch,
-    isLoading,
-    isRefetching,
-    error,
-    isError,
-  } = useGetApi<ApiResponse<ActivityType[]>>({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
-    queryKey: ACTIVITY_KEYS.activityTypeList(),
-  });
-  useToastError(isError, error);
-
-  const activityData = activityTypeData?.data ?? [];
-
-  const { mutateAsync: mutateAsyncCreate } = usePostApi({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.CREATE}`,
-    queryKey: ACTIVITY_KEYS.createActivityType(),
-  });
-
-  const editId = editingId ?? "";
-  const { mutateAsync: mutateAsyncEdit } = usePatchApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editId)}`,
-    queryKey: ACTIVITY_KEYS.editActivity(editId),
-  });
-
-  const removeId = removingId ?? "";
-  const { mutateAsync: mutateAsyncRemove } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removeId)}`,
-    ACTIVITY_KEYS.removeActivity(removeId),
-  );
-
-  const onSubmit = async (data: ActivityTypeFormProps): Promise<void> => {
-    try {
-      const { activityName } = data;
-
-      const bodyData = {
-        ...data,
-        type: stringToCamelCaseString(activityName),
-      };
-
-      if (editingId) {
-        await mutateAsyncEdit({ bodyData });
-        toast.success("Zaktualizowano pomyślnie");
-      } else {
-        await mutateAsyncCreate({ bodyData });
-        toast.success("Dodano nowy typ aktywności!");
-      }
-
-      handleCancelEdit();
-      await refetch?.();
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd.";
-
-      toast.error(errorMessage);
-    }
-  };
-
-  const onSubmitDelete = async (): Promise<void> => {
-    try {
-      await mutateAsyncRemove({});
-      await refetch?.();
-      setIsOpenRemoveModal(false);
-    } catch (error) {
-      let message = error instanceof Error ? error.message : "Błąd zapisu";
-      console.log(message);
-      toast.error(message);
-    }
-  };
-
-  const handleEdit = (item: ActivityType) => {
-    setEditingId(item.id);
-    setValue("activityName", item.activityName);
-    setValue("color", item.color);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    reset();
-  };
-
-  const handleDelete = (item: ActivityType) => {
-    setIsOpenRemoveModal(true);
-    setRemovingId(item.id);
-  };
 
   const isEditing = Boolean(editingId);
   const isBtnDisabled = !isValid || isSubmitting;
@@ -149,7 +39,7 @@ const ActivityTypePage = () => {
         Dodaj typ treningu:
       </h2>
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmitCreate)}>
           <FormInput<any>
             id="activityName"
             name="activityName"
