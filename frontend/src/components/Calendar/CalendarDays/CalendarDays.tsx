@@ -1,30 +1,41 @@
 import React, { useMemo } from "react";
 import CalendarDay from "../CalendarDay/CalendarDay";
 import { DateTime } from "luxon";
-import {
-  CalendarDaysProps,
-  DailyTasksMap,
-  TrainingTypeResponse,
-} from "../../../types";
+import { ActivityType, CalendarDaysProps, DailyTasksMap } from "../../../types";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
 import { FlattenedTask } from "../Calendar";
 import { ACTIVITY_KEYS } from "../../../constants/query-keys";
+import { ApiResponse } from "../../TrainingsType/hooks/useActivityType";
 
 const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
-  //tu zmieniać
+  // //tu zmieniać
+  // const {
+  //   data: trainingTypeData,
+  //   isError,
+  //   error,
+  // } = useGetApi<TrainingTypeResponse>({
+  //   link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
+  //   queryKey: ACTIVITY_KEYS.activityTypeList(),
+  // });
+
   const {
-    data: trainingTypeData,
-    isError,
+    data: activityTypeData,
+    //refetch,
+    //isLoading,
+    //isRefetching,
     error,
-  } = useGetApi<TrainingTypeResponse>({
+    isError,
+  } = useGetApi<ApiResponse<ActivityType[]>>({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
     queryKey: ACTIVITY_KEYS.activityTypeList(),
   });
-
-  const trainingDataColor = trainingTypeData?.data ?? [];
   useToastError(isError, error);
+  const activityData = activityTypeData?.data ?? [];
+
+  //const trainingDataColor = trainingTypeData?.data ?? [];
+  //useToastError(isError, error);
 
   const getBlankDaysBeforeMonth = (year: number, month: number): number => {
     const firstDayOfMonth = DateTime.local(year, month, 1);
@@ -124,7 +135,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
         data={tasksData}
         day={day}
         isEmpty={!date}
-        trainingDataColor={trainingDataColor}
+        trainingDataColor={activityData}
       />
     );
   };
