@@ -1,14 +1,6 @@
 import React from "react";
-import { ActivityType } from "../ActivityTypeList";
 import { StyledColorContainer } from "../../style";
-
-interface TableCellProps {
-  columnKey: keyof ActivityType | string;
-  value: string | number | boolean | null | undefined;
-  row: ActivityType;
-  onEdit: (row: ActivityType) => void;
-  onDelete: (item: ActivityType) => void;
-}
+import { TableCellProps } from "../../../../types";
 
 const RenderCellContent = ({
   columnKey,

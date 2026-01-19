@@ -1,5 +1,4 @@
 import useGetApi from "../../../hooks/api/get/useApiGet";
-import { ActivityType } from "../ActivityTypeList/ActivityTypeList";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { ACTIVITY_KEYS } from "../../../constants/query-keys";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
@@ -12,6 +11,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useYupValidationResolver } from "../../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { activitySchema } from "../schemas";
+import { ActivityType } from "../../../types";
 
 interface ActivityTypeFormProps {
   activityName: string;

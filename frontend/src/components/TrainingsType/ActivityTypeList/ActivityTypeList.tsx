@@ -1,37 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Loading from "../../shared/Loading/Loading";
 import RenderCellContent from "./RenderCellContent/RenderCellContent";
-
-export type ActivityType = {
-  id: string;
-  type: string;
-  activityName: string;
-  color: string;
-};
-
-type Columns = {
-  key: string;
-  label: string;
-};
-
-type ActivityTypeListProps = {
-  dataActivityType: ActivityType[];
-  isLoading: boolean;
-  isError: boolean;
-  isRefetching: boolean;
-  onEdit: (item: ActivityType) => void;
-  onDelete: (item: ActivityType) => void;
-};
-
-const COLUMN_NAMES: Record<string, string> = {
-  type: "Typ",
-  activityName: "Nazwa aktywności",
-  color: "Kolor",
-  createdAt: "Data utworzenia",
-  updatedAt: "Data aktualizacji",
-};
-
-const HIDDE_FIELDS = ["_id", "type"];
+import { COLUMN_NAMES, HIDDE_FIELDS } from "../../../constants";
+import { ActivityType, ActivityTypeListProps, Columns } from "../../../types";
 
 const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
   dataActivityType,
@@ -58,7 +29,9 @@ const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
 
     return [...labels, { key: "action", label: "Akcje" }];
   };
-  const columns = getTableColumns(dataActivityType);
+  const columns = useMemo(() => {
+    return getTableColumns(dataActivityType);
+  }, [dataActivityType]);
 
   if (isLoading || isRefetching) {
     return <Loading />;
@@ -88,11 +61,14 @@ const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
           {dataActivityType.map((row) => (
             <tr key={row.id}>
               {columns.map((col: Columns) => {
+                const key = col.key as keyof ActivityType | "action";
+                const value = key !== "action" ? row[key] : undefined;
+
                 return (
                   <RenderCellContent
                     key={col.key}
                     columnKey={col.key}
-                    value={row[col.key as unknown as keyof ActivityType]}
+                    value={value}
                     row={row}
                     onEdit={onEdit}
                     onDelete={onDelete}

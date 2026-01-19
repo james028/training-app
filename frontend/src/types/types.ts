@@ -132,3 +132,15 @@ export type HeaderItemProps = {
   label: string;
   handleClick?: () => void;
 };
+
+export type ActivityType = {
+  id: string;
+  type: string;
+  activityName: string;
+  color: string;
+};
+
+export type Columns = {
+  key: string;
+  label: string;
+};
