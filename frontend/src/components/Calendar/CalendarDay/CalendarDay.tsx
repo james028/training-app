@@ -33,7 +33,7 @@ const CalendarDay = ({
 
   const colorLookup = useMemo(() => {
     if (!trainingDataColor?.length) {
-      return { default: "#3b82f6" };
+      return { default: "" };
     }
 
     return trainingDataColor.reduce(
@@ -44,8 +44,6 @@ const CalendarDay = ({
       {} as Record<string, string>,
     );
   }, [trainingDataColor]);
-
-  //console.log(colorLookup);
 
   const getColor = (eventType: string): string => {
     return colorLookup[eventType] || colorLookup.default;

@@ -14,13 +14,13 @@ type GetApiResult<TData> = Pick<
 > & { data: TData | undefined };
 
 const useGetApi = <TData>({
-  url,
+  link,
   queryKey,
   params,
   paramsObject,
   headers,
 }: {
-  url: string;
+  link: string;
   queryKey: QueryKey;
   params?: Record<string, any>;
   paramsObject?: Record<string, any>;
@@ -28,14 +28,14 @@ const useGetApi = <TData>({
 }): GetApiResult<TData> => {
   const getList = async (): Promise<TData> => {
     const result = await axios.get<TData>(
-      endpointWithParams(url, params, getParams(paramsObject)),
+      endpointWithParams(link, params, getParams(paramsObject)),
       { headers },
     );
 
     return result.data;
   };
 
-  const queryKeyArray = [queryKey, url, params, paramsObject];
+  const queryKeyArray = [queryKey, link, params, paramsObject];
 
   const { isRefetching, isLoading, isError, data, status, refetch, error } =
     useQuery<TData>({
