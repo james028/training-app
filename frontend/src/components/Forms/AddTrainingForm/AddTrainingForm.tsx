@@ -108,7 +108,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               label="Rodzaj roweru"
               className="mb-2"
               errors={errors}
-              rules={{ required: "Pole jest wymagane" }}
+              rules={{}}
               options={[
                 { type: "road", name: "Road bike" },
                 { type: "mtb", name: "Mtb bike" },
@@ -127,11 +127,13 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               className="mb-2"
               register={register}
               errors={errors}
-              rules={{
-                valueAsNumber: true,
-                validate: (value) => value > 0,
-                required: "Pole jest wymagane",
-              }}
+              rules={
+                {
+                  // valueAsNumber: true,
+                  // validate: (value) => value > 0,
+                  // required: "Pole jest wymagane",
+                }
+              }
             />
             <FormInput<any>
               id="title"
@@ -141,7 +143,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               label="Tytuł treningu"
               className="mb-2"
               errors={errors}
-              rules={{ required: "Pole jest wymagane" }}
+              rules={{}}
             />
             <FormTextArea<any>
               id="description"
@@ -154,13 +156,15 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               // @ts-ignore
               rows={5}
               errors={errors}
-              rules={{
-                required: "Pole jest wymagane",
-                maxLength: {
-                  value: 100,
-                  message: "Description cannot be longer than 100 characters",
-                },
-              }}
+              rules={
+                {
+                  // required: "Pole jest wymagane",
+                  // maxLength: {
+                  //   value: 100,
+                  //   message: "Description cannot be longer than 100 characters",
+                  // },
+                }
+              }
             />
           </div>
         </div>
