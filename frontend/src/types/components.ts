@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ActivityType, TDay, TrainingTypeColor } from "./types";
+import { ActivityType, TDay } from "./types";
 import { FlattenedTask } from "../components/Calendar/Calendar";
 
 export type RemovePlankTrainingProps = {
@@ -20,7 +20,7 @@ export interface TCalendarDay {
   data: TDay[];
   day: string | null;
   isEmpty: boolean;
-  trainingDataColor: TrainingTypeColor[];
+  trainingDataColor: ActivityType[];
 }
 
 export interface ActivityTypeListProps {

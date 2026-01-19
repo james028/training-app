@@ -1,14 +1,13 @@
 import React from "react";
 import Modal from "../../shared/Modal/Modal";
 import AddTrainingForm from "../AddTrainingForm/AddTrainingForm";
-import { TrainingTypeColor } from "../../../types";
+import { ActivityType } from "../../../types";
 
 const AddTraining = ({
   isOpenModal,
   setOpenModal,
   closeModal,
   modalTitle,
-  eventData,
   day,
   trainingDataType,
 }: {
@@ -18,7 +17,7 @@ const AddTraining = ({
   modalTitle: string;
   eventData?: Record<any, any>;
   day: string | null;
-  trainingDataType: TrainingTypeColor[];
+  trainingDataType: ActivityType[];
 }) => {
   return (
     <>

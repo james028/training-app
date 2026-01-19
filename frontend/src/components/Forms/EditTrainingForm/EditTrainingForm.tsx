@@ -117,7 +117,7 @@ const EditTrainingForm = ({
                   rules={{ required: "Pole jest wymagane" }}
                   options={trainingDataType.map((item: any) => {
                     return {
-                      value: item.trainingType,
+                      value: item.activityName,
                       name: item.type,
                     };
                   })}
