@@ -12,7 +12,7 @@ exports.getListActivityType = asyncHandler(async (req, res) => {
   if (!activityTypeList) {
     return res.status(404).json({
       success: false,
-      message: "No activity types found",
+      message: "Nie znaleziono aktywności",
     });
   }
 
