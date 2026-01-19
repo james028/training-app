@@ -65,8 +65,11 @@ const ContextProvider = ({ children }: { children: any }) => {
   const [auth, setAuth, removeAuth] = useLocalStorage("jwt");
 
   const handleChangeAuth = useCallback(
-    (user: AuthResponse | null) => {
-      setAuth(user);
+    (user: any | null) => {
+      //tu poprawić to any, otypować poprawnie
+      console.log(user, "user!");
+      const { message, ...userData } = user;
+      setAuth(userData);
     },
     [setAuth],
   );
