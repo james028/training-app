@@ -18,8 +18,8 @@ const Dashboard = () => {
       {/*<br />*/}
       {/*<PlankSection />*/}
       <Calendar />
-      <SimpleCheckList />
       <ActivityTypePage />
+      <SimpleCheckList />
     </div>
   );
 };
