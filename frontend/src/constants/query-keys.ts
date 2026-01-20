@@ -43,3 +43,13 @@ export const CALEDAR_KEYS = {
     [...CALEDAR_KEYS.all, "calendarMonthlyList", { filters }] as const,
   createCalendarActivity: () => [...CALEDAR_KEYS.all, "create"] as const,
 };
+
+export const CHECKLIST_KEYS = {
+  all: ["checklist"] as const,
+  checkList: () => [...CHECKLIST_KEYS.all, "list"] as const,
+  checkListCreate: () => [...CHECKLIST_KEYS.all, "create"] as const,
+  checkListToggle: (id: string | undefined) =>
+    [...CHECKLIST_KEYS.all, "toggle", id] as const,
+  checkListDelete: (id: string | undefined) =>
+    [...CHECKLIST_KEYS.all, "delete", id] as const,
+};

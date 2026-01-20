@@ -14,4 +14,10 @@ export const API_ENDPOINTS = {
     MONTHLY_LIST: "api/activities/list",
     CREATE_ACTIVITY: "api/activities/create",
   },
+  CHECKLIST: {
+    LIST: "api/checklist/list",
+    CREATE: "api/checklist/create",
+    TOGGLE: (id: string) => `api/checklist/${id}/toggle`,
+    DELETE: (id: string) => `api/checklist/${id}`,
+  },
 } as const;
