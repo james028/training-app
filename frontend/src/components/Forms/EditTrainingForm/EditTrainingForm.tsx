@@ -65,7 +65,7 @@ const EditTrainingForm = ({
   });
 
   const { handleSubmitForm } = useAddEditFormService(
-    { year, month },
+    { year, month, day },
     "edit",
     eventData,
   );

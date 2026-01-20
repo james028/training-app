@@ -7,7 +7,6 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 import Loading from "../../shared/Loading/Loading";
 import { useAppContext } from "../../../appContext/appContext";
 import { URL } from "../../../constants";
-import { TPlankData } from "../../../types";
 
 const PlankMonthList = () => {
   const { auth } = useAppContext();
@@ -27,6 +26,8 @@ const PlankMonthList = () => {
   if (status === "error") {
     return <div>Error...</div>;
   }
+
+  const data1: any[] = [[]];
 
   return (
     <>

@@ -13,7 +13,7 @@ const RecordSchema = new Schema({
   description: { type: String, required: false },
   bikeType: { type: String, required: false },
   bikeKilometers: { type: Number, required: false },
-  dateTime: {
+  activityDate: {
     type: Date,
     required: true,
     index: true,

@@ -48,8 +48,10 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
     formState: { errors },
   } = form;
 
-  const { handleSubmitForm } = useAddEditFormService({ year, month }, "add");
-  console.log(day);
+  const { handleSubmitForm } = useAddEditFormService(
+    { year, month, day },
+    "add",
+  );
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {

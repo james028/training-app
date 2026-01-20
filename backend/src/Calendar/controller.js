@@ -1,19 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const CalendarDataModel = require("./model");
 
-const extractDateParts = (dateTime) => {
-  const date = new Date(dateTime);
-
-  // Sprawdzamy, czy data jest poprawna
-  if (isNaN(date.getTime())) {
-    return null;
-  }
-
-  return {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1, // +1 bo w JS miesiące są 0-11
-    day: date.getDate(), // getDate() zwraca dzień miesiąca (1-31)
-  };
+const extractDateParts = (isoDate) => {
+  const datePart = isoDate.split("T")[0];
+  const [year, month, day] = datePart.split("-").map(Number);
+  return { year, month, day };
 };
 
 // @desc    Gets all months with activities on a given day
@@ -21,7 +12,6 @@ const extractDateParts = (dateTime) => {
 exports.getActivitiesList = asyncHandler(async (req, res) => {
   const { year, month } = req.query;
   const userId = req.user.id;
-  //const userId = "1234";
 
   if (!year || !month) {
     return res.status(400).json({
@@ -29,14 +19,6 @@ exports.getActivitiesList = asyncHandler(async (req, res) => {
     });
   }
 
-  // const yearNum = parseInt(year);
-  // const monthNum = parseInt(month);
-  //
-  // if (yearNum < 2000 || yearNum > 2100 || monthNum < 1 || monthNum > 12) {
-  //   return res.status(400).json({
-  //     error: "Nieprawidłowe wartości: year (2000-2100), month (1-12)",
-  //   });
-  // }
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
   const monthlyData = await CalendarDataModel.findOne({
@@ -58,7 +40,6 @@ exports.getActivitiesList = asyncHandler(async (req, res) => {
     });
   }
 
-  // Zwróć dane
   return res.status(200).json(monthlyData);
 });
 
@@ -66,7 +47,6 @@ exports.getActivitiesList = asyncHandler(async (req, res) => {
 // @route   POST /api/activities/create
 exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  //const userId = "1234";
 
   const {
     activityTypeId,
@@ -75,44 +55,31 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     bikeKilometers,
     title,
     description,
-    dateTime,
-    day,
-    month,
+    activityDate,
   } = req.body;
 
-  if (!dateTime || !activityTypeId || !duration || !day || !month) {
+  if (!activityDate || !activityTypeId || !duration) {
     return res.status(400).json({
-      error:
-        "Brak wymaganych pól: day, month, activityTypeId, duration, dateTime.",
+      error: "Brak wymaganych pól: activityTypeId, duration, activityDate",
     });
   }
 
-  const date = new Date(dateTime);
-
-  if (isNaN(date.getTime())) {
-    return res.status(400).json({
-      error: "Nieprawidłowy format daty",
-    });
-  }
-
-  const { year } = extractDateParts(dateTime);
-
-  console.log(year, month, day);
+  const { year, month, day } = extractDateParts(activityDate);
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
   const newObject = {
     activity: activityTypeId,
     duration,
-    bikeType,
-    bikeKilometers,
-    title,
-    description,
-    dateTime: date,
+    ...(bikeType && { bikeType }),
+    ...(bikeKilometers && { bikeKilometers }),
+    ...(title && { title }),
+    ...(description && { description }),
+    activityDate,
   };
   const monthDoc = await CalendarDataModel.findOneAndUpdate(
     {
-      userId: userId,
-      yearMonthKey: yearMonthKey,
+      userId,
+      yearMonthKey,
       "days.dayNumber": day,
     },
     {
@@ -121,7 +88,6 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     { new: true, upsert: false },
   );
 
-  // Jeśli dzień nie istnieje
   if (!monthDoc) {
     await CalendarDataModel.findOneAndUpdate(
       { userId: userId, yearMonthKey: yearMonthKey },

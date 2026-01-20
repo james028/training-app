@@ -25,20 +25,21 @@ const removeNullValues = <T extends Record<string, any>>(
 };
 
 const createDateTime = (year: number, month: number, day: number): string => {
-  return <string>DateTime.fromObject({ year, month, day }).toISO(); // "2026-02-01T00:00:00.000+01:00"
+  return DateTime.fromObject({ year, month, day }).toISO() as string; // "2026-02-01T00:00:00.000+01:00"
 };
 
 const mapFormDataToBody = (
   data: RegistrationFormFields,
   type: "add" | "edit",
+  dateObject: { year: number; month: number; day: number },
   eventData?: Record<string, any>,
 ) => {
+  const { year, month, day } = dateObject;
   const baseData = removeNullValues({
     ...data,
     duration: convertObjectWithNumbersToString(data.duration),
-    date: createDateTime(2026, 1, 12),
+    activityDate: createDateTime(year, month, day),
   });
-  //const convertedData = handleCleanData(baseData);
 
   if (type === "edit" && eventData?.id) {
     return {
@@ -51,7 +52,7 @@ const mapFormDataToBody = (
 };
 
 export const useAddEditFormService = (
-  dateObject: { year: string; month: string },
+  dateObject: { year: number; month: number; day: number },
   type: "add" | "edit",
   eventData?: { id: string } & Record<string, any>,
 ): { handleSubmitForm: (data: any) => Promise<void> } => {
@@ -90,7 +91,7 @@ export const useAddEditFormService = (
     if (!currentMutate) {
       throw new Error(`Nieznany typ akcji formularza: ${type}`);
     }
-    const bodyData = mapFormDataToBody(data, type, eventData);
+    const bodyData = mapFormDataToBody(data, type, dateObject, eventData);
 
     try {
       await currentMutate({ bodyData });
