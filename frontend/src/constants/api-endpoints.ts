@@ -10,4 +10,8 @@ export const API_ENDPOINTS = {
     LOGIN: "",
     LOGOUT: "",
   },
+  CALENDAR: {
+    MONTHLY_LIST: "api/activities/list",
+    CREATE_ACTIVITY: "api/activities/create",
+  },
 } as const;

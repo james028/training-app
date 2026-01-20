@@ -1,13 +1,14 @@
 import React from "react";
 import CalendarHeader from "./CalendarHeader/CalendarHeader";
 import CalendarDays from "./CalendarDays/CalendarDays";
-//import { useAppContext } from "../../appContext/appContext";
 import useGetApi from "../../hooks/api/get/useApiGet";
-import { URL } from "../../constants";
+import { API_ENDPOINTS, URL } from "../../constants";
 import { TDay } from "../../types";
 import { useToastError } from "../../hooks/useToastError/useToastError";
 import Loading from "../shared/Loading/Loading";
 import { useAppContext } from "../../appContext/appContext";
+import { CALEDAR_KEYS } from "../../constants/query-keys";
+import { Navigate } from "react-router-dom";
 
 interface CalendarApiResponse {
   year: number;
@@ -104,9 +105,10 @@ export const convertCalendarDataToFlatTasks = (
 };
 
 const Calendar = () => {
-  const { year, month, changeMonth } = useAppContext();
+  const { year, month, changeMonth, auth } = useAppContext();
+  const token = auth?.data?.accessToken ?? null;
 
-  const link = "api/calendar/list";
+  const paramsFilters = { year, month };
   const {
     data: calendarData,
     isLoading,
@@ -114,9 +116,10 @@ const Calendar = () => {
     error,
     //any to musi być zmienione
   } = useGetApi<any>({
-    link: `${URL}${link}`,
-    queryKey: ["calendarDataList", year, month],
-    paramsObject: { year, month },
+    link: `${URL}${API_ENDPOINTS.CALENDAR.MONTHLY_LIST}`,
+    queryKey: CALEDAR_KEYS.calendarMonthlyList(paramsFilters),
+    paramsObject: paramsFilters,
+    headers: { Authorization: `Bearer ${token}` },
   });
   useToastError(isError, error);
 
@@ -127,6 +130,9 @@ const Calendar = () => {
   if (isLoading) {
     return <Loading />;
   }
+
+  //poprawić
+  if (!token) return <Navigate to="/login" />;
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">

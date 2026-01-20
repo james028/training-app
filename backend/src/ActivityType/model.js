@@ -31,6 +31,6 @@ const MainSchema = new Schema(
   },
 );
 
-const ActivityTypeDataModel = mongoose.model("activity-type-data", MainSchema);
+const ActivityTypeDataModel = mongoose.model("ActivityType", MainSchema);
 
 module.exports = ActivityTypeDataModel;
