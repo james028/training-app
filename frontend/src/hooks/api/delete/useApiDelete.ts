@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import {
   QueryClient,
@@ -36,6 +36,7 @@ const useDeleteApi = <
   link: string,
   queryKey: QueryKey,
   params?: Record<string, any> | null | undefined,
+  headers?: RawAxiosRequestHeaders | undefined,
 ): UseMutationResult<
   TData,
   ApiErrorResponse,
@@ -43,9 +44,10 @@ const useDeleteApi = <
 > => {
   const deleteMethod = async (
     paramsObject: MutationVariables<TBody, TParams>,
-  ): Promise<any> => {
+  ): Promise<TData> => {
     const result = await axios.delete<TData>(
       endpointWithParams(link, params, getParams(paramsObject)),
+      { headers },
     );
 
     return result.data;

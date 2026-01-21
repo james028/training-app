@@ -1,32 +1,14 @@
 import usePostApi from "../api/post/useApiPost";
 import { API_ENDPOINTS, URL } from "../../constants";
 import useGetApi from "../api/get/useApiGet";
-import { convertObjectWithNumbersToString } from "../../utils";
+import {
+  convertObjectWithNumbersToString,
+  createDateTime,
+  removeNullValues,
+} from "../../utils";
 import { RegistrationFormFields } from "../../components/Forms/EditTrainingForm/EditTrainingForm";
 import { CALEDAR_KEYS } from "../../constants/query-keys";
 import { useAppContext } from "../../appContext/appContext";
-import { DateTime } from "luxon";
-
-// const handleCleanData = (data: Record<string, any>) => {
-//   return Object.fromEntries(
-//     Object.entries(data).map(([key, value]) => [
-//       key,
-//       value === "" || value === undefined ? null : value,
-//     ]),
-//   );
-// };
-
-const removeNullValues = <T extends Record<string, any>>(
-  obj: T,
-): Partial<T> => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, v]) => v != null && v !== "" && v !== 0),
-  ) as Partial<T>;
-};
-
-const createDateTime = (year: number, month: number, day: number): string => {
-  return DateTime.fromObject({ year, month, day }).toISO() as string; // "2026-02-01T00:00:00.000+01:00"
-};
 
 const mapFormDataToBody = (
   data: RegistrationFormFields,

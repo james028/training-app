@@ -9,6 +9,21 @@ import useDeleteApi from "../../hooks/api/delete/useApiDelete";
 import toast from "react-hot-toast";
 import usePostApi from "../../hooks/api/post/useApiPost";
 
+export type TodoItemDto = {
+  id: string;
+  text: string;
+  completed: boolean;
+  userId: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type GetTodosResponseDto = {
+  success: boolean;
+  items: TodoItemDto[];
+};
+
 const SimpleCheckList = () => {
   const [newItemText, setNewItemText] = useState("");
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -23,8 +38,7 @@ const SimpleCheckList = () => {
     isError,
     error,
     refetch,
-    //any to musi być zmienione
-  } = useGetApi<any>({
+  } = useGetApi<GetTodosResponseDto>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
     queryKey: CHECKLIST_KEYS.checkList(),
     headers: { Authorization: `Bearer ${token}` },
@@ -48,19 +62,22 @@ const SimpleCheckList = () => {
   const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
     `${URL}${API_ENDPOINTS.CHECKLIST.DELETE(removingId ?? "")}`,
     CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
+    null,
+    { Authorization: `Bearer ${token}` },
   );
 
   const handleAdd = async () => {
     if (!newItemText.trim()) return;
-    await createMutate({ bodyData: { text: newItemText } });
-    toast.success("Dodano!");
-    await refetch?.();
     try {
-      setNewItemText("");
+      await createMutate({ bodyData: { text: newItemText } });
+      toast.success("Dodano!");
+      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
+    } finally {
+      setNewItemText("");
     }
   };
 
@@ -94,16 +111,9 @@ const SimpleCheckList = () => {
     }
   };
 
-  const completedCount = checkListItems.filter(
-    (item: any) => item.completed,
-  ).length;
-  const restCount = checkListItems.filter(
-    (item: any) => !item.completed,
-  ).length;
+  const restCount = checkListItems.filter((item) => !item.completed).length;
   const totalCount = checkListItems.length;
-  const width = `${100 - (completedCount / totalCount) * 100}`;
-  const width2 = `${(restCount / totalCount) * 100}`;
-  console.log(width2, "width2");
+  const width = `${(restCount / totalCount) * 100}`;
 
   if (isLoading) {
     return (
@@ -124,7 +134,7 @@ const SimpleCheckList = () => {
             <p className="text-gray-600">
               Zostało: {restCount} z {totalCount}
             </p>
-            {completedCount > 0 && (
+            {restCount > 0 && (
               <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
                 <div
                   className="bg-green-500 h-full transition-all duration-300"
@@ -160,13 +170,13 @@ const SimpleCheckList = () => {
                 Brak zadań. Dodaj pierwsze!
               </div>
             ) : (
-              checkListItems.map((item: any) => (
+              checkListItems.map((item) => (
                 <div
-                  key={item._id}
+                  key={item.id}
                   className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
                 >
                   <button
-                    onClick={() => handleToggle(item._id)}
+                    onClick={() => handleToggle(item.id)}
                     className="flex-shrink-0"
                   >
                     <div
@@ -205,7 +215,7 @@ const SimpleCheckList = () => {
                   </span>
 
                   <button
-                    onClick={() => handleDelete(item._id)}
+                    onClick={() => handleDelete(item.id)}
                     className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
                   >
                     <svg
