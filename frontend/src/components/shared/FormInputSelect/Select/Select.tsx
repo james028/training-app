@@ -11,7 +11,7 @@ export type SelectProps = {
 };
 
 const Select: FC<SelectProps> = forwardRef<HTMLInputElement, SelectProps>(
-  ({ id, name, label, className = "", options, rules, ...props }, ref) => {
+  ({ id, name, label, className = "", options, rules, ...props }) => {
     const { register, setValue } = useFormContext();
 
     //zmienić typowanie

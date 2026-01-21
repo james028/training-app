@@ -13,6 +13,7 @@ const CalendarRouter = require("./Calendar/routes");
 const PlankRouter = require("./Plank/routes");
 const TrainingTypeRouter = require("./ActivityType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
+const ChecklistRouter = require("./Checklist/routes");
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ CalendarRouter.routesConfig(app);
 PlankRouter.routesConfig(app);
 TrainingTypeRouter.routesConfig(app);
 UserRegisterLoginRouter.routesConfig(app);
+ChecklistRouter.routesConfig(app);
 
 const runningMessage = `Server running at http://localhost:${port}`;
 

@@ -3,14 +3,17 @@ const mongoose = require("../common/mongoose.service.js");
 const Schema = mongoose.Schema;
 
 const RecordSchema = new Schema({
-  //id: { type: String, required: true },
-  trainingType: { type: String, required: true },
+  activity: {
+    type: Schema.Types.ObjectId,
+    ref: "ActivityType",
+    required: true,
+  },
   duration: { type: String, required: true },
   title: { type: String, required: false },
   description: { type: String, required: false },
   bikeType: { type: String, required: false },
   bikeKilometers: { type: Number, required: false },
-  dateTime: {
+  activityDate: {
     type: Date,
     required: true,
     index: true,
@@ -19,7 +22,12 @@ const RecordSchema = new Schema({
 
 const monthlyCalendarSchema = new mongoose.Schema(
   {
-    userId: { type: Number, required: true, index: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     yearMonthKey: { type: String, required: true, index: true },
     days: [
       {
@@ -33,9 +41,6 @@ const monthlyCalendarSchema = new mongoose.Schema(
   },
 );
 
-const CalendarDataModel = mongoose.model(
-  "calendar-month-list-data",
-  monthlyCalendarSchema,
-);
+const CalendarDataModel = mongoose.model("Activities", monthlyCalendarSchema);
 
 module.exports = CalendarDataModel;

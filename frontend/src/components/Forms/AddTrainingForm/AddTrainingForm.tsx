@@ -11,7 +11,7 @@ import { useAppContext } from "../../../appContext/appContext";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
-  trainingType: string;
+  activityTypeId: string;
   duration: {
     hour: string;
     minutes: string;
@@ -29,7 +29,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
 
   const form = useForm<RegistrationFormFields>({
     defaultValues: {
-      trainingType: "",
+      activityTypeId: "",
       duration: {
         hour: "",
         minutes: "",
@@ -72,17 +72,17 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
         <div className="shadow bg-white overflow-hidden w-full block p-8">
           <div className="mb-4">
             <FormInputSelect<any>
-              id="trainingType"
-              name="trainingType"
-              label="Typ treningu"
+              id="activityTypeId"
+              name="activityTypeId"
+              label="Typ aktywności"
               className="mb-2"
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               //do zrobienia
               options={trainingDataType.map((item: any) => {
                 return {
-                  value: item.activityName,
-                  name: item.type,
+                  value: item.id,
+                  name: item.activityName,
                 };
               })}
             />

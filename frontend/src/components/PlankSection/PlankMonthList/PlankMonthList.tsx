@@ -7,11 +7,10 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 import Loading from "../../shared/Loading/Loading";
 import { useAppContext } from "../../../appContext/appContext";
 import { URL } from "../../../constants";
-import { TPlankData } from "../../../types";
 
 const PlankMonthList = () => {
-  const { user } = useAppContext();
-  const token = user?.accessToken ?? "691c7f9f7ff1367b95d4037c";
+  const { auth } = useAppContext();
+  const token = auth?.data?.accessToken ?? null;
 
   const { data, status, isRefetching } = useGetApi({
     link: `${URL}api/plank/list`,
@@ -28,9 +27,8 @@ const PlankMonthList = () => {
     return <div>Error...</div>;
   }
 
-  console.log(data);
+  const data1: any[] = [[]];
 
-  const data1: TPlankData[] = [];
   return (
     <>
       {data1?.length > 0 ? (

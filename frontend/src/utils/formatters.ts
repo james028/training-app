@@ -9,8 +9,6 @@
 // ├── time.ts         // Złożone operacje na dacie/czasie
 // └── validators.ts   // Walidacja danych
 
-// Formatowanie wartości
-
 export const convertObjectWithNumbersToString = (object: {
   hour: string;
   minutes: string;
@@ -23,4 +21,29 @@ export const convertObjectWithNumbersToString = (object: {
   return Object.values(object)
     .map((duration) => duration.toString().padStart(2, "0"))
     .join(":");
+};
+
+type NormalizeEmpty<T> = {
+  [K in keyof T]: T[K] extends string | undefined
+    ? Exclude<T[K], ""> | null
+    : T[K];
+};
+
+export function convertEmptyValuesIntoNull<T extends Record<string, unknown>>(
+  data: T,
+): NormalizeEmpty<T> {
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      value === "" || value === undefined ? null : value,
+    ]),
+  ) as NormalizeEmpty<T>;
+}
+
+export const removeNullValues = <T extends Record<string, any>>(
+  obj: T,
+): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v != null && v !== "" && v !== 0),
+  ) as Partial<T>;
 };

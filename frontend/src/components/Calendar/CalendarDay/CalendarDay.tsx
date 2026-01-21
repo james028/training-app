@@ -55,17 +55,16 @@ const CalendarDay = ({
     } else {
       if (data.length > 0) {
         return data.map((event: any) => {
-          const { trainingType } = event;
-
           return (
             <StyledTypeContainer
               key={event.id}
-              hexcolor={getColor(trainingType)}
+              //hexcolor={getColor(event?.activity?.type)}
+              hexcolor={event?.activity?.color}
               className="px-2 py-0.5 text-sm rounded-lg mt-1 overflow-hidden border border-blue-200 text-blue-800 bg-blue-100 cursor-pointer"
               onClick={() => handleEditTraining(event)}
             >
               <div className="flex items-center justify-between">
-                <span>{event.trainingType}</span>
+                <span>{event?.activity?.activityName}</span>
                 <svg
                   className="h-6 w-6 inline-flex leading-none text-white"
                   fill="none"

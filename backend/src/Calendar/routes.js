@@ -1,14 +1,16 @@
 const {
-  getCalendarDataList,
-  createNewTraining,
   editAddedTraining,
   deleteExistTraining,
+  getActivitiesList,
+  addNewActivityToCalendar,
 } = require("./controller");
-const { getPlank } = require("../Plank/controller");
+const {
+  authMiddleware,
+} = require("../UserRegisterLogin/middleware/auth.middleware");
 
 exports.routesConfig = function (app) {
-  app.get("/api/calendar/list", getCalendarDataList);
-  app.post("/api/calendar/create", createNewTraining);
-  app.post("/api/calendar/edit", editAddedTraining);
-  app.post("/api/calendar/delete/:id", deleteExistTraining);
+  app.get("/api/activities/list", authMiddleware, getActivitiesList);
+  app.post("/api/activities/create", authMiddleware, addNewActivityToCalendar);
+  app.post("/api/activities/edit/:id", editAddedTraining);
+  app.post("/api/activities/delete/:id", deleteExistTraining);
 };

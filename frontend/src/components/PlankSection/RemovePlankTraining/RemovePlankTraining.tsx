@@ -2,7 +2,6 @@ import React from "react";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
 import useGetApi from "../../../hooks/api/get/useApiGet";
-import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
 import { useAppContext } from "../../../appContext/appContext";
 import { MONTH_NAMES_MAP, URL } from "../../../constants";
 import { RemovePlankTrainingProps } from "../../../types";
@@ -11,13 +10,14 @@ import toast from "react-hot-toast";
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const { link } = useAppContext();
   const { objectData } = usePlankSectionContext();
+  //do porawy te id
   const { month, day, duration, _id: id } = objectData ?? {};
 
-  const { mutateAsync } = useDeleteApi(
-    `${URL}${link}/delete`,
-    ["deletePlank"],
-    undefined,
-  );
+  // const { mutateAsync } = useDeleteApi(
+  //   `${URL}${link}/delete`,
+  //   ["deletePlank"],
+  //   undefined,
+  // );
 
   const { refetch: refetchList } = useGetApi({
     link: `${URL}${link}/list`,
@@ -25,13 +25,13 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   });
 
   const submitDeleteRequest = async (): Promise<void> => {
-    const paramsObject = {
-      id,
-      month,
-    };
+    // const paramsObject = {
+    //   id,
+    //   month,
+    // };
 
     try {
-      await mutateAsync({ paramsObject });
+      //await mutateAsync({ paramsObject });
       await refetchList?.();
       closeModal();
     } catch (error) {

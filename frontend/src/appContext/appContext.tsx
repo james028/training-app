@@ -68,8 +68,8 @@ const ContextProvider = ({ children }: { children: any }) => {
     (user: any | null) => {
       //tu poprawić to any, otypować poprawnie
       console.log(user, "user!");
-      const { message, ...userData } = user;
-      setAuth(userData);
+      //const { message, ...userData } = user;
+      setAuth(user);
     },
     [setAuth],
   );

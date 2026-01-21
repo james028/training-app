@@ -36,3 +36,20 @@ export const ACTIVITY_KEYS = {
   removeActivity: (id: string | undefined) =>
     [...ACTIVITY_KEYS.all, "remove", id] as const,
 };
+
+export const CALEDAR_KEYS = {
+  all: ["calendar"] as const,
+  calendarMonthlyList: ({ filters }: Record<string, any>) =>
+    [...CALEDAR_KEYS.all, "calendarMonthlyList", { filters }] as const,
+  createCalendarActivity: () => [...CALEDAR_KEYS.all, "create"] as const,
+};
+
+export const CHECKLIST_KEYS = {
+  all: ["checklist"] as const,
+  checkList: () => [...CHECKLIST_KEYS.all, "list"] as const,
+  checkListCreate: () => [...CHECKLIST_KEYS.all, "create"] as const,
+  checkListToggle: (id: string | undefined) =>
+    [...CHECKLIST_KEYS.all, "toggle", id] as const,
+  checkListDelete: (id: string | undefined) =>
+    [...CHECKLIST_KEYS.all, "delete", id] as const,
+};

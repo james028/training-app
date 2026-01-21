@@ -66,7 +66,7 @@ exports.handleLogin = asyncHandler(async (req, res) => {
   const { email: userEmail, password } = req.body;
 
   try {
-    const user = await UserModel.findOne({ email: userEmail }, null, null);
+    const user = await UserModel.findOne({ email: userEmail });
 
     if (!user) {
       res.status(401).json({ message: "Nie znaleziono użytkownika" });
