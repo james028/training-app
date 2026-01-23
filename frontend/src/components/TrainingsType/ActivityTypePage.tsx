@@ -22,7 +22,7 @@ const ActivityTypePage = () => {
     isOpenRemoveModal,
     setIsOpenRemoveModal,
   } = useActivityType();
-  const { data: activityData, isLoading, isRefetching, isError } = getList;
+  const { data: activityData, isLoading, isError } = getList;
   const {
     handleSubmit,
     watch,
@@ -111,7 +111,7 @@ const ActivityTypePage = () => {
         dataActivityType={activityData}
         isLoading={isLoading}
         isError={isError}
-        isRefetching={isRefetching}
+        //isRefetching={null}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />

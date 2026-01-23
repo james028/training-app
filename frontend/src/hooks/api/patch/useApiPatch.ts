@@ -3,12 +3,11 @@ import {
   QueryKey,
   useMutation,
   UseMutationResult,
+  useQueryClient,
 } from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import toast from "react-hot-toast";
-
-const queryClient = new QueryClient();
 
 interface ApiErrorResponse {
   response: {
@@ -34,19 +33,22 @@ const usePatchApi = <
   TParams extends Record<string, any>,
 >({
   link,
-  queryKey,
+  // queryKey,               ← usuń to pole lub zrób je opcjonalne
   params,
   headers,
+  invalidateKeys = [], // ← nowe pole – tablica kluczy do invalidacji
 }: {
   link: string;
-  queryKey: QueryKey;
+  // queryKey?: QueryKey;    ← opcjonalne lub usunięte
   params?: Record<string, any> | null | undefined;
   headers?: RawAxiosRequestHeaders | undefined;
+  invalidateKeys?: QueryKey[]; // ← dodajemy to
 }): UseMutationResult<
   TData,
   ApiErrorResponse,
   MutationVariables<TBody, TParams>
 > => {
+  const queryClient = useQueryClient(); // ← bierze ten sam QueryClient z React Query Providera
   const updatePatch = async ({
     paramsObject,
     bodyData,
@@ -56,7 +58,6 @@ const usePatchApi = <
       bodyData,
       { headers },
     );
-
     return result.data;
   };
 
@@ -69,7 +70,22 @@ const usePatchApi = <
       if (variables?.successMessage) {
         toast.success(variables.successMessage);
       }
+      console.log(
+        "[MUTACJA SUCCESS] invalidateKeys =",
+        JSON.stringify(invalidateKeys, null, 2),
+      );
+      console.log("[MUTACJA SUCCESS] variables =", variables);
+      // invalidate wszystkich przekazanych kluczy
+      invalidateKeys.forEach((key) => {
+        console.log("[INVALIDUJĘ klucz] →", JSON.stringify(key, null, 2));
+        queryClient.invalidateQueries({
+          queryKey: key,
+          exact: true,
+          refetchType: "all",
+        });
+      });
     },
+
     onError: (error, variables) => {
       const message =
         variables.errorMessage ||
@@ -77,9 +93,8 @@ const usePatchApi = <
         "Coś poszło nie tak 😢";
       toast.error(message);
     },
-    onSettled: () => {
-      queryClient.invalidateQueries([queryKey, link]);
-    },
+
+    // onSettled usuwamy lub zostawiamy puste – nie invalidujemy automatycznie starego queryKey
   });
 };
 

@@ -27,7 +27,7 @@ export interface ActivityTypeListProps {
   dataActivityType: ActivityType[];
   isLoading: boolean;
   isError: boolean;
-  isRefetching: boolean;
+  //isRefetching: boolean;
   onEdit: (item: ActivityType) => void;
   onDelete: (item: ActivityType) => void;
 }

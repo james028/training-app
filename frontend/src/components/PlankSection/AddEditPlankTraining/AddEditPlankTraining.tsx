@@ -49,7 +49,7 @@ const AddEditPlankTraining = () => {
   });
   const { mutateAsync: updateMutateAsync } = usePatchApi({
     link: `${URL}${link}/update`,
-    queryKey: ["updatePlank"],
+    //queryKey: ["updatePlank"],
   });
   const { refetch: refetchList } = useGetApi({
     link: `${URL}api/plank/list`,

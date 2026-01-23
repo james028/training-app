@@ -23,6 +23,7 @@ interface Task {
   description: string;
   bikeType: string;
   bikeKilometers: number;
+  activity: any;
   dateTime: string; // Oryginalny format ISO, np. "2025-12-15T15:16:14.420Z"
 }
 

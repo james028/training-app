@@ -48,6 +48,7 @@ const CalendarDay = ({
   const getColor = (eventType: string): string => {
     return colorLookup[eventType] || colorLookup.default;
   };
+  //console.log(trainingDataColor, "trainingDataColor");
 
   const renderEvents = () => {
     if (data.length > 3) {
@@ -105,27 +106,27 @@ const CalendarDay = ({
         </div>
       ) : null}
       {renderEvents()}
-      {openModalEditTraining ? (
-        <EditTraining
-          isOpenModal={openModalEditTraining}
-          setOpenModal={setOpenModalEditTraining}
-          closeModal={() => setOpenModalEditTraining(false)}
-          modalTitle={"Trening z dnia: "}
-          eventData={eventData}
-          day={day}
-          trainingDataType={trainingDataColor}
-        />
-      ) : null}
-      {openModalAddTraining ? (
-        <AddTraining
-          isOpenModal={openModalAddTraining}
-          setOpenModal={setOpenModalEditTraining}
-          closeModal={() => setOpenModalAddTraining(false)}
-          modalTitle={"Dodaj trening"}
-          day={day}
-          trainingDataType={trainingDataColor}
-        />
-      ) : null}
+      {/*{openModalEditTraining ? (*/}
+      {/*  <EditTraining*/}
+      {/*    isOpenModal={openModalEditTraining}*/}
+      {/*    setOpenModal={setOpenModalEditTraining}*/}
+      {/*    closeModal={() => setOpenModalEditTraining(false)}*/}
+      {/*    modalTitle={"Trening z dnia: "}*/}
+      {/*    eventData={eventData}*/}
+      {/*    day={day}*/}
+      {/*    trainingDataType={trainingDataColor}*/}
+      {/*  />*/}
+      {/*) : null}*/}
+      {/*{openModalAddTraining ? (*/}
+      {/*  <AddTraining*/}
+      {/*    isOpenModal={openModalAddTraining}*/}
+      {/*    setOpenModal={setOpenModalEditTraining}*/}
+      {/*    closeModal={() => setOpenModalAddTraining(false)}*/}
+      {/*    modalTitle={"Dodaj trening"}*/}
+      {/*    day={day}*/}
+      {/*    trainingDataType={trainingDataColor}*/}
+      {/*  />*/}
+      {/*) : null}*/}
     </StyledContainerDay>
   );
 };

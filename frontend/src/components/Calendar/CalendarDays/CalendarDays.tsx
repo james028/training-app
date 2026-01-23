@@ -1,13 +1,20 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import CalendarDay from "../CalendarDay/CalendarDay";
 import { DateTime } from "luxon";
-import { ActivityType, CalendarDaysProps, DailyTasksMap } from "../../../types";
+import {
+  ActivityType,
+  CalendarDaysProps,
+  DailyTasksMap,
+  TrainingTypeResponse,
+} from "../../../types";
 import useGetApi from "../../../hooks/api/get/useApiGet";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
 import { FlattenedTask } from "../Calendar";
 import { ACTIVITY_KEYS } from "../../../constants/query-keys";
 import { ApiResponse } from "../../TrainingsType/hooks/useActivityType";
+import Loading from "../../shared/Loading/Loading";
+import { useActivityTypes } from "../../../hooks/useActivity";
 
 const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   // //tu zmieniać
@@ -20,20 +27,26 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   //   queryKey: ACTIVITY_KEYS.activityTypeList(),
   // });
 
-  const {
-    data: activityTypeData,
-    //refetch,
-    //isLoading,
-    //isRefetching,
-    error,
-    isError,
-  } = useGetApi<ApiResponse<ActivityType[]>>({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
-    queryKey: ACTIVITY_KEYS.activityTypeList(),
-  });
-  useToastError(isError, error);
-  const activityData = activityTypeData?.data ?? [];
+  // const {
+  //   data: activityTypeData,
+  //   error,
+  //   isError,
+  // } = useGetApi<any>({
+  //   link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
+  //   queryKey: ACTIVITY_KEYS.activityTypeList(),
+  // });
+  const { data, isLoading } = useActivityTypes();
 
+  //useToastError(isError, error);
+  const activityData = data?.data ?? [];
+  console.log(activityData, "aaaaaaaaaa");
+  //
+  // console.log(
+  //   "[KOMPONENT LISTY] queryKey =",
+  //   JSON.stringify(ACTIVITY_KEYS.activityTypeList(), null, 2),
+  //   "data =",
+  //   activityData?.slice(0, 2), // tylko pierwsze 2 elementy, żeby nie spamować konsoli
+  // );
   //const trainingDataColor = trainingTypeData?.data ?? [];
   //useToastError(isError, error);
 
@@ -120,37 +133,138 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
 
   const daysArray = generateDaysForMonth(year, month);
 
+  const activityMap = useMemo(() => {
+    const map = new Map<string, ActivityType>();
+    activityData.forEach((type) => {
+      map.set(type.id, type);
+    });
+    return map;
+  }, [activityData]);
+
+  // Funkcja pomocnicza – zwraca gotowy obiekt activity lub null
+  const getActivity = useCallback(
+    (activityId?: string) => {
+      return activityId ? activityMap.get(activityId) : null;
+    },
+    [activityMap],
+  );
+
+  const colorLookup = useMemo(() => {
+    if (!activityData?.length) {
+      return { default: "" };
+    }
+
+    return activityData.reduce(
+      (acc, type) => {
+        acc[type.id] = type.color;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+  }, [activityData]);
+
+  const getColor = (activity: string): string => {
+    return colorLookup[activity] || colorLookup.default;
+  };
+
   const tasksByDay = useMemo(() => {
-    //poprawić, tu od poczatku
-    return normalizeTasksForCalendar(calendarData.map((item) => ({ ...item })));
-  }, [calendarData]);
+    return normalizeTasksForCalendar(
+      calendarData.map((item) => {
+        //console.log(item, "item");
+        return {
+          ...item,
+          activity: {
+            ...getActivity(item.activity),
+            color: getColor(item.activity),
+          },
+          // activity: item.activity
+          //   ? {
+          //       ...item.activity,
+          //       color: getColor(item.activity.type),
+          //     }
+          //   : null,
+          // activity: item.activity
+          //     ? {
+          //       ...item.activity,
+          //       color: getColor(item.activity.type),
+          //     }
+          //     : null,
+        };
+      }),
+    );
+  }, [calendarData, activityData]);
+
+  //console.log(calendarData, "calendar");
+  //console.log(tasksByDay, "task by day");
+
+  // const tasksByDay2 = useMemo(() => {
+  //   //if (!calendarData.length) return [];
+  //
+  //   // const activityMap = new Map<string, ActivityType>(
+  //   //   activityData.map((t) => [t.id, t]),
+  //   // );
+  //
+  //   //console.log(calendarData, "cal");
+  //   return normalizeTasksForCalendar(calendarData.map((item) => {
+  //     console.log(item, "item");
+  //     return {
+  //       ...item,
+  //       activity: item.activity
+  //           ? {
+  //             ...item.activity,
+  //             color: getColor(item.activity.color),
+  //           }
+  //           : null,
+  //     }));
+  //
+  //
+  //
+  // }, []);
 
   const renderDay = (date: string) => {
     const tasksData = tasksByDay[date] || [];
-
     const day = getDayNumberFromDateKey(date);
+
+    console.log(tasksByDay);
 
     return (
       <CalendarDay
         data={tasksData}
         day={day}
         isEmpty={!date}
-        trainingDataColor={activityData}
+        trainingDataColor={[]}
       />
     );
   };
 
   return (
-    <div className="flex flex-wrap border-t border-l bg-gray-50">
-      {daysArray.map((dateKey, index) => {
-        const monthPrefix = `${year}-${month}`;
-        const stableKey = `${monthPrefix}-${index}`;
+    <>
+      {" "}
+      <div className="flex flex-wrap border-t border-l bg-gray-50">
+        {daysArray.map((dateKey, index) => {
+          const monthPrefix = `${year}-${month}`;
+          const stableKey = `${monthPrefix}-${index}`;
 
-        return (
-          <React.Fragment key={stableKey}>{renderDay(dateKey)}</React.Fragment>
-        );
-      })}
-    </div>
+          return (
+            <React.Fragment key={stableKey}>
+              {renderDay(dateKey)}
+            </React.Fragment>
+          );
+        })}
+      </div>
+      <div style={{ padding: 8, fontSize: 16, minWidth: 220 }}>
+        {/*<option value="">— wybierz typ aktywności —</option>*/}
+        {activityData?.map((item) => (
+          <li
+            key={item.id}
+            value={item.id}
+            style={{ backgroundColor: item.color, color: "#fff" }}
+          >
+            {item.activityName} ({item.type})
+          </li>
+        ))}
+      </div>
+    </>
   );
 };
 

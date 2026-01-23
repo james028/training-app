@@ -25,10 +25,10 @@ exports.getActivitiesList = asyncHandler(async (req, res) => {
     userId: userId,
     yearMonthKey: yearMonthKey,
   })
-    .populate({
-      path: "days.tasks.activity",
-      model: "ActivityType",
-    })
+    // .populate({
+    //   path: "days.tasks.activity",
+    //   model: "ActivityType",
+    // })
     .lean();
 
   if (!monthlyData) {

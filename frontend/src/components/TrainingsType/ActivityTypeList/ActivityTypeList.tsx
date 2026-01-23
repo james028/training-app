@@ -8,7 +8,7 @@ const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
   dataActivityType,
   isLoading,
   isError,
-  isRefetching,
+  //isRefetching,
   onEdit,
   onDelete,
 }) => {
@@ -33,7 +33,7 @@ const ActivityTypeList: React.FC<ActivityTypeListProps> = ({
     return getTableColumns(dataActivityType);
   }, [dataActivityType]);
 
-  if (isLoading || isRefetching) {
+  if (isLoading) {
     return <Loading />;
   }
 
