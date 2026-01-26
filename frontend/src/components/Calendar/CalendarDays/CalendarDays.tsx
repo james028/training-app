@@ -39,7 +39,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
 
   //useToastError(isError, error);
   const activityData = data?.data ?? [];
-  console.log(activityData, "aaaaaaaaaa");
+  //console.log(activityData, "aaaaaaaaaa");
   //
   // console.log(
   //   "[KOMPONENT LISTY] queryKey =",
@@ -133,50 +133,50 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
 
   const daysArray = generateDaysForMonth(year, month);
 
-  const activityMap = useMemo(() => {
-    const map = new Map<string, ActivityType>();
-    activityData.forEach((type) => {
-      map.set(type.id, type);
-    });
-    return map;
-  }, [activityData]);
-
-  // Funkcja pomocnicza – zwraca gotowy obiekt activity lub null
-  const getActivity = useCallback(
-    (activityId?: string) => {
-      return activityId ? activityMap.get(activityId) : null;
-    },
-    [activityMap],
-  );
-
-  const colorLookup = useMemo(() => {
-    if (!activityData?.length) {
-      return { default: "" };
-    }
-
-    return activityData.reduce(
-      (acc, type) => {
-        acc[type.id] = type.color;
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
-  }, [activityData]);
-
-  const getColor = (activity: string): string => {
-    return colorLookup[activity] || colorLookup.default;
-  };
-
+  // const activityMap = useMemo(() => {
+  //   const map = new Map<string, ActivityType>();
+  //   activityData.forEach((type) => {
+  //     map.set(type.id, type);
+  //   });
+  //   return map;
+  // }, [activityData]);
+  //
+  // // Funkcja pomocnicza – zwraca gotowy obiekt activity lub null
+  // const getActivity = useCallback(
+  //   (activityId?: string) => {
+  //     return activityId ? activityMap.get(activityId) : null;
+  //   },
+  //   [activityMap],
+  // );
+  //
+  // const colorLookup = useMemo(() => {
+  //   if (!activityData?.length) {
+  //     return { default: "" };
+  //   }
+  //
+  //   return activityData.reduce(
+  //     (acc, type) => {
+  //       acc[type.id] = type.color;
+  //       return acc;
+  //     },
+  //     {} as Record<string, string>,
+  //   );
+  // }, [activityData]);
+  //
+  // const getColor = (activity: string): string => {
+  //   return colorLookup[activity] || colorLookup.default;
+  // };
+  //
   const tasksByDay = useMemo(() => {
     return normalizeTasksForCalendar(
       calendarData.map((item) => {
         //console.log(item, "item");
         return {
           ...item,
-          activity: {
-            ...getActivity(item.activity),
-            color: getColor(item.activity),
-          },
+          // activity: {
+          //   ...getActivity(item.activity),
+          //   //color: getColor(item.activity),
+          // },
           // activity: item.activity
           //   ? {
           //       ...item.activity,
@@ -192,7 +192,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
         };
       }),
     );
-  }, [calendarData, activityData]);
+  }, [calendarData]);
 
   //console.log(calendarData, "calendar");
   //console.log(tasksByDay, "task by day");
@@ -232,7 +232,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
         data={tasksData}
         day={day}
         isEmpty={!date}
-        trainingDataColor={[]}
+        activityData={activityData}
       />
     );
   };
@@ -252,18 +252,18 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
           );
         })}
       </div>
-      <div style={{ padding: 8, fontSize: 16, minWidth: 220 }}>
-        {/*<option value="">— wybierz typ aktywności —</option>*/}
-        {activityData?.map((item) => (
-          <li
-            key={item.id}
-            value={item.id}
-            style={{ backgroundColor: item.color, color: "#fff" }}
-          >
-            {item.activityName} ({item.type})
-          </li>
-        ))}
-      </div>
+      {/*<div style={{ padding: 8, fontSize: 16, minWidth: 220 }}>*/}
+      {/*  /!*<option value="">— wybierz typ aktywności —</option>*!/*/}
+      {/*  {activityData?.map((item) => (*/}
+      {/*    <li*/}
+      {/*      key={item.id}*/}
+      {/*      value={item.id}*/}
+      {/*      style={{ backgroundColor: item.color, color: "#fff" }}*/}
+      {/*    >*/}
+      {/*      {item.activityName} ({item.type})*/}
+      {/*    </li>*/}
+      {/*  ))}*/}
+      {/*</div>*/}
     </>
   );
 };

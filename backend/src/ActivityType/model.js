@@ -19,14 +19,6 @@ const MainSchema = new Schema(
     },
   },
   {
-    toJSON: {
-      virtuals: true,
-      versionKey: false, // Automatycznie usuwa pole '__v'
-      transform: (doc, ret) => {
-        delete ret._id;
-        return ret;
-      },
-    },
     timestamps: true,
   },
 );

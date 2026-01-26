@@ -20,7 +20,7 @@ export interface TCalendarDay {
   data: TDay[];
   day: string | null;
   isEmpty: boolean;
-  trainingDataColor: ActivityType[];
+  activityData: ActivityType[];
 }
 
 export interface ActivityTypeListProps {

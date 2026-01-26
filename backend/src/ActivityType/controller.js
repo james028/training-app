@@ -4,10 +4,12 @@ const ActivityTypeDataModel = require("./model");
 // @desc    Get all activity types
 // @route   GET /api/activity-type/list
 exports.getListActivityType = asyncHandler(async (req, res) => {
-  const activityTypeList = await ActivityTypeDataModel.find({}).sort({
-    order: 1,
-    createdAt: 1,
-  });
+  const activityTypeList = await ActivityTypeDataModel.find({})
+    .sort({
+      order: 1,
+      createdAt: 1,
+    })
+    .lean();
 
   if (!activityTypeList) {
     return res.status(404).json({

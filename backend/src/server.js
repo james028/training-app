@@ -14,6 +14,9 @@ const PlankRouter = require("./Plank/routes");
 const TrainingTypeRouter = require("./ActivityType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
 const ChecklistRouter = require("./Checklist/routes");
+const {
+  transformResponse,
+} = require("./UserRegisterLogin/middleware/transformResponse");
 
 dotenv.config();
 
@@ -52,6 +55,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+app.use(transformResponse);
 
 CalendarRouter.routesConfig(app);
 PlankRouter.routesConfig(app);

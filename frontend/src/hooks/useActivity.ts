@@ -2,6 +2,8 @@
 
 import usePatchApi from "./api/patch/useApiPatch";
 import useGetApi from "./api/get/useApiGet";
+import { CALEDAR_KEYS } from "../constants/query-keys";
+import { useAppContext } from "../appContext/appContext";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -50,8 +52,12 @@ export const useActivityTypes = () => {
 
 export const useUpdateActivityType = (editingId?: string) => {
   console.log(editingId);
+  const { year, month, changeMonth, auth } = useAppContext();
+  const token = auth?.data?.accessToken ?? null;
+
+  const paramsFilters = { year, month };
   return usePatchApi({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.ACTIVITY_BASE_EDIT(editingId ?? "")}`,
-    invalidateKeys: [ACTIVITY_KEYS.list],
+    invalidateKeys: [CALEDAR_KEYS.calendarMonthlyList(paramsFilters)],
   });
 };

@@ -1,5 +1,4 @@
 import {
-  QueryClient,
   QueryKey,
   useMutation,
   UseMutationResult,
@@ -33,22 +32,20 @@ const usePatchApi = <
   TParams extends Record<string, any>,
 >({
   link,
-  // queryKey,               ← usuń to pole lub zrób je opcjonalne
   params,
   headers,
-  invalidateKeys = [], // ← nowe pole – tablica kluczy do invalidacji
+  invalidateKeys = [],
 }: {
   link: string;
-  // queryKey?: QueryKey;    ← opcjonalne lub usunięte
   params?: Record<string, any> | null | undefined;
   headers?: RawAxiosRequestHeaders | undefined;
-  invalidateKeys?: QueryKey[]; // ← dodajemy to
+  invalidateKeys?: QueryKey[];
 }): UseMutationResult<
   TData,
   ApiErrorResponse,
   MutationVariables<TBody, TParams>
 > => {
-  const queryClient = useQueryClient(); // ← bierze ten sam QueryClient z React Query Providera
+  const queryClient = useQueryClient();
   const updatePatch = async ({
     paramsObject,
     bodyData,
@@ -65,25 +62,20 @@ const usePatchApi = <
     TData,
     ApiErrorResponse,
     MutationVariables<TBody, TParams>
-  >((body) => updatePatch(body), {
+  >({
+    mutationFn: (body) => updatePatch(body),
     onSuccess: (data, variables) => {
       if (variables?.successMessage) {
         toast.success(variables.successMessage);
       }
-      console.log(
-        "[MUTACJA SUCCESS] invalidateKeys =",
-        JSON.stringify(invalidateKeys, null, 2),
-      );
-      console.log("[MUTACJA SUCCESS] variables =", variables);
-      // invalidate wszystkich przekazanych kluczy
-      invalidateKeys.forEach((key) => {
-        console.log("[INVALIDUJĘ klucz] →", JSON.stringify(key, null, 2));
-        queryClient.invalidateQueries({
-          queryKey: key,
-          exact: true,
-          refetchType: "all",
+      if (invalidateKeys.length > 0) {
+        invalidateKeys.forEach((key) => {
+          queryClient.invalidateQueries({
+            queryKey: key,
+            //refetchType: refetchActive ? "active" : "all",
+          });
         });
-      });
+      }
     },
 
     onError: (error, variables) => {
@@ -93,8 +85,6 @@ const usePatchApi = <
         "Coś poszło nie tak 😢";
       toast.error(message);
     },
-
-    // onSettled usuwamy lub zostawiamy puste – nie invalidujemy automatycznie starego queryKey
   });
 };
 
