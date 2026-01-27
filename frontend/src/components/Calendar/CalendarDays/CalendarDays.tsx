@@ -225,7 +225,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
     const tasksData = tasksByDay[date] || [];
     const day = getDayNumberFromDateKey(date);
 
-    console.log(tasksByDay);
+    //console.log(tasksByDay);
 
     return (
       <CalendarDay

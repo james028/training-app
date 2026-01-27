@@ -53,3 +53,9 @@ export const CHECKLIST_KEYS = {
   checkListDelete: (id: string | undefined) =>
     [...CHECKLIST_KEYS.all, "delete", id] as const,
 };
+
+export const DEVICE_KEYS = {
+  all: ["device"] as const,
+  checkList: () => [...DEVICE_KEYS.all, "list"] as const,
+  checkListCreate: () => [...CHECKLIST_KEYS.all, "create"] as const,
+};

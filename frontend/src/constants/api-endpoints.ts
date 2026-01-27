@@ -20,4 +20,7 @@ export const API_ENDPOINTS = {
     TOGGLE: (id: string) => `api/checklist/${id}/toggle`,
     DELETE: (id: string) => `api/checklist/${id}`,
   },
+  REGISTER_DEVICE: {
+    CREATE: "api/device/create",
+  },
 } as const;
