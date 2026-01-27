@@ -10,8 +10,10 @@ export const useRegisterDevice = (fingerprint?: string) => {
 
   const { auth } = useAppContext();
   const userId = auth?.data?.id ?? "";
-  const token = auth?.data?.token ?? null;
+  const token = auth?.data?.accessToken ?? null;
   const isAuthenticated = Object.keys(auth?.data ?? {}).length > 0;
+
+  console.log(token, "tokenssssssssssssss");
 
   const { mutateAsync, isError, error } = usePostApi<any, any, any>({
     link: `${URL}${API_ENDPOINTS.REGISTER_DEVICE.CREATE}`,

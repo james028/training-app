@@ -14,6 +14,7 @@ const PlankRouter = require("./Plank/routes");
 const TrainingTypeRouter = require("./ActivityType/routes");
 const UserRegisterLoginRouter = require("./UserRegisterLogin/routes");
 const ChecklistRouter = require("./Checklist/routes");
+const RegisteredDevicesRouter = require("./RegisterDevices/routes");
 const {
   transformResponse,
 } = require("./UserRegisterLogin/middleware/transformResponse");
@@ -63,6 +64,7 @@ PlankRouter.routesConfig(app);
 TrainingTypeRouter.routesConfig(app);
 UserRegisterLoginRouter.routesConfig(app);
 ChecklistRouter.routesConfig(app);
+RegisteredDevicesRouter.routesConfig(app);
 
 const runningMessage = `Server running at http://localhost:${port}`;
 
