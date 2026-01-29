@@ -20,6 +20,7 @@ async function main() {
   await mongoose.connect(mongoDB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    dbName: "training_app_prod",
   });
 }
 
