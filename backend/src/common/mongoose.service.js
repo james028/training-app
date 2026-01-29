@@ -3,25 +3,29 @@ const { set } = require("mongoose");
 
 set("strictQuery", false);
 
-//const mongoDB_URI = process.env.MONGO_URI;
+const isProduction = process.env.NODE_ENV === "production";
+const config = {
+  development: {
+    uri: "mongodb://127.0.0.1:27017/TrainingAppData",
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
+  },
+  production: {
+    uri: process.env.MONGO_URI,
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: "training_app_prod",
+    },
+  },
+};
 
-let mongoDB_URI;
-const mongoDB = "mongodb://127.0.0.1/TrainingAppData";
-
-if (process.env.NODE_ENV === "production") {
-  mongoDB_URI = process.env.MONGO_URI;
-  console.log("Łączenie z bazą: PRODUCTION");
-} else {
-  mongoDB_URI = mongoDB;
-  console.log("Łączenie z bazą: DEVELOPMENT");
-}
+const { uri, options } = isProduction ? config.production : config.development;
 
 async function main() {
-  await mongoose.connect(mongoDB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: "training_app_prod",
-  });
+  await mongoose.connect(uri, options);
 }
 
 main().catch((err) => console.log(err, "err"));

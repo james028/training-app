@@ -25,7 +25,7 @@ function transformIds(obj) {
 
     for (const [key, value] of Object.entries(obj)) {
       if (key === "_id") {
-        result.id = value.toString();
+        result.id = value?.toString();
       } else if (key === "__v") {
         continue;
       } else {

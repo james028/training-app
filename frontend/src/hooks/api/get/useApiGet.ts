@@ -37,8 +37,6 @@ const useGetApi = <TData>({
 
   const queryKeyArray = [queryKey];
 
-  //console.log(queryKey, "query");
-
   const {
     isRefetching,
     isLoading,
@@ -50,13 +48,17 @@ const useGetApi = <TData>({
     dataUpdatedAt,
   } = useQuery<TData>({
     // @ts-ignore
-    queryKey,
+    queryKey: queryKeyArray,
     queryFn: getList,
-    staleTime: 0, // ← wymuś natychmiastowy refetch po invalidate
-    gcTime: 1000 * 60, // 1 minuta, nie za długo
-    refetchOnMount: "always", // opcjonalnie – zawsze refetch przy montowaniu
-    refetchOnWindowFocus: false, // wyłącz, żeby nie przeszkadzało w testach
+    staleTime: 60000,
+    gcTime: 300000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    enabled: true,
   });
+
+  console.log(queryKey);
 
   return {
     data,

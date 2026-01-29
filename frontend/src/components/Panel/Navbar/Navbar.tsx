@@ -109,7 +109,10 @@ const Navbar = () => {
               />
             </svg>
           </button>
-
+          <br />
+          {auth?.data?.email}
+          <br />
+          {auth?.data?.username}
           <div
             className="hidden w-full md:block md:w-auto"
             id="navbar-solid-bg"

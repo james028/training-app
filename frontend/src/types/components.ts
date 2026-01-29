@@ -36,6 +36,6 @@ export interface TableCellProps {
   columnKey: keyof ActivityType | string;
   value: string | number | boolean | null | undefined;
   row: ActivityType;
-  onEdit: (row: ActivityType) => void;
+  onEdit: (item: ActivityType) => void;
   onDelete: (item: ActivityType) => void;
 }
