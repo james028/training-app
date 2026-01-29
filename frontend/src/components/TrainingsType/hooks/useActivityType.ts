@@ -12,6 +12,11 @@ import { useForm } from "react-hook-form";
 import { useYupValidationResolver } from "../../../hooks/useYupValidationResolver/useYupValidationResolver";
 import { activitySchema } from "../schemas";
 import { ActivityType } from "../../../types";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import {
+  useActivityTypes,
+  useUpdateActivityType,
+} from "../../../hooks/useActivity";
 
 interface ActivityTypeFormProps {
   activityName: string;
@@ -23,7 +28,10 @@ export interface ApiResponse<T> {
   data: T;
   count: number;
 }
+
 export const useActivityType = () => {
+  const queryClient = useQueryClient();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
@@ -38,18 +46,25 @@ export const useActivityType = () => {
   });
   const { reset, setValue } = form;
 
+  // const {
+  //   data: activityTypeData,
+  //   //refetch,
+  //   isLoading,
+  //   //isRefetching,
+  //   error,
+  //   isError,
+  // } = useGetApi<ApiResponse<ActivityType[]>>({
+  //   link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
+  //   queryKey: ACTIVITY_KEYS.activityTypeList(),
+  // });
+  //useToastError(isError, error);
   const {
     data: activityTypeData,
-    refetch,
     isLoading,
-    isRefetching,
     error,
     isError,
-  } = useGetApi<ApiResponse<ActivityType[]>>({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
-    queryKey: ACTIVITY_KEYS.activityTypeList(),
-  });
-  useToastError(isError, error);
+  } = useActivityTypes();
+
   const activityData = activityTypeData?.data ?? [];
 
   const { mutateAsync: createMutate } = usePostApi({
@@ -57,10 +72,14 @@ export const useActivityType = () => {
     queryKey: ACTIVITY_KEYS.createActivityType(),
   });
 
-  const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId ?? "")}`,
-    queryKey: ACTIVITY_KEYS.editActivity(editingId ?? ""),
-  });
+  const {
+    mutateAsync: editMutate,
+    //isPending
+  } = useUpdateActivityType(editingId ?? "");
+  // const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
+  //   link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId ?? "")}`,
+  //   invalidateKeys: [ACTIVITY_KEYS.activityTypeList()],
+  // });
 
   const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
     `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId ?? "")}`,
@@ -98,7 +117,11 @@ export const useActivityType = () => {
         toast.success("Dodano nowy typ aktywności!");
       }
 
-      await refetch?.();
+      await queryClient.invalidateQueries({
+        queryKey: ACTIVITY_KEYS.activityTypeList(),
+        exact: true,
+        refetchType: "all",
+      });
       handleCancelEdit();
     } catch (error) {
       const errorMessage =
@@ -111,7 +134,7 @@ export const useActivityType = () => {
   const onSubmitDelete = async (): Promise<void> => {
     try {
       await removeMutate({});
-      await refetch?.();
+      //await refetch?.();
       setIsOpenRemoveModal(false);
       setRemovingId(null);
     } catch (error) {
@@ -125,9 +148,9 @@ export const useActivityType = () => {
     form,
     getList: {
       data: activityData,
-      refetch,
+      //refetch,
       isLoading,
-      isRefetching,
+      //isRefetching,
       error,
       isError,
     },

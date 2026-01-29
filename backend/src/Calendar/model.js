@@ -2,23 +2,28 @@ const mongoose = require("../common/mongoose.service.js");
 
 const Schema = mongoose.Schema;
 
-const RecordSchema = new Schema({
-  activity: {
-    type: Schema.Types.ObjectId,
-    ref: "ActivityType",
-    required: true,
+const RecordSchema = new Schema(
+  {
+    activity: {
+      type: Schema.Types.ObjectId,
+      ref: "ActivityType",
+      required: true,
+    },
+    duration: { type: String, required: true },
+    title: { type: String, required: false },
+    description: { type: String, required: false },
+    bikeType: { type: String, required: false },
+    bikeKilometers: { type: Number, required: false },
+    activityDate: {
+      type: Date,
+      required: true,
+      index: true,
+    },
   },
-  duration: { type: String, required: true },
-  title: { type: String, required: false },
-  description: { type: String, required: false },
-  bikeType: { type: String, required: false },
-  bikeKilometers: { type: Number, required: false },
-  activityDate: {
-    type: Date,
-    required: true,
-    index: true,
+  {
+    timestamps: true,
   },
-});
+);
 
 const monthlyCalendarSchema = new mongoose.Schema(
   {
@@ -40,7 +45,6 @@ const monthlyCalendarSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
 const CalendarDataModel = mongoose.model("Activities", monthlyCalendarSchema);
 
 module.exports = CalendarDataModel;

@@ -12,12 +12,7 @@ export const StyledTypeContainer = styled.div<{
   background-color: ${(props) => (props.hexcolor ? `${props.hexcolor}` : null)};
 `;
 
-const CalendarDay = ({
-  data,
-  day,
-  isEmpty,
-  trainingDataColor,
-}: TCalendarDay) => {
+const CalendarDay = ({ data, day, isEmpty, activityData }: TCalendarDay) => {
   const [openModalEditTraining, setOpenModalEditTraining] = useState(false);
   const [openModalAddTraining, setOpenModalAddTraining] = useState(false);
   const [eventData, setEventData] = useState<Record<any, any>>({});
@@ -32,22 +27,23 @@ const CalendarDay = ({
   };
 
   const colorLookup = useMemo(() => {
-    if (!trainingDataColor?.length) {
+    if (!activityData?.length) {
       return { default: "" };
     }
 
-    return trainingDataColor.reduce(
+    return activityData.reduce(
       (acc, type) => {
         acc[type.type] = type.color;
         return acc;
       },
       {} as Record<string, string>,
     );
-  }, [trainingDataColor]);
+  }, [activityData]);
 
   const getColor = (eventType: string): string => {
     return colorLookup[eventType] || colorLookup.default;
   };
+  //console.log(trainingDataColor, "trainingDataColor");
 
   const renderEvents = () => {
     if (data.length > 3) {
@@ -55,6 +51,7 @@ const CalendarDay = ({
     } else {
       if (data.length > 0) {
         return data.map((event: any) => {
+          console.log(event);
           return (
             <StyledTypeContainer
               key={event.id}
@@ -113,7 +110,7 @@ const CalendarDay = ({
           modalTitle={"Trening z dnia: "}
           eventData={eventData}
           day={day}
-          trainingDataType={trainingDataColor}
+          trainingDataType={activityData}
         />
       ) : null}
       {openModalAddTraining ? (
@@ -123,7 +120,7 @@ const CalendarDay = ({
           closeModal={() => setOpenModalAddTraining(false)}
           modalTitle={"Dodaj trening"}
           day={day}
-          trainingDataType={trainingDataColor}
+          trainingDataType={activityData}
         />
       ) : null}
     </StyledContainerDay>

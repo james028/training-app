@@ -18,7 +18,6 @@ exports.getActivitiesList = asyncHandler(async (req, res) => {
       error: "Brak wymaganych parametrów: year i month",
     });
   }
-
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
   const monthlyData = await CalendarDataModel.findOne({

@@ -1,7 +1,6 @@
 import React from "react";
 import Calendar from "../../Calendar/Calendar";
 import ActivityTypePage from "../../TrainingsType/ActivityTypePage";
-import SimpleCheckList from "../../SimpleCheckList/SimpleCheckList";
 
 const Dashboard = () => {
   //const navigate = useNavigate();
@@ -19,7 +18,7 @@ const Dashboard = () => {
       {/*<PlankSection />*/}
       <Calendar />
       <ActivityTypePage />
-      <SimpleCheckList />
+      {/*<SimpleCheckList />*/}
     </div>
   );
 };

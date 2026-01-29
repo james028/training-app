@@ -35,13 +35,30 @@ const useGetApi = <TData>({
     return result.data;
   };
 
-  const queryKeyArray = [queryKey, link, params, paramsObject];
+  const queryKeyArray = [queryKey];
 
-  const { isRefetching, isLoading, isError, data, status, refetch, error } =
-    useQuery<TData>({
-      queryKey: queryKeyArray,
-      queryFn: getList,
-    });
+  const {
+    isRefetching,
+    isLoading,
+    isError,
+    data,
+    status,
+    refetch,
+    error,
+    dataUpdatedAt,
+  } = useQuery<TData>({
+    // @ts-ignore
+    queryKey: queryKeyArray,
+    queryFn: getList,
+    staleTime: 60000,
+    gcTime: 300000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    enabled: true,
+  });
+
+  console.log(queryKey);
 
   return {
     data,
@@ -50,6 +67,7 @@ const useGetApi = <TData>({
     status,
     refetch,
     isRefetching,
+    dataUpdatedAt,
     error,
   } as GetApiResult<TData>;
 };

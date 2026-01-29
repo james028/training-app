@@ -20,14 +20,14 @@ export interface TCalendarDay {
   data: TDay[];
   day: string | null;
   isEmpty: boolean;
-  trainingDataColor: ActivityType[];
+  activityData: ActivityType[];
 }
 
 export interface ActivityTypeListProps {
   dataActivityType: ActivityType[];
   isLoading: boolean;
   isError: boolean;
-  isRefetching: boolean;
+  //isRefetching: boolean;
   onEdit: (item: ActivityType) => void;
   onDelete: (item: ActivityType) => void;
 }
@@ -36,6 +36,6 @@ export interface TableCellProps {
   columnKey: keyof ActivityType | string;
   value: string | number | boolean | null | undefined;
   row: ActivityType;
-  onEdit: (row: ActivityType) => void;
+  onEdit: (item: ActivityType) => void;
   onDelete: (item: ActivityType) => void;
 }

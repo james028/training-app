@@ -55,7 +55,7 @@ const SimpleCheckList = () => {
 
   const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(togglingId ?? "")}`,
-    queryKey: CHECKLIST_KEYS.checkListToggle(togglingId ?? ""),
+    //queryKey: CHECKLIST_KEYS.checkListToggle(togglingId ?? ""),
     headers: { Authorization: `Bearer ${token}` },
   });
 

@@ -10,28 +10,63 @@ import { useAppContext } from "../../appContext/appContext";
 import { CALEDAR_KEYS } from "../../constants/query-keys";
 import { Navigate } from "react-router-dom";
 
+export interface Activity {
+  id: string;
+  type: string;
+  activityName: string;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Task {
+  id: string;
+  activity: Activity;
+  duration: string;
+  activityDate: string;
+  title?: string;
+  description?: string;
+  bikeType?: string;
+}
+
+export interface CalendarDay {
+  id: string;
+  dayNumber: number;
+  tasks: Task[];
+}
+
+export interface Calendar {
+  id: string;
+  userId: string;
+  yearMonthKey?: string;
+  days: CalendarDay[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface CalendarApiResponse {
   year: number;
   month: number;
   tasks: TDay[];
 }
-interface Task {
-  id: string;
-  trainingType: string;
-  duration: string;
-  title: string;
-  description: string;
-  bikeType: string;
-  bikeKilometers: number;
-  dateTime: string; // Oryginalny format ISO, np. "2025-12-15T15:16:14.420Z"
-}
+// interface Task {
+//   id: string;
+//   trainingType: string;
+//   duration: string;
+//   title: string;
+//   description: string;
+//   bikeType: string;
+//   bikeKilometers: number;
+//   activity: any;
+//   dateTime: string; // Oryginalny format ISO, np. "2025-12-15T15:16:14.420Z"
+// }
 
 interface DayEntry {
   _id: string;
   dayNumber: number;
   tasks: Task[];
 }
-
+//
 interface CalendarDataAPI {
   id: string;
   userId: number;
@@ -61,9 +96,12 @@ interface ConvertedCalendarData {
  * @returns Przekształcony obiekt z rokiem, miesiącem i płaską listą zadań.
  */
 export const convertCalendarDataToFlatTasks = (
-  apiData: CalendarDataAPI,
+  apiData: any,
 ): ConvertedCalendarData => {
-  const yearMonthKey = apiData.yearMonthKey;
+  console.log(apiData, "1");
+  //if ("yearMonthKey" in apiData) {
+  let yearMonthKey = apiData.yearMonthKey;
+
   // 1. Rozbicie yearMonthKey na rok i miesiąc
   if (!yearMonthKey || !yearMonthKey.includes("-")) {
     // Zwróć bezpieczny, pusty obiekt, aby uniknąć awarii aplikacji
@@ -73,29 +111,32 @@ export const convertCalendarDataToFlatTasks = (
       tasks: [],
     };
   }
+  //}
   const [yearStr, monthStr] = apiData.yearMonthKey.split("-") || [];
   const year = parseInt(yearStr, 10);
   const month = parseInt(monthStr, 10);
 
   // 2. Spłaszczanie i mapowanie zadań
-  const flatTasks: FlattenedTask[] = apiData.days.flatMap((dayEntry) => {
-    // Formatuje numer dnia z wiodącym zerem (np. 5 -> 05)
-    const dayNumberPadded = dayEntry.dayNumber.toString().padStart(2, "0");
+  const flatTasks: FlattenedTask[] = apiData.days.flatMap(
+    (dayEntry: { dayNumber: { toString: () => string }; tasks: any[] }) => {
+      // Formatuje numer dnia z wiodącym zerem (np. 5 -> 05)
+      const dayNumberPadded = dayEntry.dayNumber.toString().padStart(2, "0");
 
-    // Tworzy pełny klucz daty (YYYY-MM-DD)
-    const fullDateKey = `${yearStr}-${monthStr}-${dayNumberPadded}`;
+      // Tworzy pełny klucz daty (YYYY-MM-DD)
+      const fullDateKey = `${yearStr}-${monthStr}-${dayNumberPadded}`;
 
-    // Mapowanie każdego zadania z danego dnia
-    return dayEntry.tasks.map((task: any) => {
-      const { dateTime, ...restOfTask } = task;
+      // Mapowanie każdego zadania z danego dnia
+      return dayEntry.tasks.map((task: any) => {
+        const { dateTime, ...restOfTask } = task;
 
-      return {
-        ...restOfTask,
-        id: task._id,
-        fullDateTime: fullDateKey,
-      };
-    });
-  });
+        return {
+          ...restOfTask,
+          id: task._id,
+          fullDateTime: fullDateKey,
+        };
+      });
+    },
+  );
 
   return {
     year,
@@ -114,8 +155,7 @@ const Calendar = () => {
     isLoading,
     isError,
     error,
-    //any to musi być zmienione
-  } = useGetApi<any>({
+  } = useGetApi<Calendar>({
     link: `${URL}${API_ENDPOINTS.CALENDAR.MONTHLY_LIST}`,
     queryKey: CALEDAR_KEYS.calendarMonthlyList(paramsFilters),
     paramsObject: paramsFilters,

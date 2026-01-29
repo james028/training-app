@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../../appContext/appContext";
 import usePostApi from "../../../../hooks/api/post/useApiPost";
 import { URL } from "../../../../constants";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface LoginFormFields {
   email: string;
@@ -15,6 +16,7 @@ interface LoginFormFields {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { handleChangeAuth } = useAppContext();
 
@@ -50,8 +52,10 @@ const LoginPage = () => {
         errorMessage: "Nie udało się zalogować",
       });
 
+      console.log(responseData);
       if (responseData) {
         handleChangeAuth(responseData);
+        queryClient.clear();
         reset();
         navigate("/dashboard");
       }

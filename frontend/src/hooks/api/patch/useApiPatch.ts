@@ -1,14 +1,12 @@
 import {
-  QueryClient,
   QueryKey,
   useMutation,
   UseMutationResult,
+  useQueryClient,
 } from "@tanstack/react-query";
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import toast from "react-hot-toast";
-
-const queryClient = new QueryClient();
 
 interface ApiErrorResponse {
   response: {
@@ -34,19 +32,20 @@ const usePatchApi = <
   TParams extends Record<string, any>,
 >({
   link,
-  queryKey,
   params,
   headers,
+  invalidateKeys = [],
 }: {
   link: string;
-  queryKey: QueryKey;
   params?: Record<string, any> | null | undefined;
   headers?: RawAxiosRequestHeaders | undefined;
+  invalidateKeys?: QueryKey[];
 }): UseMutationResult<
   TData,
   ApiErrorResponse,
   MutationVariables<TBody, TParams>
 > => {
+  const queryClient = useQueryClient();
   const updatePatch = async ({
     paramsObject,
     bodyData,
@@ -56,7 +55,6 @@ const usePatchApi = <
       bodyData,
       { headers },
     );
-
     return result.data;
   };
 
@@ -64,21 +62,28 @@ const usePatchApi = <
     TData,
     ApiErrorResponse,
     MutationVariables<TBody, TParams>
-  >((body) => updatePatch(body), {
+  >({
+    mutationFn: (body) => updatePatch(body),
     onSuccess: (data, variables) => {
       if (variables?.successMessage) {
         toast.success(variables.successMessage);
       }
+      if (invalidateKeys.length > 0) {
+        invalidateKeys.forEach((key) => {
+          queryClient.invalidateQueries({
+            queryKey: key,
+            //refetchType: refetchActive ? "active" : "all",
+          });
+        });
+      }
     },
+
     onError: (error, variables) => {
       const message =
         variables.errorMessage ||
         error?.response?.data?.message ||
         "Coś poszło nie tak 😢";
       toast.error(message);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries([queryKey, link]);
     },
   });
 };
