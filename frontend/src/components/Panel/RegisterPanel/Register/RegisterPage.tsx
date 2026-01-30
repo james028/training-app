@@ -41,7 +41,7 @@ const RegisterPage = () => {
     isSuccess,
   } = usePostApi<RegisterFormFields, any, any>({
     link: `${URL}${linkRegister}`,
-    queryKey: ["userRegister"],
+    invalidateKeys: [["userRegister"]],
   });
 
   const onSubmit = handleSubmit(async (data: RegisterFormFields) => {

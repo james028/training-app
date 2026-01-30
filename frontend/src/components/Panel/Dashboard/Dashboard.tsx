@@ -1,5 +1,6 @@
 import React from "react";
 import Calendar from "../../Calendar/Calendar";
+import SimpleCheckList from "../../SimpleCheckList/SimpleCheckList";
 import ActivityTypePage from "../../TrainingsType/ActivityTypePage";
 
 const Dashboard = () => {
@@ -18,7 +19,7 @@ const Dashboard = () => {
       {/*<PlankSection />*/}
       <Calendar />
       <ActivityTypePage />
-      {/*<SimpleCheckList />*/}
+      <SimpleCheckList />
     </div>
   );
 };

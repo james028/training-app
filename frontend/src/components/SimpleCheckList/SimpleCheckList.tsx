@@ -49,7 +49,7 @@ const SimpleCheckList = () => {
 
   const { mutateAsync: createMutate } = usePostApi<any, any, any>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE}`,
-    queryKey: CHECKLIST_KEYS.checkListCreate(),
+    invalidateKeys: [CHECKLIST_KEYS.checkListCreate()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -61,7 +61,10 @@ const SimpleCheckList = () => {
 
   const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
     `${URL}${API_ENDPOINTS.CHECKLIST.DELETE(removingId ?? "")}`,
-    CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
+    [
+      CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
+      CHECKLIST_KEYS.checkList(),
+    ],
     null,
     { Authorization: `Bearer ${token}` },
   );

@@ -22,7 +22,7 @@ const Navbar = () => {
   const linkLogout = "api/auth/logout";
   const { mutateAsync: mutateAsyncLogout } = usePostApi({
     link: `${URL}${linkLogout}`,
-    queryKey: ["userLogout"],
+    invalidateKeys: [["userLogout"]],
   });
 
   const handleLogOut = async () => {

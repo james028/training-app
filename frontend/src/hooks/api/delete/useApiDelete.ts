@@ -1,14 +1,12 @@
 import axios, { RawAxiosRequestHeaders } from "axios";
 import { endpointWithParams, getParams } from "../apiUtils";
 import {
-  QueryClient,
   QueryKey,
   useMutation,
   UseMutationResult,
+  useQueryClient,
 } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-const queryClient = new QueryClient();
 
 interface ApiErrorResponse {
   response: {
@@ -34,7 +32,7 @@ const useDeleteApi = <
   TParams extends Record<string, any>,
 >(
   link: string,
-  queryKey: QueryKey,
+  invalidateKeys: QueryKey[],
   params?: Record<string, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
 ): UseMutationResult<
@@ -42,6 +40,8 @@ const useDeleteApi = <
   ApiErrorResponse,
   MutationVariables<TBody, TParams>
 > => {
+  const queryClient = useQueryClient();
+
   const deleteMethod = async (
     paramsObject: MutationVariables<TBody, TParams>,
   ): Promise<TData> => {
@@ -62,6 +62,14 @@ const useDeleteApi = <
       if (variables?.successMessage) {
         toast.success(variables.successMessage);
       }
+      if (invalidateKeys.length > 0) {
+        invalidateKeys.forEach((key) => {
+          queryClient.invalidateQueries({
+            queryKey: key,
+            exact: true,
+          });
+        });
+      }
     },
     onError: (error, variables) => {
       const message =
@@ -69,9 +77,6 @@ const useDeleteApi = <
         error?.response?.data?.message ||
         "Coś poszło nie tak 😢";
       toast.error(message);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries([queryKey, link]);
     },
   });
 };

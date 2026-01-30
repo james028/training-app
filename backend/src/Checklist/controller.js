@@ -6,10 +6,12 @@ const ChecklistItem = require("./model");
 exports.getChecklistItems = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
-  const items = await ChecklistItem.find({ userId }).sort({
-    order: 1,
-    createdAt: 1,
-  });
+  const items = await ChecklistItem.find({ userId })
+    .sort({
+      order: 1,
+      createdAt: 1,
+    })
+    .lean();
 
   res.json({
     success: true,

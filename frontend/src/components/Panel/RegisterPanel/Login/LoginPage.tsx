@@ -41,7 +41,7 @@ const LoginPage = () => {
     any
   >({
     link: `${URL}${linkRegister}`,
-    queryKey: ["userLogin"],
+    invalidateKeys: [["userLogin"]],
   });
 
   const onSubmit = handleSubmit(async (data: LoginFormFields) => {

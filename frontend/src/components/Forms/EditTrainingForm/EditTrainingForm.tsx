@@ -61,7 +61,7 @@ const EditTrainingForm = ({
   //pozmieniać
   const { mutateAsync: mutateAsyncRemove } = usePostApi({
     link: `${URL}${linkRemove}/${eventData.id}`,
-    queryKey: ["removeExistTraining"],
+    invalidateKeys: [["removeExistTraining"]],
   });
 
   const { handleSubmitForm } = useAddEditFormService(
