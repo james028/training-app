@@ -45,14 +45,14 @@ export const useAddEditFormService = (
 
   const { mutateAsync: addMutateAsync } = usePostApi({
     link: `${URL}${API_ENDPOINTS.CALENDAR.CREATE_ACTIVITY}`,
-    queryKey: CALEDAR_KEYS.createCalendarActivity(),
+    invalidateKeys: [CALEDAR_KEYS.createCalendarActivity()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
   const linkEdit = "api/calendar/edit";
   const { mutateAsync: editMutateAsync } = usePostApi<any, any, any>({
     link: `${URL}${linkEdit}`,
-    queryKey: ["editAddedTraining"],
+    invalidateKeys: [["editAddedTraining"]],
   });
 
   const paramsFilters = { year, month };

@@ -46,6 +46,7 @@ const usePatchApi = <
   MutationVariables<TBody, TParams>
 > => {
   const queryClient = useQueryClient();
+
   const updatePatch = async ({
     paramsObject,
     bodyData,
@@ -72,12 +73,11 @@ const usePatchApi = <
         invalidateKeys.forEach((key) => {
           queryClient.invalidateQueries({
             queryKey: key,
-            //refetchType: refetchActive ? "active" : "all",
+            exact: true,
           });
         });
       }
     },
-
     onError: (error, variables) => {
       const message =
         variables.errorMessage ||

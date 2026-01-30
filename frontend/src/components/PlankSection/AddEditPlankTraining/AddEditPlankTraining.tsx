@@ -44,12 +44,12 @@ const AddEditPlankTraining = () => {
 
   const { mutateAsync } = usePostApi({
     link: `${URL}api/plank/create`,
-    queryKey: ["createPlank"],
+    invalidateKeys: [["createPlank"]],
     headers: { Authorization: `Bearer ${token}` },
   });
   const { mutateAsync: updateMutateAsync } = usePatchApi({
     link: `${URL}${link}/update`,
-    //queryKey: ["updatePlank"],
+    invalidateKeys: [["updatePlank"]],
   });
   const { refetch: refetchList } = useGetApi({
     link: `${URL}api/plank/list`,
