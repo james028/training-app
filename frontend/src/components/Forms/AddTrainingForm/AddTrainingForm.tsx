@@ -120,7 +120,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
             <FormInput<any>
               id="bikeKilometers"
               // @ts-ignore
-              type="number"
+              type="text"
               name="bikeKilometers"
               label="Ilość kilometrów"
               placeholder="Ilość kilometrów"
