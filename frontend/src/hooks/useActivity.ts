@@ -4,6 +4,7 @@ import usePatchApi from "./api/patch/useApiPatch";
 import useGetApi from "./api/get/useApiGet";
 import { CALEDAR_KEYS } from "../constants/query-keys";
 import { useAppContext } from "../appContext/appContext";
+import { URL } from "../constants";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -19,8 +20,6 @@ export type ActivityType = {
   createdAt: string;
   updatedAt: string;
 };
-
-export const URL = "http://localhost:5001/";
 
 export const API_ENDPOINTS = {
   ACTIVITIES: {
