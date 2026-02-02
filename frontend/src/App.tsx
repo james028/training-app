@@ -1,79 +1,73 @@
-import React, { lazy, Suspense } from "react";
+import React, { Suspense } from "react";
 import "./App.css";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
-import { ErrorBoundary } from "react-error-boundary";
-
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import "./i18n/i18n";
 
 import ContextProvider from "./appContext/appContext";
-import Dashboard from "./components/Panel/Dashboard/Dashboard";
-import Calendar from "./components/Calendar/Calendar";
-import RootLayout from "./components/Home";
-import LoginPage from "./components/Panel/RegisterPanel/Login/LoginPage";
-import RegisterPage from "./components/Panel/RegisterPanel/Register/RegisterPage";
 import Loading from "./components/shared/Loading/Loading";
-import { Outlet } from "react-router-dom";
-import Navbar from "./components/Panel/Navbar/Navbar";
-import PrivateRoute from "./components/shared/PrivateRoute/PrivateRoute";
-import PublicRoute from "./components/shared/PublicRoute/PublicRoute";
+import { rootRoute } from "./components/shared/routes/rootRoute";
+import { authRoutes } from "./components/shared/routes/authRoutes";
+import { dashboardRoutes } from "./components/shared/routes/dashboardRoutes";
+import { RootRedirect } from "./components/shared/routes/rootRedirect";
 
-const ErrorPage = lazy(() => import("./pages/ErrorPage"));
-
-const PublicLayout = () => {
-  return (
-    <>
-      <Navbar />
-      <Outlet />
-      <footer style={{ padding: "1rem", background: "#eee" }}>
-        &copy; 2025 My App
-      </footer>
-    </>
-  );
-};
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <Navigate to="/login" replace />,
+//   },
+//
+//   {
+//     element: <PublicLayout />,
+//     children: [
+//       {
+//         path: "/login",
+//         element: (
+//           <PublicRoute>
+//             <LoginPage />
+//           </PublicRoute>
+//         ),
+//       },
+//       {
+//         path: "/register",
+//         element: <RegisterPage />,
+//       },
+//     ],
+//   },
+//   {
+//     element: (
+//       <ProtectedRoute>
+//         <RootLayout />
+//       </ProtectedRoute>
+//     ),
+//     children: [
+//       {
+//         path: "/dashboard",
+//         element: <Dashboard />,
+//       },
+//       {
+//         path: "/calendar",
+//         element: <Calendar />,
+//       },
+//     ],
+//   },
+// ]);
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Navigate to="/login" replace />,
-  },
-
-  {
-    element: <PublicLayout />,
+    ...rootRoute,
     children: [
-      {
-        path: "/login",
-        element: (
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        ),
-      },
-      {
-        path: "/register",
-        element: <RegisterPage />,
-      },
-    ],
-  },
-  {
-    element: (
-      <PrivateRoute>
-        <RootLayout />
-      </PrivateRoute>
-    ),
-    children: [
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "/calendar",
-        element: <Calendar />,
-      },
+      // {
+      //   index: true,
+      //   element: <RootRedirect />, // ← "/" → login lub dashboard
+      // },
+      //...rootRoute.children,
+      authRoutes,
+      dashboardRoutes,
+      //workoutRoutes,
+      //socialRoutes,
+      //settingsRoutes,
     ],
   },
 ]);
@@ -82,9 +76,8 @@ function App() {
   return (
     <ContextProvider>
       <Suspense fallback={<Loading />}>
-        <ErrorBoundary fallback={<ErrorPage />}>
-          <RouterProvider router={router} />
-        </ErrorBoundary>
+        <RouterProvider router={router} />
+        {/*<ReactQueryDevtools initialIsOpen={false} />*/}
       </Suspense>
 
       <Toaster

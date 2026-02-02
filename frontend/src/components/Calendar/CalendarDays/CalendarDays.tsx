@@ -35,21 +35,12 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   //   link: `${URL}${API_ENDPOINTS.ACTIVITIES.LIST}`,
   //   queryKey: ACTIVITY_KEYS.activityTypeList(),
   // });
-  const { data, isLoading } = useActivityTypes();
+  const { data, isLoading, isError, error } = useActivityTypes();
 
-  //useToastError(isError, error);
   const activityData = data?.data ?? [];
-  //console.log(activityData, "aaaaaaaaaa");
-  //
-  // console.log(
-  //   "[KOMPONENT LISTY] queryKey =",
-  //   JSON.stringify(ACTIVITY_KEYS.activityTypeList(), null, 2),
-  //   "data =",
-  //   activityData?.slice(0, 2), // tylko pierwsze 2 elementy, żeby nie spamować konsoli
-  // );
-  //const trainingDataColor = trainingTypeData?.data ?? [];
-  //useToastError(isError, error);
+  useToastError(isError, error, "test calendar zle poszlo");
 
+  //utils
   const getBlankDaysBeforeMonth = (year: number, month: number): number => {
     const firstDayOfMonth = DateTime.local(year, month, 1);
     const weekdayIndex = firstDayOfMonth.weekday; // np. 5 dla piątku
@@ -59,6 +50,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
     return weekdayIndex - 1;
   };
 
+  //utils
   const getBlankDaysAfterMonth = (year: number, month: number): number => {
     const lastDayOfMonth = DateTime.local(year, month, 1).endOf("month");
     const weekdayIndex = lastDayOfMonth.weekday;
@@ -239,7 +231,6 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
 
   return (
     <>
-      {" "}
       <div className="flex flex-wrap border-t border-l bg-gray-50">
         {daysArray.map((dateKey, index) => {
           const monthPrefix = `${year}-${month}`;
@@ -252,18 +243,6 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
           );
         })}
       </div>
-      {/*<div style={{ padding: 8, fontSize: 16, minWidth: 220 }}>*/}
-      {/*  /!*<option value="">— wybierz typ aktywności —</option>*!/*/}
-      {/*  {activityData?.map((item) => (*/}
-      {/*    <li*/}
-      {/*      key={item.id}*/}
-      {/*      value={item.id}*/}
-      {/*      style={{ backgroundColor: item.color, color: "#fff" }}*/}
-      {/*    >*/}
-      {/*      {item.activityName} ({item.type})*/}
-      {/*    </li>*/}
-      {/*  ))}*/}
-      {/*</div>*/}
     </>
   );
 };

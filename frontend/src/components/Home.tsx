@@ -5,7 +5,7 @@ import Navbar from "./Panel/Navbar/Navbar";
 const RootLayout = () => {
   return (
     <>
-      <Navbar />
+      <Navbar />3
       <main style={{ padding: "1rem", flex: 1 }}>
         <Outlet />
       </main>
