@@ -1,6 +1,6 @@
 import usePatchApi from "./api/patch/useApiPatch";
 import useGetApi from "./api/get/useApiGet";
-import { ACTIVITY_KEYS, CALEDAR_KEYS } from "../constants/query-keys";
+import { ACTIVITY_KEYS, CALENDAR_KEYS } from "../constants/query-keys";
 import { useAppContext } from "../appContext/appContext";
 import { API_ENDPOINTS, URL } from "../constants";
 import usePostApi from "./api/post/useApiPost";
@@ -42,7 +42,7 @@ export const useUpdateActivityType = (editingId?: string) => {
   return usePatchApi({
     link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId ?? "")}`,
     invalidateKeys: [
-      CALEDAR_KEYS.calendarMonthlyList(paramsFilters),
+      CALENDAR_KEYS.calendarMonthlyList(paramsFilters),
       ACTIVITY_KEYS.activityTypeList(),
     ],
   });

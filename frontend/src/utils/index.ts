@@ -3,3 +3,4 @@ export * from "./api";
 export * from "./colors";
 export * from "./string";
 export * from "./date";
+export * from "./route";

@@ -7,7 +7,7 @@ import { TDay } from "../../types";
 import { useToastError } from "../../hooks/useToastError/useToastError";
 import Loading from "../shared/Loading/Loading";
 import { useAppContext } from "../../appContext/appContext";
-import { CALEDAR_KEYS } from "../../constants/query-keys";
+import { CALENDAR_KEYS } from "../../constants/query-keys";
 import { Navigate } from "react-router-dom";
 
 export interface Activity {
@@ -157,10 +157,14 @@ const Calendar = () => {
     error,
   } = useGetApi<Calendar>({
     link: `${URL}${API_ENDPOINTS.CALENDAR.MONTHLY_LIST}`,
-    queryKey: CALEDAR_KEYS.calendarMonthlyList(paramsFilters),
+    queryKey: [CALENDAR_KEYS.calendarMonthlyList(paramsFilters)],
     paramsObject: paramsFilters,
     headers: { Authorization: `Bearer ${token}` },
+    options: {
+      refetchOnWindowFocus: false,
+    },
   });
+  console.log([CALENDAR_KEYS.calendarMonthlyList(paramsFilters)]);
   useToastError(isError, error);
 
   const data = calendarData ?? [];

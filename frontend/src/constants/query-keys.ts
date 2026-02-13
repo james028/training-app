@@ -37,11 +37,25 @@ export const ACTIVITY_KEYS = {
     [...ACTIVITY_KEYS.all, "remove", id] as const,
 };
 
-export const CALEDAR_KEYS = {
+export const CALENDAR_KEYS = {
   all: ["calendar"] as const,
-  calendarMonthlyList: ({ filters }: Record<string, any>) =>
-    [...CALEDAR_KEYS.all, "calendarMonthlyList", { filters }] as const,
-  createCalendarActivity: () => [...CALEDAR_KEYS.all, "create"] as const,
+  calendarMonthlyList: (filters: any) => [
+    ...CALENDAR_KEYS.all,
+    "calendarMonthlyList",
+    { ...filters },
+  ],
+  createCalendarActivity: () => [...CALENDAR_KEYS.all, "create"] as const,
+};
+
+export const CALENDAR_KEYS2 = {
+  all: ["calendar"] as const,
+  calendarMonthlyList: (month: number, year: number) => [
+    ...CALENDAR_KEYS.all,
+    "calendarMonthlyList",
+    month,
+    year,
+  ],
+  createCalendarActivity: () => [...CALENDAR_KEYS.all, "create"] as const,
 };
 
 export const CHECKLIST_KEYS = {
