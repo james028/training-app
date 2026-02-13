@@ -7,7 +7,7 @@ import {
   removeNullValues,
 } from "../../utils";
 import { RegistrationFormFields } from "../../components/Forms/EditTrainingForm/EditTrainingForm";
-import { CALEDAR_KEYS } from "../../constants/query-keys";
+import { CALENDAR_KEYS } from "../../constants/query-keys";
 import { useAppContext } from "../../appContext/appContext";
 
 const mapFormDataToBody = (
@@ -45,7 +45,7 @@ export const useAddEditFormService = (
 
   const { mutateAsync: addMutateAsync } = usePostApi({
     link: `${URL}${API_ENDPOINTS.CALENDAR.CREATE_ACTIVITY}`,
-    invalidateKeys: [CALEDAR_KEYS.createCalendarActivity()],
+    invalidateKeys: [CALENDAR_KEYS.createCalendarActivity()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -59,7 +59,7 @@ export const useAddEditFormService = (
   //tu poprawić z tym refetchem
   const { refetch: refetchCalendarData } = useGetApi<any>({
     link: `${URL}${API_ENDPOINTS.CALENDAR.MONTHLY_LIST}`,
-    queryKey: CALEDAR_KEYS.calendarMonthlyList(paramsFilters),
+    queryKey: CALENDAR_KEYS.calendarMonthlyList(paramsFilters),
     paramsObject: paramsFilters,
     headers: { Authorization: `Bearer ${token}` },
   });
