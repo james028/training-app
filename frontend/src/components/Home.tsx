@@ -10,7 +10,7 @@ const RootLayout = () => {
         <Outlet />
       </main>
       <footer style={{ padding: "1rem", background: "#eee" }}>
-        &copy; 2025 My App
+        &copy; 2025 My App footer2
       </footer>
     </>
   );

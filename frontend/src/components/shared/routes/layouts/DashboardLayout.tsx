@@ -1,7 +1,6 @@
 // layouts/DashboardLayout.tsx
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
-import { useAppContext } from "../../../appContext/appContext";
-import Navbar from "../../Panel/Navbar/Navbar";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAppContext } from "../../../../appContext/appContext";
 
 export const DashboardLayout = () => {
   const { auth } = useAppContext();
