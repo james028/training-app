@@ -157,12 +157,12 @@ const Calendar = () => {
     error,
   } = useGetApi<Calendar>({
     link: `${URL}${API_ENDPOINTS.CALENDAR.MONTHLY_LIST}`,
-    queryKey: [CALENDAR_KEYS.calendarMonthlyList(paramsFilters)],
+    queryKey: CALENDAR_KEYS.calendarMonthlyList(paramsFilters),
     paramsObject: paramsFilters,
     headers: { Authorization: `Bearer ${token}` },
-    options: {
-      refetchOnWindowFocus: false,
-    },
+    // options: {
+    //   refetchOnWindowFocus: false,
+    // },
   });
   console.log([CALENDAR_KEYS.calendarMonthlyList(paramsFilters)]);
   useToastError(isError, error);

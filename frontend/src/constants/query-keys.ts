@@ -39,11 +39,8 @@ export const ACTIVITY_KEYS = {
 
 export const CALENDAR_KEYS = {
   all: ["calendar"] as const,
-  calendarMonthlyList: (filters: any) => [
-    ...CALENDAR_KEYS.all,
-    "calendarMonthlyList",
-    { ...filters },
-  ],
+  calendarMonthlyList: (filters: { year: number; month: number }) =>
+    [...CALENDAR_KEYS.all, "calendarMonthlyList", filters] as const,
   createCalendarActivity: () => [...CALENDAR_KEYS.all, "create"] as const,
 };
 
@@ -66,4 +63,9 @@ export const CHECKLIST_KEYS = {
     [...CHECKLIST_KEYS.all, "toggle", id] as const,
   checkListDelete: (id: string | undefined) =>
     [...CHECKLIST_KEYS.all, "delete", id] as const,
+};
+
+export const AUTH_KEYS = {
+  all: ["auth"] as const,
+  authMe: () => [...AUTH_KEYS.all, "authMe"] as const,
 };

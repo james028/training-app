@@ -7,8 +7,9 @@ export const API_ENDPOINTS = {
   },
   TRAINING_TYPES: {},
   AUTH: {
-    LOGIN: "",
-    LOGOUT: "",
+    LOGIN: "api/auth/login",
+    LOGOUT: "api/auth/logout",
+    AUTH_ME: "api/auth/me",
   },
   CALENDAR: {
     MONTHLY_LIST: "api/activities/list",

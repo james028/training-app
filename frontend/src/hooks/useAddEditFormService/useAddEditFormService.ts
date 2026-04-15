@@ -43,9 +43,10 @@ export const useAddEditFormService = (
 
   const { year, month } = dateObject;
 
+  // /const paramsFilters = {}
   const { mutateAsync: addMutateAsync } = usePostApi({
     link: `${URL}${API_ENDPOINTS.CALENDAR.CREATE_ACTIVITY}`,
-    invalidateKeys: [CALENDAR_KEYS.createCalendarActivity()],
+    invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
     headers: { Authorization: `Bearer ${token}` },
   });
 

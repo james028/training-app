@@ -10,6 +10,7 @@ interface PageConfig {
   path: string;
   import: () => Promise<{ default: React.ComponentType<any> }>;
 }
+
 const dashboardPages: PageConfig[] = [
   {
     path: "dashboard",
