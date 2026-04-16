@@ -48,7 +48,7 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
   const {
-    activityTypeId,
+    activity,
     duration,
     bikeType,
     bikeKilometers,
@@ -57,17 +57,19 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     activityDate,
   } = req.body;
 
-  if (!activityDate || !activityTypeId || !duration) {
+  if (!activityDate || !activity || !duration) {
     return res.status(400).json({
-      error: "Brak wymaganych pól: activityTypeId, duration, activityDate",
+      error: "Brak wymaganych pól: activity, duration, activityDate",
     });
   }
 
   const { year, month, day } = extractDateParts(activityDate);
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
+  console.log(userId, yearMonthKey, day);
+
   const newObject = {
-    activity: activityTypeId,
+    activity,
     duration,
     ...(bikeType && { bikeType }),
     ...(bikeKilometers && { bikeKilometers }),
@@ -87,6 +89,8 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     { new: true, upsert: false },
   );
 
+  console.log(monthDoc, "monthDoc");
+
   if (!monthDoc) {
     await CalendarDataModel.findOneAndUpdate(
       { userId: userId, yearMonthKey: yearMonthKey },
@@ -102,10 +106,29 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     );
   }
 
+  // Pobierz z populate
+  const updatedCalendar = await CalendarDataModel.findById(monthDoc?._id)
+    .populate("days.tasks.activity")
+    .lean();
+
+  const createdDay = updatedCalendar?.days.find((d) => d.dayNumber === day);
+  const createdTask = createdDay?.tasks[createdDay.tasks.length - 1];
+  console.log(updatedCalendar, "updatedCalendar");
+  console.log(createdTask, "createdTask");
+
+  const activity1 = createdTask?.activity;
   return res.status(201).json({
-    success: true,
-    message: "Aktywność utworzona pomyślnie",
-    activity: newObject,
+    //success: true,
+    //message: "Aktywność utworzona pomyślnie",
+    //activity: newObject,
+    id: createdDay?._id ?? null,
+    // activity1,
+    // // createdTask,
+    // ...(bikeType && { bikeType }),
+    // ...(bikeKilometers && { bikeKilometers }),
+    // ...(title && { title }),
+    // ...(description && { description }),
+    ...createdTask,
   });
 });
 

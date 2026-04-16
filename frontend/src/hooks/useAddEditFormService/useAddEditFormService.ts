@@ -79,7 +79,6 @@ export const useAddEditFormService = (
 
     try {
       await currentMutate({ bodyData });
-      console.log("HOOK SERWISOWY: Udało się wykonać mutację."); // <- Ten powinien się pojawić, jeśli mutacja resolve
       await refetchCalendarData();
     } catch (error) {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");

@@ -11,7 +11,7 @@ import { useAppContext } from "../../../appContext/appContext";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
-  activityTypeId: string;
+  activity: string;
   duration: {
     hour: string;
     minutes: string;
@@ -29,13 +29,13 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
 
   const form = useForm<RegistrationFormFields>({
     defaultValues: {
-      activityTypeId: "",
+      activity: "",
       duration: {
         hour: "",
         minutes: "",
         seconds: "",
       },
-      dateTime: DateTime.now(),
+      //dateTime: DateTime.now(),
       bikeType: "",
       bikeKilometers: 0,
       title: "",
@@ -72,8 +72,8 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
         <div className="shadow bg-white overflow-hidden w-full block p-8">
           <div className="mb-4">
             <FormInputSelect<any>
-              id="activityTypeId"
-              name="activityTypeId"
+              id="activity"
+              name="activity"
               label="Typ aktywności"
               className="mb-2"
               errors={errors}

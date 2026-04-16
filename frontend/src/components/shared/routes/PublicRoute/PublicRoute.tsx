@@ -3,6 +3,7 @@ import { useAppContext } from "../../../../appContext/appContext";
 import { Navigate } from "react-router-dom";
 import { useLocalStorage } from "../../../../hooks/useLocalStorage/useLocalStorage";
 import { useValidateToken } from "../../../../hooks/useValidateToken/useValidateToken";
+import Loading from "../../Loading/Loading";
 
 const PublicRoute = ({ children }: any) => {
   //const { auth } = useAppContext();
@@ -22,7 +23,7 @@ const PublicRoute = ({ children }: any) => {
     //   </div>
     // );
 
-    return null;
+    return <Loading />;
   }
 
   console.log(isValid, "isValid");
