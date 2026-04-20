@@ -9,6 +9,7 @@ import {
 import { RegistrationFormFields } from "../../components/Forms/EditTrainingForm/EditTrainingForm";
 import { CALENDAR_KEYS } from "../../constants/query-keys";
 import { useAppContext } from "../../appContext/appContext";
+import usePatchApi from "../api/patch/useApiPatch";
 
 const mapFormDataToBody = (
   data: RegistrationFormFields,
@@ -17,13 +18,17 @@ const mapFormDataToBody = (
   eventData?: Record<string, any>,
 ) => {
   const { year, month, day } = dateObject;
+
+  console.log(type, "type");
   const baseData = removeNullValues({
     ...data,
     duration: convertObjectWithNumbersToString(data.duration),
     activityDate: createDateTime(year, month, day),
   });
 
+  console.log("edit 111111111111", eventData);
   if (type === "edit" && eventData?.id) {
+    // zrobić poprawny payload
     return {
       ...baseData,
       taskId: eventData.id,
@@ -38,6 +43,7 @@ export const useAddEditFormService = (
   type: "add" | "edit",
   eventData?: { id: string } & Record<string, any>,
 ): { handleSubmitForm: (data: any) => Promise<void> } => {
+  console.log(type, "type");
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken ?? null;
 
@@ -51,9 +57,15 @@ export const useAddEditFormService = (
   });
 
   const linkEdit = "api/calendar/edit";
-  const { mutateAsync: editMutateAsync } = usePostApi<any, any, any>({
-    link: `${URL}${linkEdit}`,
-    invalidateKeys: [["editAddedTraining"]],
+
+  console.log(eventData?.id, "idddd");
+  const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
+    //link: `${URL}${linkEdit}`,
+    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(eventData?.id ?? "69e6631f0ece4d089eca6f9c")}`,
+    //invalidateKeys: [["editAddedTraining"]],
+    //invalidateKeys: [CALENDAR_KEYS.editCalendarActivity()],
+    invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   const paramsFilters = { year, month };

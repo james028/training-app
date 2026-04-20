@@ -19,6 +19,8 @@ const CalendarDay = ({ data, day, isEmpty, activityData }: TCalendarDay) => {
 
   const handleEditTraining = (event: TDay): void => {
     setOpenModalEditTraining(true);
+
+    console.log(event, " w handle edit");
     setEventData(event);
   };
 

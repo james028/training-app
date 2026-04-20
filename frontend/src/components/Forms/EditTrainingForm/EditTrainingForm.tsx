@@ -64,6 +64,7 @@ const EditTrainingForm = ({
     invalidateKeys: [["removeExistTraining"]],
   });
 
+  console.log(eventData, "eventdata");
   const { handleSubmitForm } = useAddEditFormService(
     { year, month, day },
     "edit",

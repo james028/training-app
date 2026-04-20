@@ -66,9 +66,7 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
   const { year, month, day } = extractDateParts(activityDate);
   const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
 
-  console.log(userId, yearMonthKey, day);
-
-  const newObject = {
+  const newTask = {
     activity,
     duration,
     ...(bikeType && { bikeType }),
@@ -84,7 +82,7 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
       "days.dayNumber": day,
     },
     {
-      $push: { "days.$.tasks": newObject },
+      $push: { "days.$.tasks": newTask },
     },
     { new: true, upsert: false },
   );
@@ -98,7 +96,7 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
         $push: {
           days: {
             dayNumber: day,
-            tasks: [newObject],
+            tasks: [newTask],
           },
         },
       },
@@ -106,38 +104,32 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     );
   }
 
-  // Pobierz z populate
-  const updatedCalendar = await CalendarDataModel.findById(monthDoc?._id)
+  const populatedCalendar = await CalendarDataModel.findById(monthDoc?._id)
     .populate("days.tasks.activity")
     .lean();
 
-  const createdDay = updatedCalendar?.days.find((d) => d.dayNumber === day);
-  const createdTask = createdDay?.tasks[createdDay.tasks.length - 1];
-  console.log(updatedCalendar, "updatedCalendar");
-  console.log(createdTask, "createdTask");
+  if (!populatedCalendar) {
+    return res.status(500).json({ error: "Failed to retrieve created task" });
+  }
 
-  const activity1 = createdTask?.activity;
+  const createdDay = populatedCalendar?.days.find((d) => d.dayNumber === day);
+
+  if (!createdDay) {
+    return res.status(500).json({ error: "Day not found after creation" });
+  }
+
+  const createdTask = createdDay?.tasks[createdDay.tasks.length - 1];
+
   return res.status(201).json({
-    //success: true,
-    //message: "Aktywność utworzona pomyślnie",
-    //activity: newObject,
-    id: createdDay?._id ?? null,
-    // activity1,
-    // // createdTask,
-    // ...(bikeType && { bikeType }),
-    // ...(bikeKilometers && { bikeKilometers }),
-    // ...(title && { title }),
-    // ...(description && { description }),
+    //id: createdDay?._id,
     ...createdTask,
   });
 });
 
 // @desc    Edit added activity
-// @route   PATCH /api/calendar/edit
+// @route   PATCH /api/activities/edit/:id
 exports.editAddedTraining = asyncHandler(async (req, res) => {
-  // 1. Walidacja Użytkownika i Danych
-  //const userId = req.user.id; // Zakładamy autentykację
-  const userId = "1234";
+  const userId = req.user.id;
 
   // Dane lokalizacyjne i ID zadania muszą przyjść z frontendu
   const { year, month, day, taskId, ...updatedFields } = req.body;
@@ -199,7 +191,7 @@ exports.editAddedTraining = asyncHandler(async (req, res) => {
   }
 
   return res.status(200).json({
-    success: true,
+    //success: true,
     message: "Zadanie zaktualizowane pomyślnie",
   });
 });

@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
   CALENDAR: {
     MONTHLY_LIST: "api/activities/list",
     CREATE_ACTIVITY: "api/activities/create",
+    EDIT_ACTIVITY: (id: string) => `api/activities/edit/${id}`,
   },
   CHECKLIST: {
     LIST: "api/checklist/list",

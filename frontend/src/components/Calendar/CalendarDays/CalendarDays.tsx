@@ -38,6 +38,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   const { data, isLoading, isError, error } = useActivityTypes();
 
   const activityData = data?.data ?? [];
+  console.log(activityData, "act");
   useToastError(isError, error, "test calendar zle poszlo");
 
   //utils
@@ -160,6 +161,7 @@ const CalendarDays = ({ calendarData, year, month }: CalendarDaysProps) => {
   // };
   //
   const tasksByDay = useMemo(() => {
+    //tu ogarnac z tym id
     return normalizeTasksForCalendar(
       calendarData.map((item) => {
         //console.log(item, "item");

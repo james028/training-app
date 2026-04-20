@@ -42,6 +42,7 @@ export const CALENDAR_KEYS = {
   calendarMonthlyList: (filters: { year: number; month: number }) =>
     [...CALENDAR_KEYS.all, "calendarMonthlyList", filters] as const,
   createCalendarActivity: () => [...CALENDAR_KEYS.all, "create"] as const,
+  editCalendarActivity: () => [...CALENDAR_KEYS.all, "edit"] as const,
 };
 
 export const CALENDAR_KEYS2 = {
