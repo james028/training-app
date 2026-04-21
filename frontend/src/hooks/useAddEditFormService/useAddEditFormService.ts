@@ -4,64 +4,91 @@ import useGetApi from "../api/get/useApiGet";
 import {
   convertObjectWithNumbersToString,
   createDateTime,
-  removeNullValues,
+  normalizeDate,
 } from "../../utils";
 import { RegistrationFormFields } from "../../components/Forms/EditTrainingForm/EditTrainingForm";
 import { CALENDAR_KEYS } from "../../constants/query-keys";
 import { useAppContext } from "../../appContext/appContext";
 import usePatchApi from "../api/patch/useApiPatch";
 
+type CreateActivityDTO = {
+  duration?: string;
+  trainingType: string;
+  bikeType?: string;
+  title: string;
+  description?: string;
+  bikeKilometers?: number;
+  activityDate: string;
+};
+
+type UpdateActivityDTO = Partial<CreateActivityDTO>;
+
 const mapFormDataToBody = (
   data: RegistrationFormFields,
-  type: "add" | "edit",
+  dirtyFields: Partial<Record<keyof RegistrationFormFields, boolean>>,
   dateObject: { year: number; month: number; day: number },
-  eventData?: Record<string, any>,
-) => {
-  const { year, month, day } = dateObject;
+  type: "add" | "edit",
+): UpdateActivityDTO => {
+  const { year, month, day } = normalizeDate(dateObject);
 
-  console.log(type, "type");
-  const baseData = removeNullValues({
-    ...data,
-    duration: convertObjectWithNumbersToString(data.duration),
-    activityDate: createDateTime(year, month, day),
-  });
+  const body: UpdateActivityDTO = {};
 
-  console.log("edit 111111111111", eventData);
-  if (type === "edit" && eventData?.id) {
-    // zrobić poprawny payload
-    return {
-      ...baseData,
-      taskId: eventData.id,
-    };
+  const setActivityDate = () => createDateTime(year, month, day);
+
+  if (type === "add") {
+    body.activityDate = setActivityDate();
   }
 
-  return baseData;
+  for (const key in dirtyFields) {
+    if (!dirtyFields[key as keyof RegistrationFormFields]) continue;
+
+    //const typedKey = key as keyof RegistrationFormFields;
+
+    const typedKey = key as keyof RegistrationFormFields;
+    const value = data[typedKey];
+    switch (typedKey) {
+      case "duration":
+        // 2. Bezpiecznik: Jeśli używasz obiektu, RHF mógł go błędnie oznaczyć jako dirty
+        // Możesz dodać proste sprawdzenie, czy wartość w ogóle jest różna od pustej/domyślnej
+        // Poniżej przykładowy warunek, który możesz dostosować do swojej struktury duration:
+        const stringDuration = convertObjectWithNumbersToString(value);
+
+        // Jeśli Twoja funkcja zwraca np. "00:00:00" dla pustego czasu,
+        // to nie wysyłaj tego, jeśli nie trzeba:
+        if (stringDuration === "00:00:00" && type === "edit") continue;
+
+        body.duration = stringDuration;
+        break;
+      default:
+        // @ts-ignore
+        body[typedKey] = data[typedKey] as any;
+    }
+  }
+
+  return body;
 };
 
 export const useAddEditFormService = (
   dateObject: { year: number; month: number; day: number },
   type: "add" | "edit",
-  eventData?: { id: string } & Record<string, any>,
-): { handleSubmitForm: (data: any) => Promise<void> } => {
-  console.log(type, "type");
+  id?: string,
+): { handleSubmitForm: (data: any, dirtyFields: any) => Promise<void> } => {
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken ?? null;
 
   const { year, month } = dateObject;
 
-  // /const paramsFilters = {}
   const { mutateAsync: addMutateAsync } = usePostApi({
     link: `${URL}${API_ENDPOINTS.CALENDAR.CREATE_ACTIVITY}`,
     invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  console.log();
   const linkEdit = "api/calendar/edit";
-
-  console.log(eventData?.id, "idddd");
   const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
     //link: `${URL}${linkEdit}`,
-    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(eventData?.id ?? "69e6631f0ece4d089eca6f9c")}`,
+    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id ?? "")}`,
     //invalidateKeys: [["editAddedTraining"]],
     //invalidateKeys: [CALENDAR_KEYS.editCalendarActivity()],
     invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
@@ -77,7 +104,10 @@ export const useAddEditFormService = (
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  const handleSubmitForm = async (data: RegistrationFormFields) => {
+  const handleSubmitForm = async (
+    data: RegistrationFormFields,
+    dirtyFields: Partial<Record<keyof RegistrationFormFields, boolean>>,
+  ) => {
     const mutators = {
       add: addMutateAsync,
       edit: editMutateAsync,
@@ -87,10 +117,16 @@ export const useAddEditFormService = (
     if (!currentMutate) {
       throw new Error(`Nieznany typ akcji formularza: ${type}`);
     }
-    const bodyData = mapFormDataToBody(data, type, dateObject, eventData);
+    const bodyData = mapFormDataToBody(data, dirtyFields, dateObject, type);
+
+    if (type === "edit" && Object.keys(bodyData).length === 0) {
+      console.log("No changes detected - skipping update");
+      return;
+    }
 
     try {
       await currentMutate({ bodyData });
+      //pokombinować jako invalide
       await refetchCalendarData();
     } catch (error) {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");

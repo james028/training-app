@@ -9,11 +9,21 @@
 // ├── time.ts         // Złożone operacje na dacie/czasie
 // └── validators.ts   // Walidacja danych
 
-export const convertObjectWithNumbersToString = (object: {
-  hour: string;
-  minutes: string;
-  seconds: string;
-}): string | undefined => {
+import { DateTime } from "luxon";
+import { DefaultValidity } from "luxon/src/_util";
+
+export const convertObjectWithNumbersToString = (
+  object:
+    | string
+    | {
+        hour: string;
+        minutes: string;
+        seconds: string;
+      }
+    | DateTime<DefaultValidity>
+    | undefined
+    | number,
+): string | undefined => {
   if (!object) {
     return;
   }
@@ -46,4 +56,16 @@ export const removeNullValues = <T extends Record<string, any>>(
   return Object.fromEntries(
     Object.entries(obj).filter(([_, v]) => v != null && v !== "" && v !== 0),
   ) as Partial<T>;
+};
+
+export const getDirtyValues = <T extends Record<string, any>>(
+  dirtyFields: Partial<Record<keyof T, any>>, // 'any' bo dirtyFields może być obiektem dla zagnieżdżonych pól
+  allValues: T,
+): Partial<T> => {
+  return (Object.keys(dirtyFields) as Array<keyof T>).reduce((acc, key) => {
+    if (dirtyFields[key]) {
+      acc[key] = allValues[key];
+    }
+    return acc;
+  }, {} as Partial<T>);
 };

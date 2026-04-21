@@ -5,5 +5,21 @@ export const createDateTime = (
   month: number,
   day: number,
 ): string => {
-  return DateTime.fromObject({ year, month, day }).toUTC().toISO() as string; // "2026-02-01T00:00:00.000+01:00"
+  const dt = DateTime.utc(year, month, day).startOf("day");
+
+  if (!dt.isValid) {
+    throw new Error("Invalid date input");
+  }
+
+  return dt.toISO()!;
 };
+
+export const normalizeDate = (dateObject: {
+  year: number;
+  month: number;
+  day: string | number;
+}) => ({
+  year: Number(dateObject.year),
+  month: Number(dateObject.month),
+  day: Number(dateObject.day),
+});

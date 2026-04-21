@@ -46,7 +46,6 @@ exports.getActivitiesList = asyncHandler(async (req, res) => {
 // @route   POST /api/activities/create
 exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-
   const {
     activity,
     duration,
@@ -58,9 +57,7 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
   } = req.body;
 
   if (!activityDate || !activity || !duration) {
-    return res.status(400).json({
-      error: "Brak wymaganych pól: activity, duration, activityDate",
-    });
+    return res.status(400).json({ error: "Brak wymaganych pól" });
   }
 
   const { year, month, day } = extractDateParts(activityDate);
@@ -75,55 +72,32 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     ...(description && { description }),
     activityDate,
   };
-  const monthDoc = await CalendarDataModel.findOneAndUpdate(
-    {
-      userId,
-      yearMonthKey,
-      "days.dayNumber": day,
-    },
-    {
-      $push: { "days.$.tasks": newTask },
-    },
-    { new: true, upsert: false },
+
+  // 1. Zapisujemy/Aktualizujemy
+  let doc = await CalendarDataModel.findOneAndUpdate(
+    { userId, yearMonthKey, "days.dayNumber": day },
+    { $push: { "days.$.tasks": newTask } },
+    { new: true },
   );
 
-  console.log(monthDoc, "monthDoc");
-
-  if (!monthDoc) {
-    await CalendarDataModel.findOneAndUpdate(
-      { userId: userId, yearMonthKey: yearMonthKey },
-      {
-        $push: {
-          days: {
-            dayNumber: day,
-            tasks: [newTask],
-          },
-        },
-      },
+  if (!doc) {
+    doc = await CalendarDataModel.findOneAndUpdate(
+      { userId, yearMonthKey },
+      { $push: { days: { dayNumber: day, tasks: [newTask] } } },
       { new: true, upsert: true },
     );
   }
 
-  const populatedCalendar = await CalendarDataModel.findById(monthDoc?._id)
-    .populate("days.tasks.activity")
-    .lean();
+  await doc.populate("days.tasks.activity");
 
-  if (!populatedCalendar) {
+  const createdDay = doc.days.find((d) => d.dayNumber === day);
+  const createdTask = createdDay?.tasks[createdDay.tasks.length - 1];
+
+  if (!createdTask) {
     return res.status(500).json({ error: "Failed to retrieve created task" });
   }
 
-  const createdDay = populatedCalendar?.days.find((d) => d.dayNumber === day);
-
-  if (!createdDay) {
-    return res.status(500).json({ error: "Day not found after creation" });
-  }
-
-  const createdTask = createdDay?.tasks[createdDay.tasks.length - 1];
-
-  return res.status(201).json({
-    //id: createdDay?._id,
-    ...createdTask,
-  });
+  return res.status(201).json(createdTask.toObject());
 });
 
 // @desc    Edit added activity

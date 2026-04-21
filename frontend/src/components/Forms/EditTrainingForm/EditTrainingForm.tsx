@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import SubmitButtons from "../SubmitButtons/SubmitButtons";
 import EditLabelInput from "../../shared/EditLabelInput/EditLabelInput";
 import FormInput from "../../shared/FormInput/FormInput";
@@ -13,6 +13,7 @@ import usePostApi from "../../../hooks/api/post/useApiPost";
 import { URL } from "../../../constants";
 import { DateTime } from "luxon";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
+import { getDirtyValues } from "../../../utils";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -38,23 +39,21 @@ const EditTrainingForm = ({
   const [isEdit, setIsEdit] = useState(false);
 
   const form = useForm<RegistrationFormFields>({
-    defaultValues: {
-      trainingType: "",
-      duration: {
-        hour: "",
-        minutes: "",
-        seconds: "",
-      },
-      dateTime: DateTime.now(),
-      bikeKilometers: 0,
-      bikeType: "",
-      title: "",
-      description: "",
-    },
+    defaultValues: useMemo(
+      () => ({
+        trainingType: eventData?.trainingType || "",
+        duration: eventData?.duration || { hour: "", minutes: "", seconds: "" },
+        title: eventData?.title || "",
+        description: eventData?.description || "",
+        bikeType: eventData?.bikeType || "",
+        bikeKilometers: eventData?.bikeKilometers || 0,
+      }),
+      [eventData],
+    ),
   });
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = form;
 
   const linkRemove = "api/calendar/delete";
@@ -64,16 +63,24 @@ const EditTrainingForm = ({
     invalidateKeys: [["removeExistTraining"]],
   });
 
-  console.log(eventData, "eventdata");
+  console.log(eventData?.id);
   const { handleSubmitForm } = useAddEditFormService(
     { year, month, day },
     "edit",
-    eventData,
+    eventData?.id,
   );
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {
-      await handleSubmitForm(data);
+      //const formData = getDirtyValues(dirtyFields, data);
+
+      if (Object.keys(dirtyFields).length === 0) {
+        toast.custom("Nie wprowadzono żadnych zmian.");
+        closeModal();
+        return;
+      }
+
+      await handleSubmitForm(data, dirtyFields);
       toast.success("Edycja zapisana pomyślnie!");
       setIsEdit(false);
       closeModal();
@@ -159,7 +166,7 @@ const EditTrainingForm = ({
                   placeholder="Rodzaj roweru"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane" }}
+                  rules={{}}
                   options={[
                     { type: "road", name: "Road bike" },
                     { type: "mtb", name: "Mtb bike" },
@@ -205,7 +212,7 @@ const EditTrainingForm = ({
                   label="Tytuł treningu"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane" }}
+                  rules={{}}
                   defaultValue={eventData?.title}
                 />
               }
@@ -222,15 +229,18 @@ const EditTrainingForm = ({
                   //placeholder=""
                   className="mb-2"
                   errors={errors}
-                  rules={{
-                    required: "Pole jest wymagane",
-                    maxLength: {
-                      value: 100,
-                      //zmienic tlumaczenie
-                      message:
-                        "Description cannot be longer than 100 characters",
-                    },
-                  }}
+                  rules={
+                    //     {
+                    //   required: "Pole jest wymagane",
+                    //   maxLength: {
+                    //     value: 100,
+                    //     //zmienic tlumaczenie
+                    //     message:
+                    //       "Description cannot be longer than 100 characters",
+                    //   },
+                    // }
+                    {}
+                  }
                   // @ts-ignore
                   defaultValue={eventData?.description}
                 />

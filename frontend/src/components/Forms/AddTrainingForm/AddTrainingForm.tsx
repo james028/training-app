@@ -45,7 +45,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = form;
 
   const { handleSubmitForm } = useAddEditFormService(
@@ -55,7 +55,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {
-      await handleSubmitForm(data);
+      await handleSubmitForm(data, dirtyFields);
       toast.success("Dodanie zapisane pomyślnie!");
       closeModal();
     } catch (error) {
@@ -120,20 +120,18 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
             <FormInput<any>
               id="bikeKilometers"
               // @ts-ignore
-              type="text"
+              type="number"
               name="bikeKilometers"
               label="Ilość kilometrów"
               placeholder="Ilość kilometrów"
               className="mb-2"
               register={register}
               errors={errors}
-              rules={
-                {
-                  // valueAsNumber: true,
-                  // validate: (value) => value > 0,
-                  // required: "Pole jest wymagane",
-                }
-              }
+              rules={{
+                valueAsNumber: true,
+                required: "Pole jest wymagane",
+                min: { value: 0, message: "Nie może być ujemne" },
+              }}
             />
             <FormInput<any>
               id="title"
