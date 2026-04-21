@@ -4,12 +4,14 @@ import useGetApi from "../api/get/useApiGet";
 import {
   convertObjectWithNumbersToString,
   createDateTime,
+  isDurationEmpty,
   normalizeDate,
 } from "../../utils";
 import { RegistrationFormFields } from "../../components/Forms/EditTrainingForm/EditTrainingForm";
 import { CALENDAR_KEYS } from "../../constants/query-keys";
 import { useAppContext } from "../../appContext/appContext";
 import usePatchApi from "../api/patch/useApiPatch";
+import toast from "react-hot-toast";
 
 type CreateActivityDTO = {
   duration?: string;
@@ -42,27 +44,17 @@ const mapFormDataToBody = (
   for (const key in dirtyFields) {
     if (!dirtyFields[key as keyof RegistrationFormFields]) continue;
 
-    //const typedKey = key as keyof RegistrationFormFields;
+    // Kluczowe: ignorujemy tutaj duration, obsłużymy je osobno
+    if (key === "duration") continue;
 
     const typedKey = key as keyof RegistrationFormFields;
-    const value = data[typedKey];
-    switch (typedKey) {
-      case "duration":
-        // 2. Bezpiecznik: Jeśli używasz obiektu, RHF mógł go błędnie oznaczyć jako dirty
-        // Możesz dodać proste sprawdzenie, czy wartość w ogóle jest różna od pustej/domyślnej
-        // Poniżej przykładowy warunek, który możesz dostosować do swojej struktury duration:
-        const stringDuration = convertObjectWithNumbersToString(value);
+    body[typedKey] = data[typedKey] as any;
+  }
 
-        // Jeśli Twoja funkcja zwraca np. "00:00:00" dla pustego czasu,
-        // to nie wysyłaj tego, jeśli nie trzeba:
-        if (stringDuration === "00:00:00" && type === "edit") continue;
-
-        body.duration = stringDuration;
-        break;
-      default:
-        // @ts-ignore
-        body[typedKey] = data[typedKey] as any;
-    }
+  // 2. Osobna logika dla duration (niezależna od dirtyFields)
+  // Jeśli jest wypełnione - wysyłamy. Jeśli puste - ignorujemy.
+  if (!isDurationEmpty(data.duration)) {
+    body.duration = convertObjectWithNumbersToString(data.duration);
   }
 
   return body;
@@ -78,17 +70,21 @@ export const useAddEditFormService = (
 
   const { year, month } = dateObject;
 
+  if (type === "edit" && !id) {
+    console.error("Logic Error: Attempted to edit without an ID.");
+    toast.error("Brak id for edit");
+  }
+
   const { mutateAsync: addMutateAsync } = usePostApi({
     link: `${URL}${API_ENDPOINTS.CALENDAR.CREATE_ACTIVITY}`,
     invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  console.log();
   const linkEdit = "api/calendar/edit";
   const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
     //link: `${URL}${linkEdit}`,
-    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id ?? "")}`,
+    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id ?? "696e71c84180c74b3804cb4b")}`,
     //invalidateKeys: [["editAddedTraining"]],
     //invalidateKeys: [CALENDAR_KEYS.editCalendarActivity()],
     invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
@@ -115,7 +111,8 @@ export const useAddEditFormService = (
     const currentMutate = mutators[type];
 
     if (!currentMutate) {
-      throw new Error(`Nieznany typ akcji formularza: ${type}`);
+      //throw new Error(`Nieznany typ akcji formularza: ${type}`);
+      toast.error(`Nieznany typ akcji formularza: ${type}`);
     }
     const bodyData = mapFormDataToBody(data, dirtyFields, dateObject, type);
 
@@ -140,3 +137,7 @@ export const useAddEditFormService = (
 
   return { handleSubmitForm };
 };
+
+//invalidate key
+//to w id w kalendarzu
+//backend do edycji

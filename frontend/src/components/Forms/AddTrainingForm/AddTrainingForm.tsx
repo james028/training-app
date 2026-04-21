@@ -17,7 +17,6 @@ export type RegistrationFormFields = {
     minutes: string;
     seconds: string;
   };
-  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;

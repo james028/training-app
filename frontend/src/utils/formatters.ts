@@ -12,18 +12,11 @@
 import { DateTime } from "luxon";
 import { DefaultValidity } from "luxon/src/_util";
 
-export const convertObjectWithNumbersToString = (
-  object:
-    | string
-    | {
-        hour: string;
-        minutes: string;
-        seconds: string;
-      }
-    | DateTime<DefaultValidity>
-    | undefined
-    | number,
-): string | undefined => {
+export const convertObjectWithNumbersToString = (object: {
+  hour: string;
+  minutes: string;
+  seconds: string;
+}): string | undefined => {
   if (!object) {
     return;
   }
@@ -68,4 +61,13 @@ export const getDirtyValues = <T extends Record<string, any>>(
     }
     return acc;
   }, {} as Partial<T>);
+};
+
+export const isDurationEmpty = (duration: any) => {
+  // /if (!duration || typeof duration !== "object") return true;
+  if (!duration || typeof duration !== "object") return true;
+  const values = Object.values(duration);
+  return values.every(
+    (v) => v === "" || v === 0 || v === null || v === undefined,
+  );
 };

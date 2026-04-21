@@ -73,7 +73,6 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
     activityDate,
   };
 
-  // 1. Zapisujemy/Aktualizujemy
   let doc = await CalendarDataModel.findOneAndUpdate(
     { userId, yearMonthKey, "days.dayNumber": day },
     { $push: { "days.$.tasks": newTask } },

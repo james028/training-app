@@ -13,7 +13,6 @@ import usePostApi from "../../../hooks/api/post/useApiPost";
 import { URL } from "../../../constants";
 import { DateTime } from "luxon";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
-import { getDirtyValues } from "../../../utils";
 
 export type RegistrationFormFields = {
   trainingType: string;
@@ -22,7 +21,6 @@ export type RegistrationFormFields = {
     minutes: string;
     seconds: string;
   };
-  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;
