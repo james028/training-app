@@ -33,7 +33,7 @@ const AddEditPlankTraining = () => {
   } = usePlankSectionContext();
 
   const { link, auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const token = auth?.data?.accessToken;
 
   const {
     handleSubmit,

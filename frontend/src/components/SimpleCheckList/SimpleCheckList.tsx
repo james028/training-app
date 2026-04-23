@@ -30,7 +30,7 @@ const SimpleCheckList = () => {
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   const { auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const token = auth?.data?.accessToken;
 
   const {
     data: checkListData,

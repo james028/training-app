@@ -3,7 +3,7 @@ import { useAppContext } from "../../../appContext/appContext";
 
 export const RootRedirect = () => {
   const { auth } = useAppContext();
-  const isAuth = auth?.data?.accessToken ?? null;
+  const isAuth = auth?.data?.accessToken;
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }

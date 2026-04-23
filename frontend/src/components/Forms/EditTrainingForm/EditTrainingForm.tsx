@@ -11,7 +11,6 @@ import { useAppContext } from "../../../appContext/appContext";
 import toast from "react-hot-toast";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import { URL } from "../../../constants";
-import { DateTime } from "luxon";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
@@ -39,7 +38,7 @@ const EditTrainingForm = ({
   const form = useForm<RegistrationFormFields>({
     defaultValues: useMemo(
       () => ({
-        trainingType: eventData?.trainingType || "",
+        trainingType: eventData?.activity?.activityName || "",
         duration: eventData?.duration || { hour: "", minutes: "", seconds: "" },
         title: eventData?.title || "",
         description: eventData?.description || "",
@@ -70,8 +69,6 @@ const EditTrainingForm = ({
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {
-      //const formData = getDirtyValues(dirtyFields, data);
-
       if (Object.keys(dirtyFields).length === 0) {
         toast.custom("Nie wprowadzono żadnych zmian.");
         closeModal();
@@ -123,14 +120,14 @@ const EditTrainingForm = ({
                   rules={{ required: "Pole jest wymagane" }}
                   options={trainingDataType.map((item: any) => {
                     return {
-                      value: item.activityName,
-                      name: item.type,
+                      value: item.type,
+                      name: item.activityName,
                     };
                   })}
-                  defaultValue={eventData?.trainingType}
+                  defaultValue={eventData?.activity?.type}
                 />
               }
-              eventDataField={eventData?.trainingType}
+              eventDataField={eventData?.activity?.activityName}
             />
             <EditLabelInput
               label={"Długość treningu"}
@@ -172,10 +169,10 @@ const EditTrainingForm = ({
                     value: item.type,
                     name: item.name,
                   }))}
-                  defaultValue={eventData?.bikeType}
+                  defaultValue={"Road bike"}
                 />
               }
-              eventDataField={eventData?.bikeType}
+              eventDataField={"Road bike"}
             />
             <EditLabelInput
               label={"Liczba kilometrów"}

@@ -47,13 +47,14 @@ const CalendarDay = ({ data, day, isEmpty, activityData }: TCalendarDay) => {
   };
   //console.log(trainingDataColor, "trainingDataColor");
 
+  console.log(data, "data");
   const renderEvents = () => {
     if (data.length > 3) {
       return <div className="flex items-center">+3</div>;
     } else {
       if (data.length > 0) {
+        //otypowanie tego
         return data.map((event: any) => {
-          console.log(event);
           return (
             <StyledTypeContainer
               key={event.id}

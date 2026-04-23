@@ -4,7 +4,7 @@ import { useAppContext } from "../../../../appContext/appContext";
 
 export const DashboardLayout = () => {
   const { auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const token = auth?.data?.accessToken;
   const navigate = useNavigate();
 
   const handleLogout = () => {

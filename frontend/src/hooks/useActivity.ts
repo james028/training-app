@@ -49,8 +49,10 @@ export const useUpdateActivityType = (editingId?: string) => {
 };
 
 export const useDeleteActivityType = (removingId?: string) => {
+  if (!removingId) {
+  }
   return useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId ?? "")}`,
+    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId!)}`,
     [
       ACTIVITY_KEYS.removeActivity(removingId ?? ""),
       ACTIVITY_KEYS.activityTypeList(),

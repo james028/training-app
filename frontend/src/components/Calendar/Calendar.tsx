@@ -131,7 +131,7 @@ export const convertCalendarDataToFlatTasks = (
 
         return {
           ...restOfTask,
-          id: task._id,
+          //id: task.id,
           fullDateTime: fullDateKey,
         };
       });
@@ -147,7 +147,7 @@ export const convertCalendarDataToFlatTasks = (
 
 const Calendar = () => {
   const { year, month, changeMonth, auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const token = auth?.data?.accessToken;
 
   const paramsFilters = { year, month };
   const {
@@ -164,7 +164,6 @@ const Calendar = () => {
     //   refetchOnWindowFocus: false,
     // },
   });
-  console.log([CALENDAR_KEYS.calendarMonthlyList(paramsFilters)]);
   useToastError(isError, error);
 
   const data = calendarData ?? [];
@@ -174,9 +173,6 @@ const Calendar = () => {
   if (isLoading) {
     return <Loading />;
   }
-
-  //poprawić
-  if (!token) return <Navigate to="/login" />;
 
   return (
     <div className="container mx-auto px-4 py-2 md:py-24">

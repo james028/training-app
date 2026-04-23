@@ -103,11 +103,10 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
 // @route   PATCH /api/activities/edit/:id
 exports.editAddedTraining = asyncHandler(async (req, res) => {
   const userId = req.user.id;
+  const id = req.query.id;
 
-  // Dane lokalizacyjne i ID zadania muszą przyjść z frontendu
   const { year, month, day, taskId, ...updatedFields } = req.body;
 
-  // Oczekujemy, że front-end prześle zaktualizowane pola (np. title, duration, bikeType)
   if (
     !taskId ||
     !day ||

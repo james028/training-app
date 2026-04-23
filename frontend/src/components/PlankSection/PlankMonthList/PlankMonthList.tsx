@@ -10,7 +10,7 @@ import { URL } from "../../../constants";
 
 const PlankMonthList = () => {
   const { auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const token = auth?.data?.accessToken;
 
   const { data, status, isRefetching } = useGetApi({
     link: `${URL}api/plank/list`,

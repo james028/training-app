@@ -66,7 +66,7 @@ export const useAddEditFormService = (
   id?: string,
 ): { handleSubmitForm: (data: any, dirtyFields: any) => Promise<void> } => {
   const { auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const token = auth?.data?.accessToken;
 
   const { year, month } = dateObject;
 
@@ -84,7 +84,7 @@ export const useAddEditFormService = (
   const linkEdit = "api/calendar/edit";
   const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
     //link: `${URL}${linkEdit}`,
-    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id ?? "696e71c84180c74b3804cb4b")}`,
+    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id!)}`,
     //invalidateKeys: [["editAddedTraining"]],
     //invalidateKeys: [CALENDAR_KEYS.editCalendarActivity()],
     invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
@@ -141,3 +141,5 @@ export const useAddEditFormService = (
 //invalidate key
 //to w id w kalendarzu
 //backend do edycji
+//calendar - czy id number czy string - sugerowane number w id
+//jesli edycja to typ aktywnosci wypełniony w select +
