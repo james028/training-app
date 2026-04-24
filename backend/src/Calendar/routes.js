@@ -11,6 +11,6 @@ const {
 exports.routesConfig = function (app) {
   app.get("/api/activities/list", authMiddleware, getActivitiesList);
   app.post("/api/activities/create", authMiddleware, addNewActivityToCalendar);
-  app.patch("/api/activities/edit/:id", editAddedTraining);
-  app.post("/api/activities/delete/:id", deleteExistTraining);
+  app.patch("/api/activities/edit/:id", authMiddleware, editAddedTraining);
+  app.post("/api/activities/delete/:id", authMiddleware, deleteExistTraining);
 };

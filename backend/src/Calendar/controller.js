@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const CalendarDataModel = require("./model");
+const mongoose = require("mongoose");
 
 const extractDateParts = (isoDate) => {
   const datePart = isoDate.split("T")[0];
@@ -103,77 +104,101 @@ exports.addNewActivityToCalendar = asyncHandler(async (req, res) => {
 // @route   PATCH /api/activities/edit/:id
 exports.editAddedTraining = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const id = req.query.id;
+  const taskId = req.params.id;
+  const updateData = req.body;
 
-  const { year, month, day, taskId, ...updatedFields } = req.body;
-
-  if (
-    !taskId ||
-    !day ||
-    !month ||
-    !year ||
-    Object.keys(updatedFields).length === 0
-  ) {
-    return res.status(400).json({ error: "Brak wymaganych danych do edycji." });
+  if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
+    return res.status(400).json({
+      error: "Invalid task ID",
+    });
   }
 
+  const allowedFields = [
+    "activity",
+    "duration",
+    "title",
+    "description",
+    "bikeType",
+    "bikeKilometers",
+    "activityDate",
+  ];
+
+  const updateFields = Object.keys(updateData).filter((key) =>
+    allowedFields.includes(key),
+  );
+
+  if (updateFields.length === 0) {
+    return res.status(400).json({
+      error: "No valid fields to update",
+      allowedFields,
+    });
+  }
+
+  const updateObject = {};
+  updateFields.forEach((field) => {
+    updateObject[`days.$[day].tasks.$[task].${field}`] = updateData[field];
+  });
+
+  console.log(updateObject, "updateObject");
   // Zbudowanie klucza grupowania
-  const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
-
-  console.log(taskId, day, month, yearMonthKey, year, updatedFields);
-
-  if (updatedFields.dateTime) {
-    updatedFields.dateTime = new Date(updatedFields.dateTime);
-  }
+  // const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
+  //
+  // console.log(taskId, day, month, yearMonthKey, year, updatedFields);
+  //
+  // if (updatedFields.dateTime) {
+  //   updatedFields.dateTime = new Date(updatedFields.dateTime);
+  // }
 
   // Używamy $set do zaktualizowania konkretnych pól
-  const update = {};
-  for (const key in updatedFields) {
-    // Klucz dynamiczny: "days.$.tasks.$[task].title"
-    // Wskazuje ścieżkę do pola 'key' w zadaniu 'task'
-    update[`days.$.tasks.$[task].${key}`] = updatedFields[key];
-  }
+  // const update = {};
+  // for (const key in updatedFields) {
+  //   // Klucz dynamiczny: "days.$.tasks.$[task].title"
+  //   // Wskazuje ścieżkę do pola 'key' w zadaniu 'task'
+  //   update[`days.$.tasks.$[task].${key}`] = updatedFields[key];
+  // }
 
-  // 4. Wykonanie Zapytania Mongoose
-  const monthDoc = await CalendarDataModel.findOneAndUpdate(
+  const calendar = await CalendarDataModel.findOneAndUpdate(
     {
-      // A. Lokalizacja Głównego Dokumentu (Miesiąc/Użytkownik)
-      userId: userId,
-      yearMonthKey: yearMonthKey,
-      // B. Lokalizacja Dnia (W tablicy 'days')
-      "days.dayNumber": day,
-      // C. Warunek upewniający się, że zadanie istnieje, ale nie używamy go w warunku,
-      // tylko jako część ArrayFilters dla optymalizacji
+      userId,
+      "days.tasks._id": taskId,
     },
-    { $set: update },
+    { $set: updateObject },
     {
       new: true,
-      arrayFilters: [
-        // To jest kluczowe! Wskazuje, który element tablicy 'tasks' ma być zmieniony
-        { "task._id": taskId },
-      ],
+      arrayFilters: [{ "day.tasks._id": taskId }, { "task._id": taskId }],
     },
   );
 
-  // 5. Obsługa Wyniku
-  if (!monthDoc) {
-    return res
-      .status(404)
-      .json({ error: "Nie znaleziono zadania do aktualizacji." });
+  if (!calendar) {
+    return res.status(404).json({
+      error: "Task not found or you do not have permission to edit it",
+    });
+  }
+
+  let updatedTask = null;
+  for (const day of calendar.days) {
+    const task = day.tasks.find((t) => t._id.toString() === taskId);
+    if (task) {
+      updatedTask = task;
+      break;
+    }
+  }
+
+  if (!updatedTask) {
+    return res.status(500).json({
+      error: "Task updated but could not retrieve it",
+    });
   }
 
   return res.status(200).json({
-    //success: true,
     message: "Zadanie zaktualizowane pomyślnie",
+    data: updatedTask,
   });
 });
 
 // @desc    Remove exist training
 // @route   DELETE /api/calendar/remove/:id
 exports.deleteExistTraining = asyncHandler(async (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
-
   // 1. Walidacja Użytkownika i Danych
   // /const userId = req.user.id; // Zakładamy autentykację
   const userId = "1234";

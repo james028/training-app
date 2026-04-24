@@ -19,8 +19,6 @@ const CalendarDay = ({ data, day, isEmpty, activityData }: TCalendarDay) => {
 
   const handleEditTraining = (event: TDay): void => {
     setOpenModalEditTraining(true);
-
-    console.log(event, " w handle edit");
     setEventData(event);
   };
 
@@ -45,16 +43,13 @@ const CalendarDay = ({ data, day, isEmpty, activityData }: TCalendarDay) => {
   const getColor = (eventType: string): string => {
     return colorLookup[eventType] || colorLookup.default;
   };
-  //console.log(trainingDataColor, "trainingDataColor");
 
-  console.log(data, "data");
   const renderEvents = () => {
     if (data.length > 3) {
       return <div className="flex items-center">+3</div>;
     } else {
       if (data.length > 0) {
-        //otypowanie tego
-        return data.map((event: any) => {
+        return data.map((event) => {
           return (
             <StyledTypeContainer
               key={event.id}

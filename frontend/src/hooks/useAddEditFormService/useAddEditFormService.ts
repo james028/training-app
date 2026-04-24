@@ -139,7 +139,7 @@ export const useAddEditFormService = (
 };
 
 //invalidate key
-//to w id w kalendarzu
-//backend do edycji
-//calendar - czy id number czy string - sugerowane number w id
+//to w id w kalendarzu +
+//backend do edycji +
+//calendar - czy id number czy string - sugerowane string w id +
 //jesli edycja to typ aktywnosci wypełniony w select +

@@ -14,6 +14,7 @@ import { URL } from "../../../constants";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
+  //naprawić
   trainingType: string;
   duration: {
     hour: string;
@@ -26,6 +27,7 @@ export type RegistrationFormFields = {
   description?: string;
 };
 
+//otypować
 const EditTrainingForm = ({
   eventData,
   closeModal,
@@ -38,7 +40,7 @@ const EditTrainingForm = ({
   const form = useForm<RegistrationFormFields>({
     defaultValues: useMemo(
       () => ({
-        trainingType: eventData?.activity?.activityName || "",
+        activity: eventData?.activity?.id || "",
         duration: eventData?.duration || { hour: "", minutes: "", seconds: "" },
         title: eventData?.title || "",
         description: eventData?.description || "",
@@ -109,22 +111,23 @@ const EditTrainingForm = ({
               isEdit={isEdit}
               childrenInput={
                 <FormInputSelect<any>
-                  id="trainingType"
+                  id="activity"
                   // @ts-ignore
                   type="text"
-                  name="trainingType"
+                  name="activity"
                   label="Typ treningu"
                   placeholder="Typ treningu"
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
+                  // otypować
                   options={trainingDataType.map((item: any) => {
                     return {
-                      value: item.type,
+                      value: item.id,
                       name: item.activityName,
                     };
                   })}
-                  defaultValue={eventData?.activity?.type}
+                  defaultValue={eventData?.activity?.id}
                 />
               }
               eventDataField={eventData?.activity?.activityName}
