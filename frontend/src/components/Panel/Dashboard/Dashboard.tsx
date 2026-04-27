@@ -17,8 +17,8 @@ const Dashboard = () => {
       {/*<button onClick={() => navigate(`/trainings`)}>Treningi</button>*/}
       {/*<br />*/}
       {/*<PlankSection />*/}
-      <Calendar />
-      <ActivityTypePage />
+      {/*<Calendar />*/}
+      {/*<ActivityTypePage />*/}
       <SimpleCheckList />
     </div>
   );

@@ -3,6 +3,8 @@ const {
   createChecklistItem,
   toggleChecklistItem,
   deleteChecklistItem,
+  createNewSetInChecklist,
+  deleteChecklistSet,
 } = require("./controller");
 const {
   authMiddleware,
@@ -10,7 +12,21 @@ const {
 
 exports.routesConfig = function (app) {
   app.get("/api/checklist/list", authMiddleware, getChecklistItems);
+  app.post(
+    "/api/checklist/set/create",
+    authMiddleware,
+    createNewSetInChecklist,
+  );
   app.post("/api/checklist/create", authMiddleware, createChecklistItem);
-  app.patch("/api/checklist/:id/toggle", authMiddleware, toggleChecklistItem);
-  app.delete("/api/checklist/:id", authMiddleware, deleteChecklistItem);
+  app.patch(
+    "/api/checklist/:setId/toggle-item/:itemId",
+    authMiddleware,
+    toggleChecklistItem,
+  );
+  app.delete("/api/checklist/:setId", authMiddleware, deleteChecklistSet);
+  app.delete(
+    "/api/checklist/:setId/item-remove/:itemId",
+    authMiddleware,
+    deleteChecklistItem,
+  );
 };

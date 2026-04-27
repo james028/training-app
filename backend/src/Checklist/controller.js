@@ -6,23 +6,65 @@ const ChecklistItem = require("./model");
 exports.getChecklistItems = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
-  const items = await ChecklistItem.find({ userId })
+  let checklistItems = await ChecklistItem.find({ userId })
     .sort({
       order: 1,
       createdAt: 1,
     })
     .lean();
 
-  res.json({
-    success: true,
-    items,
+  if (!checklistItems) {
+    checklistItems = await ChecklistItem.create({
+      userId,
+      sets: [
+        {
+          name: "Set nr 1",
+          order: 0,
+          items: [],
+        },
+      ],
+    });
+  }
+
+  const sets = checklistItems[0]?.sets;
+
+  return res.status(200).json({ sets });
+});
+
+// POST /api/checklist - Dodaj nowy set
+exports.createNewSetInChecklist = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { setName } = req.body;
+
+  let checklistItems = await ChecklistItem.findOne({ userId });
+
+  if (!checklistItems) {
+    checklistItems = await ChecklistItem.create({
+      userId,
+      sets: [],
+    });
+  }
+
+  const orders = checklistItems[0]?.sets?.map((s) => s.order);
+  const maxOrder = orders?.length ? Math.max(...orders) : -1;
+
+  checklistItems.sets.push({
+    name: setName || `Set nr ${items.sets.length + 1}`,
+    order: maxOrder + 1,
+    items: [],
   });
+
+  await checklistItems.save();
+
+  return res
+    .status(200)
+    .json({ message: "Dodano nowy set", sets: checklistItems[0]?.sets });
 });
 
 // POST /api/checklist - Dodaj nowy punkt
 exports.createChecklistItem = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const { text } = req.body;
+  const { text, radioId } = req.body;
 
   if (!text) {
     return res.status(400).json({
@@ -31,57 +73,104 @@ exports.createChecklistItem = asyncHandler(async (req, res) => {
     });
   }
 
-  const item = new ChecklistItem({ userId, text });
-  await item.save();
+  const checklistItems = await ChecklistItem.findOne({ userId });
+
+  if (!checklistItems) {
+    return res.status(404).json({ error: "Todo sets not found" });
+  }
+
+  const set = checklistItems.sets.id(radioId);
+  if (!set) {
+    return res.status(404).json({ error: "Set not found" });
+  }
+
+  set.items.push({
+    text,
+    completed: false,
+    order: set.items.length,
+  });
+  await checklistItems.save();
 
   res.status(201).json({
-    success: true,
-    item,
+    message: "Dodano nowy item",
+    item: checklistItems,
   });
 });
 
-// PATCH /api/checklist/:id/toggle - Przełącz completed
+// PATCH /api/checklist/:setId/toggle-item/:itemId - Przełącz completed
 exports.toggleChecklistItem = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { setId, itemId } = req.params;
   const userId = req.user.id;
+  const { completed } = req.body;
 
-  const item = await ChecklistItem.findByIdAndUpdate({ _id: id, userId });
-
-  if (!item) {
-    return res.status(404).json({
-      success: false,
-      message: "Nie znaleziono elementu",
-    });
+  const checklistItems = await ChecklistItem.findOne({ userId });
+  if (!checklistItems) {
+    return res.status(404).json({ error: "Todo sets not found" });
   }
 
-  item.completed = !item.completed;
-  await item.save();
+  const set = checklistItems.sets.id(setId);
+  if (!set) {
+    return res.status(404).json({ error: "Set not found" });
+  }
+
+  const item = set.items.id(itemId);
+  if (!item) {
+    return res.status(404).json({ error: "Item sets not found" });
+  }
+
+  item.completed = completed;
+  await checklistItems.save();
 
   res.json({
-    success: true,
+    message: "Zaaktualizowano",
     item,
   });
 });
 
-// DELETE /api/checklist/:id - Usuń punkt
-exports.deleteChecklistItem = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+// DELETE /api/checklist/:setId - Usuń set
+exports.deleteChecklistSet = asyncHandler(async (req, res) => {
+  const { setId } = req.params;
   const userId = req.user.id;
 
-  const item = await ChecklistItem.findByIdAndDelete({
-    _id: id,
-    userId,
-  });
-
-  if (!item) {
-    return res.status(404).json({
-      success: false,
-      message: "Nie znaleziono elementu",
-    });
+  const checklistItems = await ChecklistItem.findOne({ userId });
+  if (!checklistItems) {
+    return res.status(404).json({ error: "Todo sets not found" });
   }
 
+  checklistItems.sets.pull(setId);
+  await checklistItems.save();
+
   res.json({
-    success: true,
+    message: "Element usunięty",
+    //sets: checklistItems.sets,
+  });
+});
+
+exports.deleteChecklistItem = asyncHandler(async (req, res) => {
+  const { setId, itemId } = req.params;
+  const userId = req.user.id;
+
+  const checklistItems = await ChecklistItem.findOne({ userId });
+  if (!checklistItems) {
+    return res.status(404).json({ error: "Todo sets not found" });
+  }
+
+  const set = checklistItems.sets.id(setId);
+  if (!set) {
+    return res.status(404).json({ error: "Set not found" });
+  }
+
+  set.items.pull(itemId);
+  await checklistItems.save();
+
+  res.json({
     message: "Element usunięty",
   });
 });
+
+//pobiera wszystko +
+//dodaje nowy set +
+//dodaje nowy item do setu +
+//completed item w danym secie +
+//usuwanie danego setu
+//usuwanie danego itemu w secie

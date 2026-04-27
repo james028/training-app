@@ -24,10 +24,33 @@ export type GetTodosResponseDto = {
   items: TodoItemDto[];
 };
 
+const setsData = {
+  sets: [
+    {
+      id: "set1",
+      name: "Set nr 1",
+      order: 0,
+      items: [
+        { id: "item1", text: "Buy milk", completed: false },
+        { id: "item2", text: "Call mom", completed: true },
+      ],
+    },
+    {
+      id: "set2",
+      name: "Set nr 2",
+      order: 1,
+      items: [{ id: "item3", text: "Finish report", completed: false }],
+    },
+  ],
+};
+
 const SimpleCheckList = () => {
   const [newItemText, setNewItemText] = useState("");
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [dataCompleted, setDataCompleted] = useState<any>(null);
+  const [selectedId, setSelectedId] = useState([]);
+  const [selectedRadioId, setSelectedRadioId] = useState("");
 
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
@@ -38,32 +61,49 @@ const SimpleCheckList = () => {
     isError,
     error,
     refetch,
-  } = useGetApi<GetTodosResponseDto>({
+  } = useGetApi<any>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
     queryKey: CHECKLIST_KEYS.checkList(),
     headers: { Authorization: `Bearer ${token}` },
   });
   useToastError(isError, error);
+  const checkListItems = checkListData?.sets ?? [];
 
-  const checkListItems = checkListData?.items ?? [];
-
-  const { mutateAsync: createMutate } = usePostApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE}`,
-    invalidateKeys: [CHECKLIST_KEYS.checkListCreate()],
+  console.log(selectedRadioId);
+  const { mutateAsync: createNewSetMutate } = usePostApi<any, any, any>({
+    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_SET}`,
+    invalidateKeys: [],
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  const { mutateAsync: createMutate } = usePostApi<any, any, any>({
+    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE}`,
+    invalidateKeys: [],
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  //inaczej ten id
   const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(togglingId ?? "")}`,
+    link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(selectedRadioId ?? "", togglingId ?? "")}`,
     //queryKey: CHECKLIST_KEYS.checkListToggle(togglingId ?? ""),
     headers: { Authorization: `Bearer ${token}` },
   });
 
   const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE(removingId ?? "")}`,
+    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_ITEM(selectedRadioId ?? "", removingId ?? "")}`,
     [
-      CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
-      CHECKLIST_KEYS.checkList(),
+      //CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
+      //CHECKLIST_KEYS.checkList(),
+    ],
+    null,
+    { Authorization: `Bearer ${token}` },
+  );
+
+  const { mutateAsync: removeMutateSet } = useDeleteApi<any, any, any>(
+    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_SET(selectedRadioId ?? "")}`,
+    [
+      //CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
+      //CHECKLIST_KEYS.checkList(),
     ],
     null,
     { Authorization: `Bearer ${token}` },
@@ -72,7 +112,9 @@ const SimpleCheckList = () => {
   const handleAdd = async () => {
     if (!newItemText.trim()) return;
     try {
-      await createMutate({ bodyData: { text: newItemText } });
+      await createMutate({
+        bodyData: { radioId: selectedRadioId, text: newItemText },
+      });
       toast.success("Dodano!");
       await refetch?.();
     } catch (error) {
@@ -84,11 +126,32 @@ const SimpleCheckList = () => {
     }
   };
 
-  const handleToggle = async (id: string) => {
+  const handleAddNewSet = async () => {
     try {
-      setTogglingId(id);
-      await editMutate({});
-      toast.success("Edytowanu!");
+      await createNewSetMutate({ bodyData: { setName: null } });
+      toast.success("Dodano nowy set!");
+      await refetch?.();
+    } catch (error) {
+      let message = error instanceof Error ? error.message : "Błąd zapisu";
+      console.log(message);
+      toast.error(message);
+    }
+  };
+
+  const handleToggle = async (
+    setId: string,
+    itemId: string,
+    completed: boolean,
+  ) => {
+    try {
+      setSelectedRadioId(setId);
+      setTogglingId(itemId);
+
+      console.log(completed, "comp");
+      await editMutate({
+        bodyData: { completed },
+      });
+      toast.success("Edytowano!");
       await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
@@ -99,9 +162,23 @@ const SimpleCheckList = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteSet = async (setId: string) => {
     try {
-      setRemovingId(id);
+      setSelectedRadioId(setId);
+      await removeMutateSet({});
+      toast.success("Usunięto set!");
+      await refetch?.();
+    } catch (error) {
+      let message = error instanceof Error ? error.message : "Błąd zapisu";
+      console.log(message);
+      toast.error(message);
+    }
+  };
+
+  const handleDelete = async (setId: string, itemId: string) => {
+    try {
+      setSelectedRadioId(setId);
+      setRemovingId(itemId);
       await removeMutate({});
       toast.success("Usunięto!");
       await refetch?.();
@@ -114,9 +191,15 @@ const SimpleCheckList = () => {
     }
   };
 
-  const restCount = checkListItems.filter((item) => !item.completed).length;
-  const totalCount = checkListItems.length;
-  const width = `${(restCount / totalCount) * 100}`;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // e.target.value to będzie nasze _id
+    setSelectedRadioId(e.target.value);
+    console.log("Wybrane ID:", e.target.value);
+  };
+
+  // const restCount = checkListItems.filter((item) => !item.completed).length;
+  // const totalCount = checkListItems.length;
+  // const width = `${(restCount / totalCount) * 100}`;
 
   if (isLoading) {
     return (
@@ -126,6 +209,93 @@ const SimpleCheckList = () => {
     );
   }
 
+  if (checkListItems?.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        Brak zadań. Dodaj pierwsze!
+        <div onClick={handleAddNewSet}>Dodaj nowy set</div>
+      </div>
+    );
+  }
+
+  const renderSetItems = (data: any) => {
+    console.log(data);
+    if (data.items.length === 0) {
+      return <div>Brak danych w secie</div>;
+    } else {
+      return data.items.map((item: any) => (
+        <div
+          key={item.id}
+          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+        >
+          <label className="flex-shrink-0 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={item.completed ?? false}
+              onChange={(event) => {
+                handleToggle(data.id, item.id, event.target.checked);
+              }}
+              className="hidden peer"
+            />
+
+            <div
+              className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all
+              ${
+                item.completed
+                  ? "bg-green-500 border-green-500"
+                  : "border-gray-300 hover:border-green-400"
+              }
+              peer-focus:ring-2 peer-focus:ring-green-300
+            `}
+            >
+              {item.completed && (
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+            </div>
+          </label>
+          <span
+            className={`flex-1 ${
+              item.completed ? "text-gray-500 line-through" : "text-gray-900"
+            }`}
+          >
+            {item.text}
+          </span>
+
+          <button
+            onClick={() => handleDelete(data.id, item.id)}
+            className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
+      ));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-2xl mx-auto">
@@ -134,21 +304,20 @@ const SimpleCheckList = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Moja Checklista
             </h1>
-            <p className="text-gray-600">
-              Zostało: {restCount} z {totalCount}
-            </p>
-            {restCount > 0 && (
-              <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-green-500 h-full transition-all duration-300"
-                  style={{
-                    width: `${width}%`,
-                  }}
-                />
-              </div>
-            )}
+            {/*<p className="text-gray-600">*/}
+            {/*  Zostało: {restCount} z {totalCount}*/}
+            {/*</p>*/}
+            {/*{restCount > 0 && (*/}
+            {/*  <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">*/}
+            {/*    <div*/}
+            {/*      className="bg-green-500 h-full transition-all duration-300"*/}
+            {/*      style={{*/}
+            {/*        width: `${width}%`,*/}
+            {/*      }}*/}
+            {/*    />*/}
+            {/*  </div>*/}
+            {/*)}*/}
           </div>
-
           <div className="mb-6 flex gap-2">
             <input
               type="text"
@@ -168,76 +337,106 @@ const SimpleCheckList = () => {
           </div>
 
           <div className="space-y-2">
-            {checkListItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                Brak zadań. Dodaj pierwsze!
-              </div>
-            ) : (
-              checkListItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
-                >
-                  <button
-                    onClick={() => handleToggle(item.id)}
-                    className="flex-shrink-0"
-                  >
-                    <div
-                      className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
-                        item.completed
-                          ? "bg-green-500 border-green-500"
-                          : "border-gray-300 hover:border-green-400"
-                      }`}
-                    >
-                      {item.completed && (
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
+            {checkListItems.map((checklistItem: any) => {
+              return (
+                <div key={checklistItem.id}>
+                  <input
+                    type="radio"
+                    // To ID musi być unikalne dla DOM (dlatego używamy _id)
+                    id={checklistItem.id}
+                    // To jest wartość, która trafi do Twojego obiektu data
+                    value={checklistItem.id}
+                    // Wszystkie radio w grupie muszą mieć ten sam klucz w register
+                    checked={selectedRadioId === checklistItem.id}
+                    onChange={handleChange}
+                  />
+                  <label htmlFor={checklistItem.id}>{checklistItem.name}</label>
+                  <button onClick={() => handleDeleteSet(checklistItem.id)}>
+                    Usuń
                   </button>
-
-                  <span
-                    className={`flex-1 ${
-                      item.completed
-                        ? "text-gray-500 line-through"
-                        : "text-gray-900"
-                    }`}
-                  >
-                    {item.text}
-                  </span>
-
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
+                  <div>{renderSetItems(checklistItem)}</div>
                 </div>
-              ))
-            )}
+              );
+            })}
+            {/*{checkListItems.length === 0 ? (*/}
+            {/*  <div className="text-center py-8 text-gray-500">*/}
+            {/*    Brak zadań. Dodaj pierwsze!*/}
+            {/*  </div>*/}
+            {/*) : (*/}
+            {/*  checkListItems.map((item) => (*/}
+            {/*    <div*/}
+            {/*      key={item.id}*/}
+            {/*      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"*/}
+            {/*    >*/}
+            {/*      <label className="flex-shrink-0 cursor-pointer">*/}
+            {/*        <input*/}
+            {/*          type="checkbox"*/}
+            {/*          checked={item.completed ?? false}*/}
+            {/*          onChange={(event) => {*/}
+            {/*            handleToggle(item.id, event.target.checked);*/}
+            {/*          }}*/}
+            {/*          className="hidden peer"*/}
+            {/*        />*/}
+
+            {/*        <div*/}
+            {/*          className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all*/}
+            {/*  ${*/}
+            {/*    item.completed*/}
+            {/*      ? "bg-green-500 border-green-500"*/}
+            {/*      : "border-gray-300 hover:border-green-400"*/}
+            {/*  }*/}
+            {/*  peer-focus:ring-2 peer-focus:ring-green-300*/}
+            {/*`}*/}
+            {/*        >*/}
+            {/*          {item.completed && (*/}
+            {/*            <svg*/}
+            {/*              className="w-4 h-4 text-white"*/}
+            {/*              fill="none"*/}
+            {/*              stroke="currentColor"*/}
+            {/*              viewBox="0 0 24 24"*/}
+            {/*            >*/}
+            {/*              <path*/}
+            {/*                strokeLinecap="round"*/}
+            {/*                strokeLinejoin="round"*/}
+            {/*                strokeWidth={2}*/}
+            {/*                d="M5 13l4 4L19 7"*/}
+            {/*              />*/}
+            {/*            </svg>*/}
+            {/*          )}*/}
+            {/*        </div>*/}
+            {/*      </label>*/}
+            {/*      <span*/}
+            {/*        className={`flex-1 ${*/}
+            {/*          item.completed*/}
+            {/*            ? "text-gray-500 line-through"*/}
+            {/*            : "text-gray-900"*/}
+            {/*        }`}*/}
+            {/*      >*/}
+            {/*        {item.text}*/}
+            {/*      </span>*/}
+
+            {/*      <button*/}
+            {/*        onClick={() => handleDelete(item.id)}*/}
+            {/*        className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"*/}
+            {/*      >*/}
+            {/*        <svg*/}
+            {/*          className="w-5 h-5"*/}
+            {/*          fill="none"*/}
+            {/*          stroke="currentColor"*/}
+            {/*          viewBox="0 0 24 24"*/}
+            {/*        >*/}
+            {/*          <path*/}
+            {/*            strokeLinecap="round"*/}
+            {/*            strokeLinejoin="round"*/}
+            {/*            strokeWidth={2}*/}
+            {/*            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"*/}
+            {/*          />*/}
+            {/*        </svg>*/}
+            {/*      </button>*/}
+            {/*    </div>*/}
+            {/*  ))*/}
+            {/*)}*/}
+            <div onClick={handleAddNewSet}>Dodaj nowy set</div>
           </div>
         </div>
       </div>
