@@ -146,6 +146,7 @@ exports.deleteChecklistSet = asyncHandler(async (req, res) => {
   });
 });
 
+// DELETE /api/checklist/:setId/item-remove/:itemId - Usuń item
 exports.deleteChecklistItem = asyncHandler(async (req, res) => {
   const { setId, itemId } = req.params;
   const userId = req.user.id;
@@ -172,5 +173,5 @@ exports.deleteChecklistItem = asyncHandler(async (req, res) => {
 //dodaje nowy set +
 //dodaje nowy item do setu +
 //completed item w danym secie +
-//usuwanie danego setu
-//usuwanie danego itemu w secie
+//usuwanie danego setu +
+//usuwanie danego itemu w secie +
