@@ -159,37 +159,6 @@ const SimpleCheckList = () => {
     }
   };
 
-  const restCount = 5;
-  const totalCount = 12;
-  const width = `${(restCount / totalCount) * 100}`;
-
-  const renderStatusBar = (data: TodoSet) => {
-    if (!data) return "Brak";
-
-    const { items } = data;
-    const restCount = items.filter((item) => !item.completed).length;
-    const totalCount = items.length;
-    const width = `${(restCount / totalCount) * 100}`;
-
-    return (
-      <>
-        <p className="text-gray-600">
-          Zostało: {restCount} z {totalCount}
-        </p>
-        {restCount > 0 && (
-          <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden mb-2">
-            <div
-              className="bg-green-500 h-full transition-all duration-300"
-              style={{
-                width: `${width}%`,
-              }}
-            />
-          </div>
-        )}
-      </>
-    );
-  };
-
   const addNewSetButton = () => {
     return (
       <button
@@ -308,6 +277,32 @@ const SimpleCheckList = () => {
         </div>
       ));
     }
+  };
+
+  const renderStatusBar = (data: TodoSet) => {
+    if (!data) return "Brak";
+    const { items } = data;
+    const restCount = items.filter((item) => !item.completed).length;
+    const totalCount = items.length;
+    const width = `${(restCount / totalCount) * 100}`;
+
+    return (
+      <>
+        <p className="text-gray-600">
+          Zostało: {restCount} z {totalCount}
+        </p>
+        {restCount > 0 && (
+          <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-green-500 h-full transition-all duration-300"
+              style={{
+                width: `${width}%`,
+              }}
+            />
+          </div>
+        )}
+      </>
+    );
   };
 
   return (
