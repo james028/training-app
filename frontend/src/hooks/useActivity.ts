@@ -21,12 +21,12 @@ export const useCreateActivityType = () => {
   });
 };
 
-export const useUpdateActivityType = (editingId?: string) => {
+export const useUpdateActivityType = (editingId: string | null) => {
   const { year, month } = useAppContext();
   const paramsFilters = { year, month };
 
   return usePatchApi({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId ?? "")}`,
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId)}`,
     invalidateKeys: [
       CALENDAR_KEYS.calendarMonthlyList(paramsFilters),
       ACTIVITY_KEYS.activityTypeList(),
@@ -34,13 +34,11 @@ export const useUpdateActivityType = (editingId?: string) => {
   });
 };
 
-export const useDeleteActivityType = (removingId?: string) => {
-  if (!removingId) {
-  }
+export const useDeleteActivityType = (removingId: string | null) => {
   return useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId!)}`,
+    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId)}`,
     [
-      ACTIVITY_KEYS.removeActivity(removingId ?? ""),
+      ACTIVITY_KEYS.removeActivity(removingId),
       ACTIVITY_KEYS.activityTypeList(),
     ],
   );

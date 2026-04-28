@@ -53,10 +53,10 @@ export const useActivityType = () => {
     mutateAsync: editMutate,
     error: errorEditMutate,
     isError: isErrorEditMutate,
-  } = useUpdateActivityType(editingId ?? "");
+  } = useUpdateActivityType(editingId);
   useToastError(isErrorEditMutate, errorEditMutate);
 
-  const { mutateAsync: removeMutate } = useDeleteActivityType(removingId ?? "");
+  const { mutateAsync: removeMutate } = useDeleteActivityType(removingId);
 
   const handleEdit = (item: ActivityType) => {
     setEditingId(item.id);

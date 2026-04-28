@@ -2,8 +2,8 @@ export const API_ENDPOINTS = {
   ACTIVITIES: {
     LIST: "api/activity-type/list",
     CREATE: "api/activity-type/create",
-    EDIT: (id: string) => `api/activity-type/edit/${id}`,
-    REMOVE: (id: string) => `api/activity-type/remove/${id}`,
+    EDIT: (id: string | null) => `api/activity-type/edit/${id}`,
+    REMOVE: (id: string | null) => `api/activity-type/remove/${id}`,
   },
   TRAINING_TYPES: {},
   AUTH: {
@@ -20,10 +20,10 @@ export const API_ENDPOINTS = {
     LIST: "api/checklist/list",
     CREATE: (setId: string) => `api/checklist/create/${setId}`,
     CREATE_SET: "api/checklist/set/create",
-    TOGGLE: (setId: string, itemId: string) =>
+    TOGGLE: (setId: string, itemId: string | null) =>
       `api/checklist/${setId}/toggle-item/${itemId}`,
     DELETE_SET: (setId: string) => `api/checklist/${setId}`,
-    DELETE_ITEM: (setId: string, itemId: string) =>
+    DELETE_ITEM: (setId: string, itemId: string | null) =>
       `api/checklist/${setId}/item-remove/${itemId}`,
   },
 } as const;

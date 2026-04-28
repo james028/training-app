@@ -1,10 +1,10 @@
 const {
   getChecklistItems,
   createChecklistItem,
-  toggleChecklistItem,
-  deleteChecklistItem,
   createNewSetInChecklist,
   deleteChecklistSet,
+  toggleChecklistItem,
+  deleteChecklistItem,
 } = require("./controller");
 const {
   authMiddleware,

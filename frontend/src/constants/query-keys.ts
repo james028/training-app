@@ -31,9 +31,9 @@ export const ACTIVITY_KEYS = {
 
   // 3. Klucz dla konkretnego ID
   // Bardzo przydatne przy PATCH - precyzyjnie określa, co zmieniamy
-  editActivity: (id: string | undefined) =>
+  editActivity: (id: string | null) =>
     [...ACTIVITY_KEYS.all, "edit", id] as const,
-  removeActivity: (id: string | undefined) =>
+  removeActivity: (id: string | null) =>
     [...ACTIVITY_KEYS.all, "remove", id] as const,
 };
 

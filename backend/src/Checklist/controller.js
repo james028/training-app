@@ -6,7 +6,7 @@ const ChecklistItem = require("./model");
 exports.getChecklistItems = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
-  let checklistItems = await ChecklistItem.find({ userId })
+  let checklistItems = await ChecklistItem.findOne({ userId })
     .sort({
       order: 1,
       createdAt: 1,
@@ -26,7 +26,7 @@ exports.getChecklistItems = asyncHandler(async (req, res) => {
     });
   }
 
-  const sets = checklistItems[0]?.sets;
+  const sets = checklistItems.sets;
 
   return res.status(200).json({ sets });
 });
@@ -80,7 +80,7 @@ exports.createChecklistItem = asyncHandler(async (req, res) => {
     return res.status(404).json({ error: "Todo sets not found" });
   }
 
-  const set = checklistItems.sets.id(radioId);
+  const set = checklistItems.sets.id(setId);
   if (!set) {
     return res.status(404).json({ error: "Set not found" });
   }
@@ -169,10 +169,3 @@ exports.deleteChecklistItem = asyncHandler(async (req, res) => {
     message: "Element usunięty",
   });
 });
-
-//pobiera wszystko +
-//dodaje nowy set +
-//dodaje nowy item do setu +
-//completed item w danym secie +
-//usuwanie danego setu +
-//usuwanie danego itemu w secie +

@@ -9,47 +9,30 @@ import useDeleteApi from "../../hooks/api/delete/useApiDelete";
 import toast from "react-hot-toast";
 import usePostApi from "../../hooks/api/post/useApiPost";
 
-export type TodoItemDto = {
+type Item = {
   id: string;
   text: string;
-  completed: boolean;
-  userId: string;
   order: number;
+  completed: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
-export type GetTodosResponseDto = {
-  success: boolean;
-  items: TodoItemDto[];
+type TodoSet = {
+  id: string;
+  name: string;
+  order: number;
+  items: Item[];
 };
 
-const setsData = {
-  sets: [
-    {
-      id: "set1",
-      name: "Set nr 1",
-      order: 0,
-      items: [
-        { id: "item1", text: "Buy milk", completed: false },
-        { id: "item2", text: "Call mom", completed: true },
-      ],
-    },
-    {
-      id: "set2",
-      name: "Set nr 2",
-      order: 1,
-      items: [{ id: "item3", text: "Finish report", completed: false }],
-    },
-  ],
+type SetsResponse = {
+  sets: TodoSet[];
 };
 
 const SimpleCheckList = () => {
   const [newItemText, setNewItemText] = useState("");
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
-  const [dataCompleted, setDataCompleted] = useState<any>(null);
-  const [selectedId, setSelectedId] = useState([]);
   const [selectedRadioId, setSelectedRadioId] = useState("");
 
   const { auth } = useAppContext();
@@ -60,8 +43,7 @@ const SimpleCheckList = () => {
     isLoading,
     isError,
     error,
-    refetch,
-  } = useGetApi<any>({
+  } = useGetApi<SetsResponse>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
     queryKey: CHECKLIST_KEYS.checkList(),
     headers: { Authorization: `Bearer ${token}` },
@@ -72,51 +54,43 @@ const SimpleCheckList = () => {
   console.log(selectedRadioId);
   const { mutateAsync: createNewSetMutate } = usePostApi<any, any, any>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_SET}`,
-    invalidateKeys: [],
+    invalidateKeys: [CHECKLIST_KEYS.checkList()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
   const { mutateAsync: createMutate } = usePostApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE(selectedRadioId ?? "")}`,
-    invalidateKeys: [],
+    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE(selectedRadioId)}`,
+    invalidateKeys: [CHECKLIST_KEYS.checkList()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  //inaczej ten id
   const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(selectedRadioId ?? "", togglingId ?? "")}`,
-    //queryKey: CHECKLIST_KEYS.checkListToggle(togglingId ?? ""),
+    link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(selectedRadioId, togglingId)}`,
+    invalidateKeys: [CHECKLIST_KEYS.checkList()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
   const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_ITEM(selectedRadioId ?? "", removingId ?? "")}`,
-    [
-      //CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
-      //CHECKLIST_KEYS.checkList(),
-    ],
+    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_ITEM(selectedRadioId, removingId)}`,
+    [CHECKLIST_KEYS.checkList()],
     null,
     { Authorization: `Bearer ${token}` },
   );
 
   const { mutateAsync: removeMutateSet } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_SET(selectedRadioId ?? "")}`,
-    [
-      //CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
-      //CHECKLIST_KEYS.checkList(),
-    ],
+    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_SET(selectedRadioId)}`,
+    [CHECKLIST_KEYS.checkList()],
     null,
     { Authorization: `Bearer ${token}` },
   );
 
-  const handleAdd = async () => {
+  const handleAddNewItem = async () => {
     if (!newItemText.trim()) return;
     try {
       await createMutate({
         bodyData: { text: newItemText },
       });
       toast.success("Dodano!");
-      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
@@ -130,7 +104,6 @@ const SimpleCheckList = () => {
     try {
       await createNewSetMutate({ bodyData: { setName: null } });
       toast.success("Dodano nowy set!");
-      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
@@ -150,7 +123,6 @@ const SimpleCheckList = () => {
         bodyData: { completed },
       });
       toast.success("Edytowano!");
-      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
@@ -165,7 +137,6 @@ const SimpleCheckList = () => {
       setSelectedRadioId(setId);
       await removeMutateSet({});
       toast.success("Usunięto set!");
-      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
@@ -179,7 +150,6 @@ const SimpleCheckList = () => {
       setRemovingId(itemId);
       await removeMutate({});
       toast.success("Usunięto!");
-      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
@@ -189,13 +159,36 @@ const SimpleCheckList = () => {
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedRadioId(event.target.value);
-  };
+  const restCount = 5;
+  const totalCount = 12;
+  const width = `${(restCount / totalCount) * 100}`;
 
-  //const restCount = checkListItems.filter((item) => !item.completed).length;
-  //const totalCount = checkListItems.length;
-  //const width = `${(restCount / totalCount) * 100}`;
+  const renderStatusBar = (data: TodoSet) => {
+    if (!data) return "Brak";
+
+    const { items } = data;
+    const restCount = items.filter((item) => !item.completed).length;
+    const totalCount = items.length;
+    const width = `${(restCount / totalCount) * 100}`;
+
+    return (
+      <>
+        <p className="text-gray-600">
+          Zostało: {restCount} z {totalCount}
+        </p>
+        {restCount > 0 && (
+          <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden mb-2">
+            <div
+              className="bg-green-500 h-full transition-all duration-300"
+              style={{
+                width: `${width}%`,
+              }}
+            />
+          </div>
+        )}
+      </>
+    );
+  };
 
   const addNewSetButton = () => {
     return (
@@ -238,11 +231,11 @@ const SimpleCheckList = () => {
     );
   }
 
-  const renderSetItems = (data: any) => {
+  const renderSetItems = (data: TodoSet) => {
     if (data.items.length === 0) {
       return <p className="text-gray-600 text-sm mb-4">Brak danych w secie</p>;
     } else {
-      return data.items.map((item: any) => (
+      return data.items.map((item) => (
         <div
           key={item.id}
           className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
@@ -252,6 +245,8 @@ const SimpleCheckList = () => {
               type="checkbox"
               checked={item.completed ?? false}
               onChange={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
                 handleToggle(data.id, item.id, event.target.checked);
               }}
               className="hidden peer"
@@ -323,19 +318,6 @@ const SimpleCheckList = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Moja Checklista
             </h1>
-            {/*<p className="text-gray-600">*/}
-            {/*  Zostało: {restCount} z {totalCount}*/}
-            {/*</p>*/}
-            {/*{restCount > 0 && (*/}
-            {/*  <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">*/}
-            {/*    <div*/}
-            {/*      className="bg-green-500 h-full transition-all duration-300"*/}
-            {/*      style={{*/}
-            {/*        width: `${width}%`,*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*  </div>*/}
-            {/*)}*/}
           </div>
           <div className="mb-6 flex gap-2">
             <input
@@ -347,7 +329,7 @@ const SimpleCheckList = () => {
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
-              onClick={handleAdd}
+              onClick={handleAddNewItem}
               disabled={!newItemText.trim()}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
@@ -356,9 +338,10 @@ const SimpleCheckList = () => {
           </div>
 
           <div className="space-y-2">
-            {checkListItems.map((checklistItem: any) => {
+            {checkListItems.map((checklistItem) => {
               return (
                 <div key={checklistItem.id}>
+                  {renderStatusBar(checklistItem)}
                   <label className="flex items-center justify-between p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition group">
                     <div className="flex items-center gap-3">
                       <input
@@ -366,7 +349,9 @@ const SimpleCheckList = () => {
                         id={checklistItem.id}
                         value={checklistItem.id}
                         checked={selectedRadioId === checklistItem.id}
-                        onChange={handleChange}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>,
+                        ) => setSelectedRadioId(event.target.value)}
                       />
                       <span className="text-sm text-gray-800">
                         {checklistItem.name}
@@ -375,7 +360,7 @@ const SimpleCheckList = () => {
                     <button
                       type="button"
                       onClick={(event) => {
-                        event.preventDefault(); // ważne żeby nie triggerować radio
+                        event.preventDefault();
                         event.stopPropagation();
                         handleDeleteSet(checklistItem.id);
                       }}
