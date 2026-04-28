@@ -45,11 +45,11 @@ exports.createNewSetInChecklist = asyncHandler(async (req, res) => {
     });
   }
 
-  const orders = checklistItems[0]?.sets?.map((s) => s.order);
+  const orders = checklistItems.sets.map((s) => s.order);
   const maxOrder = orders?.length ? Math.max(...orders) : -1;
 
   checklistItems.sets.push({
-    name: setName || `Set nr ${items.sets.length + 1}`,
+    name: setName || `Set nr ${checklistItems.sets.length + 1}`,
     order: maxOrder + 1,
     items: [],
   });
@@ -58,13 +58,14 @@ exports.createNewSetInChecklist = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json({ message: "Dodano nowy set", sets: checklistItems[0]?.sets });
+    .json({ message: "Dodano nowy set", sets: checklistItems.sets });
 });
 
 // POST /api/checklist - Dodaj nowy punkt
 exports.createChecklistItem = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const { text, radioId } = req.body;
+  const { setId } = req.params;
+  const { text } = req.body;
 
   if (!text) {
     return res.status(400).json({

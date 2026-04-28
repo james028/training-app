@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
   },
   CHECKLIST: {
     LIST: "api/checklist/list",
-    CREATE: "api/checklist/create",
+    CREATE: (setId: string) => `api/checklist/create/${setId}`,
     CREATE_SET: "api/checklist/set/create",
     TOGGLE: (setId: string, itemId: string) =>
       `api/checklist/${setId}/toggle-item/${itemId}`,

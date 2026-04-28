@@ -17,7 +17,7 @@ exports.routesConfig = function (app) {
     authMiddleware,
     createNewSetInChecklist,
   );
-  app.post("/api/checklist/create", authMiddleware, createChecklistItem);
+  app.post("/api/checklist/create/:setId", authMiddleware, createChecklistItem);
   app.patch(
     "/api/checklist/:setId/toggle-item/:itemId",
     authMiddleware,
