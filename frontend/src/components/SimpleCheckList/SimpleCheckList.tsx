@@ -51,7 +51,6 @@ const SimpleCheckList = () => {
   useToastError(isError, error);
   const checkListItems = checkListData?.sets ?? [];
 
-  console.log(selectedRadioId);
   const { mutateAsync: createNewSetMutate } = usePostApi<any, any, any>({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_SET}`,
     invalidateKeys: [CHECKLIST_KEYS.checkList()],
@@ -255,7 +254,6 @@ const SimpleCheckList = () => {
           >
             {item.text}
           </span>
-
           <button
             onClick={() => handleDelete(data.id, item.id)}
             className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"

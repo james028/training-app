@@ -4,21 +4,10 @@ import SimpleCheckList from "../../SimpleCheckList/SimpleCheckList";
 import ActivityTypePage from "../../TrainingsType/ActivityTypePage";
 
 const Dashboard = () => {
-  //const navigate = useNavigate();
-
   return (
     <div>
-      {/*Dashboard*/}
-      {/*<br />*/}
-      {/*<button onClick={() => navigate(`/trainings-test`)}>*/}
-      {/*  Treningi testowe*/}
-      {/*</button>*/}
-      {/*<br />*/}
-      {/*<button onClick={() => navigate(`/trainings`)}>Treningi</button>*/}
-      {/*<br />*/}
-      {/*<PlankSection />*/}
-      {/*<Calendar />*/}
-      {/*<ActivityTypePage />*/}
+      <Calendar />
+      <ActivityTypePage />
       <SimpleCheckList />
     </div>
   );

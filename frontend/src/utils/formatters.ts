@@ -9,9 +9,7 @@
 // ├── time.ts         // Złożone operacje na dacie/czasie
 // └── validators.ts   // Walidacja danych
 
-import { DateTime } from "luxon";
-import { DefaultValidity } from "luxon/src/_util";
-
+//
 export const convertObjectWithNumbersToString = (object: {
   hour: string;
   minutes: string;
@@ -32,6 +30,7 @@ type NormalizeEmpty<T> = {
     : T[K];
 };
 
+//
 export function convertEmptyValuesIntoNull<T extends Record<string, unknown>>(
   data: T,
 ): NormalizeEmpty<T> {
@@ -43,6 +42,7 @@ export function convertEmptyValuesIntoNull<T extends Record<string, unknown>>(
   ) as NormalizeEmpty<T>;
 }
 
+//usuwa klucze w obiekcie, w ktorych wartości mają wartość null
 export const removeNullValues = <T extends Record<string, any>>(
   obj: T,
 ): Partial<T> => {
@@ -51,6 +51,7 @@ export const removeNullValues = <T extends Record<string, any>>(
   ) as Partial<T>;
 };
 
+//zwraca wartośći, które w obiekcie z parametru nr zostały zmienione
 export const getDirtyValues = <T extends Record<string, any>>(
   dirtyFields: Partial<Record<keyof T, any>>, // 'any' bo dirtyFields może być obiektem dla zagnieżdżonych pól
   allValues: T,
@@ -63,9 +64,11 @@ export const getDirtyValues = <T extends Record<string, any>>(
   }, {} as Partial<T>);
 };
 
-export const isDurationEmpty = (duration: any) => {
-  // /if (!duration || typeof duration !== "object") return true;
-  if (!duration || typeof duration !== "object") return true;
+//sprawdza czy wszystkie wartości w obiekcie spełniaja warunki takie jak pusty string, null, 0, undefined
+export const isDurationEmpty = (duration: Record<any, any>) => {
+  if (!duration || typeof duration !== "object") {
+    return true;
+  }
   const values = Object.values(duration);
   return values.every(
     (v) => v === "" || v === 0 || v === null || v === undefined,

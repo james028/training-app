@@ -51,7 +51,6 @@ exports.handleRegister = asyncHandler(async (req, res) => {
   await newUser.save();
 
   res.status(201).json({
-    success: true,
     message: "Rejestracja zakończona sukcesem!",
     user: {
       id: newUser._id,
@@ -123,7 +122,7 @@ exports.handleLogout = asyncHandler(async (req, res) => {
     path: "/",
   });
 
-  res.status(200).json({ message: "Successfully logged out" });
+  res.status(200).json({ message: "Wylogowano pomyślnie" });
 });
 
 exports.handleAuthMe = asyncHandler(async (req, res) => {
@@ -133,7 +132,6 @@ exports.handleAuthMe = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    status: "success",
     data: {
       id: req.user.id,
       email: req.user.email,
