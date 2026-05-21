@@ -1,14 +1,17 @@
 import React from "react";
-import { useAppContext } from "../../../../appContext/appContext";
 import { Navigate, useLocation } from "react-router-dom";
+import { useValidateToken } from "../../../../hooks/useValidateToken/useValidateToken";
+import Loading from "../../Loading/Loading";
 
 const ProtectedRoute = ({ children }: any) => {
-  const { auth } = useAppContext();
-  const isAuth = auth?.data?.id;
-
   const location = useLocation();
+  const { isValid, isLoading } = useValidateToken();
 
-  if (!isAuth) {
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!isValid) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

@@ -6,9 +6,11 @@ import { useLocalStorage } from "../../../hooks/useLocalStorage/useLocalStorage"
 import { URL } from "../../../constants";
 import toast from "react-hot-toast";
 import { HeaderItemProps } from "../../../types";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
   //const [openMenu, setOpenMenu] = useState(false);
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate();
 
@@ -36,6 +38,7 @@ const Navbar = () => {
     } finally {
       removeValue();
       handleChangeAuth(null);
+      queryClient.clear();
       toast.success("Wylogowano");
       navigate("/login");
     }

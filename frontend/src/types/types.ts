@@ -14,13 +14,23 @@ export type TMonth = {
 
 //tu lepsze otypowanie
 export type TDay = {
-  //dokladnie dobrze zrobic czy string czy number
-  id: number;
+  id: string;
   type: string;
   bikeType: string;
   bikeKilometers: number;
-  duration: string; // potem jakis moze data
+  duration: string;
   fullDateTime: string;
+  activityDate: string;
+  activity: ActivityType;
+};
+
+export type ActivityType = {
+  id: string;
+  type: string;
+  activityName: string;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TDay2 = {
@@ -133,14 +143,20 @@ export type HeaderItemProps = {
   handleClick?: () => void;
 };
 
-export type ActivityType = {
-  id: string;
-  type: string;
-  activityName: string;
-  color: string;
-};
+// export type ActivityType = {
+//   id: string;
+//   type: string;
+//   activityName: string;
+//   color: string;
+// };
 
 export type Columns = {
   key: string;
   label: string;
 };
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  count: number;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import SubmitButtons from "../SubmitButtons/SubmitButtons";
 import EditLabelInput from "../../shared/EditLabelInput/EditLabelInput";
 import FormInput from "../../shared/FormInput/FormInput";
@@ -11,23 +11,23 @@ import { useAppContext } from "../../../appContext/appContext";
 import toast from "react-hot-toast";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import { URL } from "../../../constants";
-import { DateTime } from "luxon";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
+  //naprawić
   trainingType: string;
   duration: {
     hour: string;
     minutes: string;
     seconds: string;
   };
-  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;
   description?: string;
 };
 
+//otypować
 const EditTrainingForm = ({
   eventData,
   closeModal,
@@ -38,23 +38,21 @@ const EditTrainingForm = ({
   const [isEdit, setIsEdit] = useState(false);
 
   const form = useForm<RegistrationFormFields>({
-    defaultValues: {
-      trainingType: "",
-      duration: {
-        hour: "",
-        minutes: "",
-        seconds: "",
-      },
-      dateTime: DateTime.now(),
-      bikeKilometers: 0,
-      bikeType: "",
-      title: "",
-      description: "",
-    },
+    defaultValues: useMemo(
+      () => ({
+        activity: eventData?.activity?.id || "",
+        duration: eventData?.duration || { hour: "", minutes: "", seconds: "" },
+        title: eventData?.title || "",
+        description: eventData?.description || "",
+        bikeType: eventData?.bikeType || "",
+        bikeKilometers: eventData?.bikeKilometers || 0,
+      }),
+      [eventData],
+    ),
   });
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = form;
 
   const linkRemove = "api/calendar/delete";
@@ -64,15 +62,22 @@ const EditTrainingForm = ({
     invalidateKeys: [["removeExistTraining"]],
   });
 
+  console.log(eventData?.id);
   const { handleSubmitForm } = useAddEditFormService(
     { year, month, day },
     "edit",
-    eventData,
+    eventData?.id,
   );
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {
-      await handleSubmitForm(data);
+      if (Object.keys(dirtyFields).length === 0) {
+        toast.custom("Nie wprowadzono żadnych zmian.");
+        closeModal();
+        return;
+      }
+
+      await handleSubmitForm(data, dirtyFields);
       toast.success("Edycja zapisana pomyślnie!");
       setIsEdit(false);
       closeModal();
@@ -106,25 +111,26 @@ const EditTrainingForm = ({
               isEdit={isEdit}
               childrenInput={
                 <FormInputSelect<any>
-                  id="trainingType"
+                  id="activity"
                   // @ts-ignore
                   type="text"
-                  name="trainingType"
+                  name="activity"
                   label="Typ treningu"
                   placeholder="Typ treningu"
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
+                  // otypować
                   options={trainingDataType.map((item: any) => {
                     return {
-                      value: item.activityName,
-                      name: item.type,
+                      value: item.id,
+                      name: item.activityName,
                     };
                   })}
-                  defaultValue={eventData?.trainingType}
+                  defaultValue={eventData?.activity?.id}
                 />
               }
-              eventDataField={eventData?.trainingType}
+              eventDataField={eventData?.activity?.activityName}
             />
             <EditLabelInput
               label={"Długość treningu"}
@@ -158,7 +164,7 @@ const EditTrainingForm = ({
                   placeholder="Rodzaj roweru"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane" }}
+                  rules={{}}
                   options={[
                     { type: "road", name: "Road bike" },
                     { type: "mtb", name: "Mtb bike" },
@@ -166,10 +172,10 @@ const EditTrainingForm = ({
                     value: item.type,
                     name: item.name,
                   }))}
-                  defaultValue={eventData?.bikeType}
+                  defaultValue={"Road bike"}
                 />
               }
-              eventDataField={eventData?.bikeType}
+              eventDataField={"Road bike"}
             />
             <EditLabelInput
               label={"Liczba kilometrów"}
@@ -204,7 +210,7 @@ const EditTrainingForm = ({
                   label="Tytuł treningu"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane" }}
+                  rules={{}}
                   defaultValue={eventData?.title}
                 />
               }
@@ -221,15 +227,18 @@ const EditTrainingForm = ({
                   //placeholder=""
                   className="mb-2"
                   errors={errors}
-                  rules={{
-                    required: "Pole jest wymagane",
-                    maxLength: {
-                      value: 100,
-                      //zmienic tlumaczenie
-                      message:
-                        "Description cannot be longer than 100 characters",
-                    },
-                  }}
+                  rules={
+                    //     {
+                    //   required: "Pole jest wymagane",
+                    //   maxLength: {
+                    //     value: 100,
+                    //     //zmienic tlumaczenie
+                    //     message:
+                    //       "Description cannot be longer than 100 characters",
+                    //   },
+                    // }
+                    {}
+                  }
                   // @ts-ignore
                   defaultValue={eventData?.description}
                 />

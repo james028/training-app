@@ -5,21 +5,7 @@ import { useAppContext } from "../appContext/appContext";
 import { API_ENDPOINTS, URL } from "../constants";
 import usePostApi from "./api/post/useApiPost";
 import useDeleteApi from "./api/delete/useApiDelete";
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  count: number;
-}
-
-export type ActivityType = {
-  id: string;
-  type: string;
-  activityName: string;
-  color: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { ActivityType, ApiResponse } from "../types";
 
 export const useActivityTypes = () => {
   return useGetApi<ApiResponse<ActivityType[]>>({
@@ -35,12 +21,12 @@ export const useCreateActivityType = () => {
   });
 };
 
-export const useUpdateActivityType = (editingId?: string) => {
+export const useUpdateActivityType = (editingId: string | null) => {
   const { year, month } = useAppContext();
   const paramsFilters = { year, month };
 
   return usePatchApi({
-    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId ?? "")}`,
+    link: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId)}`,
     invalidateKeys: [
       CALENDAR_KEYS.calendarMonthlyList(paramsFilters),
       ACTIVITY_KEYS.activityTypeList(),
@@ -48,11 +34,11 @@ export const useUpdateActivityType = (editingId?: string) => {
   });
 };
 
-export const useDeleteActivityType = (removingId?: string) => {
+export const useDeleteActivityType = (removingId: string | null) => {
   return useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId ?? "")}`,
+    `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId)}`,
     [
-      ACTIVITY_KEYS.removeActivity(removingId ?? ""),
+      ACTIVITY_KEYS.removeActivity(removingId),
       ACTIVITY_KEYS.activityTypeList(),
     ],
   );

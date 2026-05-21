@@ -38,7 +38,10 @@ const useGetApi = <TQueryFnData, TData = TQueryFnData>({
   params?: Record<string, any>;
   paramsObject?: Record<string, any>;
   headers?: RawAxiosRequestHeaders;
-  options?: QueryConfig<TQueryFnData, TData>; // Używamy naszego helpera
+
+  //naprawić
+  //options?: QueryConfig<TQueryFnData, TData>; // Używamy naszego helpera
+  options?: any;
 }): GetApiResult<TData> => {
   // getList zwraca surowe dane z API (TQueryFnData)
   const getList = async (): Promise<TQueryFnData> => {

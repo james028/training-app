@@ -51,7 +51,6 @@ exports.handleRegister = asyncHandler(async (req, res) => {
   await newUser.save();
 
   res.status(201).json({
-    success: true,
     message: "Rejestracja zakończona sukcesem!",
     user: {
       id: newUser._id,
@@ -116,8 +115,6 @@ exports.handleLogin = asyncHandler(async (req, res) => {
 });
 
 exports.handleLogout = asyncHandler(async (req, res) => {
-  console.log("csdsadsad", req.cookies?.accessToken, req.cookies?.refreshToken);
-
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: true,
@@ -125,5 +122,19 @@ exports.handleLogout = asyncHandler(async (req, res) => {
     path: "/",
   });
 
-  res.status(200).json({ message: "Successfully logged out" });
+  res.status(200).json({ message: "Wylogowano pomyślnie" });
+});
+
+exports.handleAuthMe = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    res.status(401);
+    throw new Error("User not found in request");
+  }
+
+  res.status(200).json({
+    data: {
+      id: req.user.id,
+      email: req.user.email,
+    },
+  });
 });
