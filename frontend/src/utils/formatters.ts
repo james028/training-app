@@ -9,7 +9,7 @@
 // ├── time.ts         // Złożone operacje na dacie/czasie
 // └── validators.ts   // Walidacja danych
 
-//
+//wartosc number konwertowana na string
 export const convertObjectWithNumbersToString = (object: {
   hour: string;
   minutes: string;
@@ -30,7 +30,7 @@ type NormalizeEmpty<T> = {
     : T[K];
 };
 
-//
+//wartości w obiekcie, które są pustą wartościa albo undefined są przekonwertowane na null
 export function convertEmptyValuesIntoNull<T extends Record<string, unknown>>(
   data: T,
 ): NormalizeEmpty<T> {

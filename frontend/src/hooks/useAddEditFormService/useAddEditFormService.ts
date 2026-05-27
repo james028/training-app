@@ -48,6 +48,7 @@ const mapFormDataToBody = (
     if (key === "duration") continue;
 
     const typedKey = key as keyof RegistrationFormFields;
+    console.log({ body: body, typedKey: typedKey, data: data });
     body[typedKey] = data[typedKey] as any;
   }
 
@@ -81,7 +82,6 @@ export const useAddEditFormService = (
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  const linkEdit = "api/calendar/edit";
   const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
     //link: `${URL}${linkEdit}`,
     link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id!)}`,

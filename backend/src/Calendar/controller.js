@@ -197,52 +197,38 @@ exports.editAddedTraining = asyncHandler(async (req, res) => {
 });
 
 // @desc    Remove exist training
-// @route   DELETE /api/calendar/remove/:id
+// @route   DELETE /api/calendar/delete/:id
 exports.deleteExistTraining = asyncHandler(async (req, res) => {
-  // 1. Walidacja Użytkownika i Danych
-  // /const userId = req.user.id; // Zakładamy autentykację
-  const userId = "1234";
-  const { id: taskId } = req.params; // ID treningu z URL
-  //const taskId =
+  const activationId = req.params.id;
+  const userId = req.user.id;
 
-  const { year, month, day } = req.body;
-  //
-  if (!taskId || !day || !month || !year) {
-    return res
-      .status(400)
-      .json({ error: "Brak wymaganych danych (taskId, day, month, year)." });
+  if (!activationId) {
+    return res.status(400).json({ message: "Brak identyfikatora aktywacji." });
   }
 
-  const yearMonthKey = `${year}-${String(month).padStart(2, "0")}`;
-
-  // 2. Budowanie Zapytania Mongoose (Użycie $pull)
-
-  const monthDoc = await CalendarDataModel.findOneAndUpdate(
+  const deletedActivation = await CalendarDataModel.findOneAndUpdate(
     {
-      userId: userId,
-      yearMonthKey: yearMonthKey,
-      // B. Lokalizacja Dnia (w tablicy 'days')
-      "days.dayNumber": day,
+      userId,
+      "days.tasks._id": activationId,
     },
     {
-      // Operator $pull: usuwa elementy z tablicy na podstawie warunku
       $pull: {
-        "days.$.tasks": {
-          _id: taskId,
-        },
+        "days.$.tasks": { _id: activationId },
       },
     },
-    { new: true },
+    {
+      new: true,
+    },
   );
 
-  if (!monthDoc) {
+  if (!deletedActivation) {
     return res.status(404).json({
-      error: "Nie znaleziono zadania do usunięcia w podanej lokalizacji.",
+      message: "Nie znaleziono aktywacji lub brak uprawnień do jej usunięcia.",
     });
   }
 
   return res.status(200).json({
-    success: true,
-    message: "Zadanie usunięte pomyślnie",
+    message: "Aktywacja została pomyślnie usunięta.",
+    id: activationId,
   });
 });

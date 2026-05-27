@@ -9,9 +9,11 @@ import EditButtons from "../EditButtons/EditButtons";
 import FormTextArea from "../../shared/FormTextArea/FormTextArea";
 import { useAppContext } from "../../../appContext/appContext";
 import toast from "react-hot-toast";
-import usePostApi from "../../../hooks/api/post/useApiPost";
-import { URL } from "../../../constants";
+import { API_ENDPOINTS, URL } from "../../../constants";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
+import { ActivityType } from "../../../types";
+import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
+import { CALENDAR_KEYS } from "../../../constants/query-keys";
 
 export type RegistrationFormFields = {
   //naprawić
@@ -27,14 +29,22 @@ export type RegistrationFormFields = {
   description?: string;
 };
 
-//otypować
+interface EditTrainingFormProps {
+  eventData: any;
+  closeModal: () => void;
+  day: string | null;
+  trainingDataType: ActivityType[];
+}
+
 const EditTrainingForm = ({
   eventData,
   closeModal,
   day,
   trainingDataType,
-}: any) => {
-  const { year, month } = useAppContext();
+}: EditTrainingFormProps) => {
+  const { year, month, auth } = useAppContext();
+  const token = auth?.data?.accessToken;
+
   const [isEdit, setIsEdit] = useState(false);
 
   const form = useForm<RegistrationFormFields>({
@@ -55,16 +65,21 @@ const EditTrainingForm = ({
     formState: { errors, dirtyFields },
   } = form;
 
-  const linkRemove = "api/calendar/delete";
-  //pozmieniać
-  const { mutateAsync: mutateAsyncRemove } = usePostApi({
-    link: `${URL}${linkRemove}/${eventData.id}`,
-    invalidateKeys: [["removeExistTraining"]],
-  });
+  const { mutateAsync: removeMutateAsync } = useDeleteApi(
+    `${URL}${API_ENDPOINTS.CALENDAR.DELETE_ACTIVITY(eventData?.id)}`,
+    [
+      CALENDAR_KEYS.calendarMonthlyList({
+        year,
+        month,
+      }),
+    ],
+    null,
+    { Authorization: `Bearer ${token}` },
+  );
 
   console.log(eventData?.id);
   const { handleSubmitForm } = useAddEditFormService(
-    { year, month, day },
+    { year, month, day: day ? Number(day) : 1 },
     "edit",
     eventData?.id,
   );
@@ -91,14 +106,14 @@ const EditTrainingForm = ({
 
   const handleRemove = async () => {
     try {
-      await mutateAsyncRemove({
-        bodyData: {
-          year,
-          month,
-          day,
-        },
-      });
-    } catch (error) {}
+      await removeMutateAsync({});
+      closeModal();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd.";
+
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -121,7 +136,7 @@ const EditTrainingForm = ({
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
                   // otypować
-                  options={trainingDataType.map((item: any) => {
+                  options={trainingDataType.map((item) => {
                     return {
                       value: item.id,
                       name: item.activityName,
@@ -246,7 +261,7 @@ const EditTrainingForm = ({
               eventDataField={eventData?.description}
             />
           </div>
-          <button type="button" onClick={() => handleRemove()}>
+          <button type="button" onClick={handleRemove}>
             Usuń
           </button>
           <EditButtons

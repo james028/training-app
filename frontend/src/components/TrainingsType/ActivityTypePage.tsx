@@ -129,7 +129,7 @@ const ActivityTypePage = () => {
           </div>
           <SubmitButtons
             closeModal={() => setIsOpenRemoveModal(false)}
-            saveChanges={() => onSubmitDelete()}
+            saveChanges={onSubmitDelete}
           />
         </Modal>
       ) : null}
