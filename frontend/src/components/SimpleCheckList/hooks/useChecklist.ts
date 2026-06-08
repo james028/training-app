@@ -1,5 +1,5 @@
 import usePostApi from "../../../hooks/api/post/useApiPost";
-import { API_ENDPOINTS } from "../../../constants";
+import { API_ENDPOINTS, URL } from "../../../constants";
 import usePatchApi from "../../../hooks/api/patch/useApiPatch";
 import { CHECKLIST_KEYS } from "../../../constants/query-keys";
 import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
@@ -30,27 +30,12 @@ export const useChecklist = () => {
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
 
-  const {
-    data: checkListData,
-    isLoading,
-    isError,
-    error,
-  } = useGetApi<SetsResponse>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}aa`,
-
+  // 1. Pobieranie listy (możesz tu dodać logikę transformacji danych)
+  const query = useGetApi<SetsResponse>({
+    link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
     queryKey: CHECKLIST_KEYS.checkList(),
-
     headers: { Authorization: `Bearer ${token}` },
   });
-
-  console.log(checkListData);
-
-  // 1. Pobieranie listy (możesz tu dodać logikę transformacji danych)
-  // const query = useGetApi<SetsResponse>({
-  //   link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
-  //   queryKey: CHECKLIST_KEYS.checkList(),
-  //   headers: { Authorization: `Bearer ${token}` },
-  // });
 
   const createSet = usePostApi({
     link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_SET}`,
@@ -86,10 +71,9 @@ export const useChecklist = () => {
     },
   );
 
-  const query = { data: {} };
   console.log(query, "query");
   return {
-    //...query,
+    ...query,
     checkListItems: query.data?.sets ?? [],
     createSet,
     createItem,
