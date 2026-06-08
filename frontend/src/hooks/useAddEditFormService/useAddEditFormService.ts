@@ -48,7 +48,6 @@ const mapFormDataToBody = (
     if (key === "duration") continue;
 
     const typedKey = key as keyof RegistrationFormFields;
-    console.log({ body: body, typedKey: typedKey, data: data });
     body[typedKey] = data[typedKey] as any;
   }
 
@@ -73,7 +72,7 @@ export const useAddEditFormService = (
 
   if (type === "edit" && !id) {
     console.error("Logic Error: Attempted to edit without an ID.");
-    toast.error("Brak id for edit");
+    toast.error("Brak id dla edycji");
   }
 
   const { mutateAsync: addMutateAsync } = usePostApi({
@@ -84,7 +83,7 @@ export const useAddEditFormService = (
 
   const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
     //link: `${URL}${linkEdit}`,
-    link: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id!)}`,
+    //link: ,
     //invalidateKeys: [["editAddedTraining"]],
     //invalidateKeys: [CALENDAR_KEYS.editCalendarActivity()],
     invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
@@ -104,16 +103,6 @@ export const useAddEditFormService = (
     data: RegistrationFormFields,
     dirtyFields: Partial<Record<keyof RegistrationFormFields, boolean>>,
   ) => {
-    const mutators = {
-      add: addMutateAsync,
-      edit: editMutateAsync,
-    };
-    const currentMutate = mutators[type];
-
-    if (!currentMutate) {
-      //throw new Error(`Nieznany typ akcji formularza: ${type}`);
-      toast.error(`Nieznany typ akcji formularza: ${type}`);
-    }
     const bodyData = mapFormDataToBody(data, dirtyFields, dateObject, type);
 
     if (type === "edit" && Object.keys(bodyData).length === 0) {
@@ -122,7 +111,19 @@ export const useAddEditFormService = (
     }
 
     try {
-      await currentMutate({ bodyData });
+      const mutators = {
+        add: addMutateAsync({ bodyData }),
+        edit: editMutateAsync({
+          bodyData,
+          customLink: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id)}`,
+        }),
+      };
+      // if (!currentMutate) {
+      //   //throw new Error(`Nieznany typ akcji formularza: ${type}`);
+      //   toast.error(`Nieznany typ akcji formularza: ${type}`);
+      // }
+      //const currentMutate = mutators[type];
+      await mutators[type];
       //pokombinować jako invalide
       await refetchCalendarData();
     } catch (error) {

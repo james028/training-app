@@ -1,13 +1,13 @@
 import React from "react";
-import Calendar from "../../Calendar/Calendar";
+//import Calendar from "../../Calendar/Calendar";
 import SimpleCheckList from "../../SimpleCheckList/SimpleCheckList";
-import ActivityTypePage from "../../TrainingsType/ActivityTypePage";
+//import ActivityTypePage from "../../TrainingsType/ActivityTypePage";
 
 const Dashboard = () => {
   return (
     <div>
-      <Calendar />
-      <ActivityTypePage />
+      {/*<Calendar />*/}
+      {/*<ActivityTypePage />*/}
       <SimpleCheckList />
     </div>
   );

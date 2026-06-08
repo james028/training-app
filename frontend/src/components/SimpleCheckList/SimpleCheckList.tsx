@@ -1,93 +1,30 @@
 import React, { useState } from "react";
-import useGetApi from "../../hooks/api/get/useApiGet";
 import { API_ENDPOINTS, URL } from "../../constants";
-import { CHECKLIST_KEYS } from "../../constants/query-keys";
-import { useToastError } from "../../hooks/useToastError/useToastError";
-import { useAppContext } from "../../appContext/appContext";
-import usePatchApi from "../../hooks/api/patch/useApiPatch";
-import useDeleteApi from "../../hooks/api/delete/useApiDelete";
 import toast from "react-hot-toast";
-import usePostApi from "../../hooks/api/post/useApiPost";
-
-type Item = {
-  id: string;
-  text: string;
-  order: number;
-  completed: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type TodoSet = {
-  id: string;
-  name: string;
-  order: number;
-  items: Item[];
-};
-
-type SetsResponse = {
-  sets: TodoSet[];
-};
+import { TodoSet, useChecklist } from "./hooks/useChecklist";
 
 const SimpleCheckList = () => {
   const [newItemText, setNewItemText] = useState("");
-  const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-  const [selectedRadioId, setSelectedRadioId] = useState("");
-
-  const { auth } = useAppContext();
-  const token = auth?.data?.accessToken;
+  const [selectedRadioId, setSelectedRadioId] = useState<string | null>(null);
 
   const {
-    data: checkListData,
+    checkListItems,
     isLoading,
-    isError,
-    error,
-  } = useGetApi<SetsResponse>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
-    queryKey: CHECKLIST_KEYS.checkList(),
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  useToastError(isError, error);
-  const checkListItems = checkListData?.sets ?? [];
-
-  const { mutateAsync: createNewSetMutate } = usePostApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_SET}`,
-    invalidateKeys: [CHECKLIST_KEYS.checkList()],
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const { mutateAsync: createMutate } = usePostApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE(selectedRadioId)}`,
-    invalidateKeys: [CHECKLIST_KEYS.checkList()],
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(selectedRadioId, togglingId)}`,
-    invalidateKeys: [CHECKLIST_KEYS.checkList()],
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_ITEM(selectedRadioId, removingId)}`,
-    [CHECKLIST_KEYS.checkList()],
-    null,
-    { Authorization: `Bearer ${token}` },
-  );
-
-  const { mutateAsync: removeMutateSet } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_SET(selectedRadioId)}`,
-    [CHECKLIST_KEYS.checkList()],
-    null,
-    { Authorization: `Bearer ${token}` },
-  );
+    createSet,
+    createItem,
+    updateItem,
+    removeSet,
+    removeItem,
+  } = useChecklist();
 
   const handleAddNewItem = async () => {
     if (!newItemText.trim()) return;
     try {
-      await createMutate({
+      if (!selectedRadioId) return;
+
+      await createItem.mutateAsync({
         bodyData: { text: newItemText },
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE(selectedRadioId)}`,
       });
       toast.success("Dodano!");
     } catch (error) {
@@ -101,7 +38,7 @@ const SimpleCheckList = () => {
 
   const handleAddNewSet = async () => {
     try {
-      await createNewSetMutate({ bodyData: { setName: null } });
+      await createSet.mutateAsync({ bodyData: { setName: null } });
       toast.success("Dodano nowy set!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
@@ -116,25 +53,23 @@ const SimpleCheckList = () => {
     completed: boolean,
   ) => {
     try {
-      setSelectedRadioId(setId);
-      setTogglingId(itemId);
-      await editMutate({
+      await updateItem.mutateAsync({
         bodyData: { completed },
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(setId, itemId)}`,
       });
       toast.success("Edytowano!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
-    } finally {
-      setTogglingId(null);
     }
   };
 
   const handleDeleteSet = async (setId: string) => {
     try {
-      setSelectedRadioId(setId);
-      await removeMutateSet({});
+      await removeSet.mutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_SET(setId)}`,
+      });
       toast.success("Usunięto set!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
@@ -145,16 +80,14 @@ const SimpleCheckList = () => {
 
   const handleDelete = async (setId: string, itemId: string) => {
     try {
-      setSelectedRadioId(setId);
-      setRemovingId(itemId);
-      await removeMutate({});
-      toast.success("Usunięto!");
+      await removeItem.mutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_ITEM(setId, itemId)}`,
+      });
+      toast.success("Usunięto item!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
-    } finally {
-      setRemovingId(null);
     }
   };
 
@@ -323,7 +256,7 @@ const SimpleCheckList = () => {
             />
             <button
               onClick={handleAddNewItem}
-              disabled={!newItemText.trim()}
+              disabled={!newItemText.trim() || !selectedRadioId}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Dodaj

@@ -66,18 +66,17 @@ const EditTrainingForm = ({
   } = form;
 
   const { mutateAsync: removeMutateAsync } = useDeleteApi(
-    `${URL}${API_ENDPOINTS.CALENDAR.DELETE_ACTIVITY(eventData?.id)}`,
     [
       CALENDAR_KEYS.calendarMonthlyList({
         year,
         month,
       }),
     ],
+    undefined,
     null,
     { Authorization: `Bearer ${token}` },
   );
 
-  console.log(eventData?.id);
   const { handleSubmitForm } = useAddEditFormService(
     { year, month, day: day ? Number(day) : 1 },
     "edit",
@@ -106,7 +105,9 @@ const EditTrainingForm = ({
 
   const handleRemove = async () => {
     try {
-      await removeMutateAsync({});
+      await removeMutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.CALENDAR.DELETE_ACTIVITY(eventData?.id)}`,
+      });
       closeModal();
     } catch (error) {
       const errorMessage =

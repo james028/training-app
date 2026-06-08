@@ -22,6 +22,7 @@ interface MutationVariables<
 > {
   bodyData?: TBody | null;
   paramsObject?: TParams | null;
+  customLink?: string;
   successMessage?: string;
   errorMessage?: string;
 }
@@ -31,8 +32,8 @@ const useDeleteApi = <
   TBody extends Record<string, any>,
   TParams extends Record<string, any>,
 >(
-  link: string,
   invalidateKeys: QueryKey[],
+  link?: string,
   params?: Record<string, any> | null | undefined,
   headers?: RawAxiosRequestHeaders | undefined,
 ): UseMutationResult<
@@ -42,11 +43,18 @@ const useDeleteApi = <
 > => {
   const queryClient = useQueryClient();
 
-  const deleteMethod = async (
-    paramsObject: MutationVariables<TBody, TParams>,
-  ): Promise<TData> => {
+  const deleteMethod = async ({
+    paramsObject,
+    customLink,
+  }: MutationVariables<TBody, TParams>): Promise<TData> => {
+    const targetLink = customLink || link || "";
+
+    if (!targetLink) {
+      throw new Error("Brak zdefiniowanego linku dla mutacji DELETE.");
+    }
+
     const result = await axios.delete<TData>(
-      endpointWithParams(link, params, getParams(paramsObject)),
+      endpointWithParams(targetLink, params, getParams(paramsObject)),
       { headers },
     );
 
