@@ -31,20 +31,18 @@ export const ACTIVITY_KEYS = {
 
   // 3. Klucz dla konkretnego ID
   // Bardzo przydatne przy PATCH - precyzyjnie określa, co zmieniamy
-  editActivity: (id: string | undefined) =>
+  editActivity: (id: string | null) =>
     [...ACTIVITY_KEYS.all, "edit", id] as const,
-  removeActivity: (id: string | undefined) =>
+  removeActivity: (id: string | null) =>
     [...ACTIVITY_KEYS.all, "remove", id] as const,
 };
 
 export const CALENDAR_KEYS = {
   all: ["calendar"] as const,
-  calendarMonthlyList: (filters: any) => [
-    ...CALENDAR_KEYS.all,
-    "calendarMonthlyList",
-    { ...filters },
-  ],
+  calendarMonthlyList: (filters: { year: number; month: number }) =>
+    [...CALENDAR_KEYS.all, "calendarMonthlyList", filters] as const,
   createCalendarActivity: () => [...CALENDAR_KEYS.all, "create"] as const,
+  editCalendarActivity: () => [...CALENDAR_KEYS.all, "edit"] as const,
 };
 
 export const CALENDAR_KEYS2 = {
@@ -66,4 +64,9 @@ export const CHECKLIST_KEYS = {
     [...CHECKLIST_KEYS.all, "toggle", id] as const,
   checkListDelete: (id: string | undefined) =>
     [...CHECKLIST_KEYS.all, "delete", id] as const,
+};
+
+export const AUTH_KEYS = {
+  all: ["auth"] as const,
+  authMe: () => [...AUTH_KEYS.all, "authMe"] as const,
 };

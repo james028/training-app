@@ -11,13 +11,12 @@ import { useAppContext } from "../../../appContext/appContext";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
 
 export type RegistrationFormFields = {
-  activityTypeId: string;
+  activity: string;
   duration: {
     hour: string;
     minutes: string;
     seconds: string;
   };
-  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;
@@ -29,13 +28,13 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
 
   const form = useForm<RegistrationFormFields>({
     defaultValues: {
-      activityTypeId: "",
+      activity: "",
       duration: {
         hour: "",
         minutes: "",
         seconds: "",
       },
-      dateTime: DateTime.now(),
+      //dateTime: DateTime.now(),
       bikeType: "",
       bikeKilometers: 0,
       title: "",
@@ -45,7 +44,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = form;
 
   const { handleSubmitForm } = useAddEditFormService(
@@ -55,7 +54,7 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {
-      await handleSubmitForm(data);
+      await handleSubmitForm(data, dirtyFields);
       toast.success("Dodanie zapisane pomyślnie!");
       closeModal();
     } catch (error) {
@@ -72,8 +71,8 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
         <div className="shadow bg-white overflow-hidden w-full block p-8">
           <div className="mb-4">
             <FormInputSelect<any>
-              id="activityTypeId"
-              name="activityTypeId"
+              id="activity"
+              name="activity"
               label="Typ aktywności"
               className="mb-2"
               errors={errors}
@@ -120,20 +119,18 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
             <FormInput<any>
               id="bikeKilometers"
               // @ts-ignore
-              type="text"
+              type="number"
               name="bikeKilometers"
               label="Ilość kilometrów"
               placeholder="Ilość kilometrów"
               className="mb-2"
               register={register}
               errors={errors}
-              rules={
-                {
-                  // valueAsNumber: true,
-                  // validate: (value) => value > 0,
-                  // required: "Pole jest wymagane",
-                }
-              }
+              rules={{
+                valueAsNumber: true,
+                required: "Pole jest wymagane",
+                min: { value: 0, message: "Nie może być ujemne" },
+              }}
             />
             <FormInput<any>
               id="title"

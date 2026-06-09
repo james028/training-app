@@ -12,12 +12,12 @@ const EditTraining = ({
   day,
   trainingDataType,
 }: {
-  isOpenModal: any;
-  setOpenModal: any;
-  closeModal: any;
+  isOpenModal: boolean;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  closeModal: () => void;
   modalTitle: string;
   eventData?: Record<any, any>;
-  day: any;
+  day: string | null;
   trainingDataType: ActivityType[];
 }) => {
   return (

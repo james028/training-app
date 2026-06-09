@@ -7,17 +7,24 @@ export const API_ENDPOINTS = {
   },
   TRAINING_TYPES: {},
   AUTH: {
-    LOGIN: "",
-    LOGOUT: "",
+    LOGIN: "api/auth/login",
+    LOGOUT: "api/auth/logout",
+    AUTH_ME: "api/auth/me",
   },
   CALENDAR: {
     MONTHLY_LIST: "api/activities/list",
     CREATE_ACTIVITY: "api/activities/create",
+    EDIT_ACTIVITY: (id: string | undefined) => `api/activities/edit/${id}`,
+    DELETE_ACTIVITY: (id: string) => `api/activities/delete/${id}`,
   },
   CHECKLIST: {
-    LIST: "api/checklist/list",
-    CREATE: "api/checklist/create",
-    TOGGLE: (id: string) => `api/checklist/${id}/toggle`,
-    DELETE: (id: string) => `api/checklist/${id}`,
+    LIST: "api/checklists",
+    CREATE_SET: "api/checklists",
+    DELETE_SET: (setId: string) => `api/checklists/${setId}`,
+    CREATE_ITEM: (setId: string) => `api/checklists/${setId}/items`,
+    UPDATE_ITEM: (setId: string, itemId: string) =>
+      `api/checklists/${setId}/items/${itemId}`,
+    DELETE_ITEM: (setId: string, itemId: string) =>
+      `api/checklists/${setId}/items/${itemId}`,
   },
 } as const;

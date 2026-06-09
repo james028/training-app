@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import SubmitButtons from "../SubmitButtons/SubmitButtons";
 import EditLabelInput from "../../shared/EditLabelInput/EditLabelInput";
 import FormInput from "../../shared/FormInput/FormInput";
@@ -9,70 +9,89 @@ import EditButtons from "../EditButtons/EditButtons";
 import FormTextArea from "../../shared/FormTextArea/FormTextArea";
 import { useAppContext } from "../../../appContext/appContext";
 import toast from "react-hot-toast";
-import usePostApi from "../../../hooks/api/post/useApiPost";
-import { URL } from "../../../constants";
-import { DateTime } from "luxon";
+import { API_ENDPOINTS, URL } from "../../../constants";
 import { useAddEditFormService } from "../../../hooks/useAddEditFormService/useAddEditFormService";
+import { ActivityType } from "../../../types";
+import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
+import { CALENDAR_KEYS } from "../../../constants/query-keys";
 
 export type RegistrationFormFields = {
+  //naprawić
   trainingType: string;
   duration: {
     hour: string;
     minutes: string;
     seconds: string;
   };
-  dateTime: DateTime;
   bikeType?: string;
   bikeKilometers?: number;
   title?: string;
   description?: string;
 };
 
+interface EditTrainingFormProps {
+  eventData: any;
+  closeModal: () => void;
+  day: string | null;
+  trainingDataType: ActivityType[];
+}
+
 const EditTrainingForm = ({
   eventData,
   closeModal,
   day,
   trainingDataType,
-}: any) => {
-  const { year, month } = useAppContext();
+}: EditTrainingFormProps) => {
+  const { year, month, auth } = useAppContext();
+  const token = auth?.data?.accessToken;
+
   const [isEdit, setIsEdit] = useState(false);
 
   const form = useForm<RegistrationFormFields>({
-    defaultValues: {
-      trainingType: "",
-      duration: {
-        hour: "",
-        minutes: "",
-        seconds: "",
-      },
-      dateTime: DateTime.now(),
-      bikeKilometers: 0,
-      bikeType: "",
-      title: "",
-      description: "",
-    },
+    defaultValues: useMemo(
+      () => ({
+        activity: eventData?.activity?.id || "",
+        duration: eventData?.duration || { hour: "", minutes: "", seconds: "" },
+        title: eventData?.title || "",
+        description: eventData?.description || "",
+        bikeType: eventData?.bikeType || "",
+        bikeKilometers: eventData?.bikeKilometers || 0,
+      }),
+      [eventData],
+    ),
   });
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = form;
 
-  const linkRemove = "api/calendar/delete";
-  //pozmieniać
-  const { mutateAsync: mutateAsyncRemove } = usePostApi({
-    link: `${URL}${linkRemove}/${eventData.id}`,
-    invalidateKeys: [["removeExistTraining"]],
-  });
+  const { mutateAsync: removeMutateAsync } = useDeleteApi(
+    [
+      CALENDAR_KEYS.calendarMonthlyList({
+        year,
+        month,
+      }),
+    ],
+    undefined,
+    null,
+    { Authorization: `Bearer ${token}` },
+  );
 
   const { handleSubmitForm } = useAddEditFormService(
-    { year, month, day },
+    { year, month, day: day ? Number(day) : 1 },
     "edit",
-    eventData,
+    eventData?.id,
   );
 
   const onSubmit = handleSubmit(async (data: RegistrationFormFields) => {
     try {
-      await handleSubmitForm(data);
+      if (Object.keys(dirtyFields).length === 0) {
+        toast.custom("Nie wprowadzono żadnych zmian.");
+        closeModal();
+        return;
+      }
+
+      await handleSubmitForm(data, dirtyFields);
       toast.success("Edycja zapisana pomyślnie!");
       setIsEdit(false);
       closeModal();
@@ -86,14 +105,16 @@ const EditTrainingForm = ({
 
   const handleRemove = async () => {
     try {
-      await mutateAsyncRemove({
-        bodyData: {
-          year,
-          month,
-          day,
-        },
+      await removeMutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.CALENDAR.DELETE_ACTIVITY(eventData?.id)}`,
       });
-    } catch (error) {}
+      closeModal();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd.";
+
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -106,25 +127,26 @@ const EditTrainingForm = ({
               isEdit={isEdit}
               childrenInput={
                 <FormInputSelect<any>
-                  id="trainingType"
+                  id="activity"
                   // @ts-ignore
                   type="text"
-                  name="trainingType"
+                  name="activity"
                   label="Typ treningu"
                   placeholder="Typ treningu"
                   className="mb-2"
                   errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
-                  options={trainingDataType.map((item: any) => {
+                  // otypować
+                  options={trainingDataType.map((item) => {
                     return {
-                      value: item.activityName,
-                      name: item.type,
+                      value: item.id,
+                      name: item.activityName,
                     };
                   })}
-                  defaultValue={eventData?.trainingType}
+                  defaultValue={eventData?.activity?.id}
                 />
               }
-              eventDataField={eventData?.trainingType}
+              eventDataField={eventData?.activity?.activityName}
             />
             <EditLabelInput
               label={"Długość treningu"}
@@ -158,7 +180,7 @@ const EditTrainingForm = ({
                   placeholder="Rodzaj roweru"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane" }}
+                  rules={{}}
                   options={[
                     { type: "road", name: "Road bike" },
                     { type: "mtb", name: "Mtb bike" },
@@ -166,10 +188,10 @@ const EditTrainingForm = ({
                     value: item.type,
                     name: item.name,
                   }))}
-                  defaultValue={eventData?.bikeType}
+                  defaultValue={"Road bike"}
                 />
               }
-              eventDataField={eventData?.bikeType}
+              eventDataField={"Road bike"}
             />
             <EditLabelInput
               label={"Liczba kilometrów"}
@@ -204,7 +226,7 @@ const EditTrainingForm = ({
                   label="Tytuł treningu"
                   className="mb-2"
                   errors={errors}
-                  rules={{ required: "Pole jest wymagane" }}
+                  rules={{}}
                   defaultValue={eventData?.title}
                 />
               }
@@ -221,15 +243,18 @@ const EditTrainingForm = ({
                   //placeholder=""
                   className="mb-2"
                   errors={errors}
-                  rules={{
-                    required: "Pole jest wymagane",
-                    maxLength: {
-                      value: 100,
-                      //zmienic tlumaczenie
-                      message:
-                        "Description cannot be longer than 100 characters",
-                    },
-                  }}
+                  rules={
+                    //     {
+                    //   required: "Pole jest wymagane",
+                    //   maxLength: {
+                    //     value: 100,
+                    //     //zmienic tlumaczenie
+                    //     message:
+                    //       "Description cannot be longer than 100 characters",
+                    //   },
+                    // }
+                    {}
+                  }
                   // @ts-ignore
                   defaultValue={eventData?.description}
                 />
@@ -237,7 +262,7 @@ const EditTrainingForm = ({
               eventDataField={eventData?.description}
             />
           </div>
-          <button type="button" onClick={() => handleRemove()}>
+          <button type="button" onClick={handleRemove}>
             Usuń
           </button>
           <EditButtons

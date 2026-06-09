@@ -12,6 +12,7 @@ import {
   useDeleteActivityType,
   useUpdateActivityType,
 } from "../../../hooks/useActivity";
+import { API_ENDPOINTS, URL } from "../../../constants";
 
 interface ActivityTypeFormProps {
   activityName: string;
@@ -51,9 +52,12 @@ export const useActivityType = () => {
   const { mutateAsync: createMutate } = useCreateActivityType();
   const {
     mutateAsync: editMutate,
-    //isPending
-  } = useUpdateActivityType(editingId ?? "");
-  const { mutateAsync: removeMutate } = useDeleteActivityType(removingId ?? "");
+    error: errorEditMutate,
+    isError: isErrorEditMutate,
+  } = useUpdateActivityType();
+  useToastError(isErrorEditMutate, errorEditMutate);
+
+  const { mutateAsync: removeMutate } = useDeleteActivityType(removingId);
 
   const handleEdit = (item: ActivityType) => {
     setEditingId(item.id);
@@ -79,7 +83,10 @@ export const useActivityType = () => {
       };
 
       if (editingId) {
-        await editMutate({ bodyData });
+        await editMutate({
+          bodyData,
+          customLink: `${URL}${API_ENDPOINTS.ACTIVITIES.EDIT(editingId)}`,
+        });
         toast.success("Zaktualizowano pomyślnie");
       } else {
         await createMutate({ bodyData });
@@ -96,7 +103,11 @@ export const useActivityType = () => {
 
   const onSubmitDelete = async (): Promise<void> => {
     try {
-      await removeMutate({});
+      if (!removingId) return;
+
+      await removeMutate({
+        customLink: `${URL}${API_ENDPOINTS.ACTIVITIES.REMOVE(removingId)}`,
+      });
       setIsOpenRemoveModal(false);
       setRemovingId(null);
     } catch (error) {
@@ -122,8 +133,8 @@ export const useActivityType = () => {
     onSubmitDelete,
     editingId,
     isOpenRemoveModal,
-    setEditingId,
+    //setEditingId,
     setIsOpenRemoveModal,
-    setRemovingId,
+    //setRemovingId,
   };
 };

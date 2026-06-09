@@ -5,7 +5,7 @@ type ModalProps = {
   children: any;
   closeModal: () => void;
   modalTitle: string;
-  openModal: () => void;
+  openModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const Modal = ({ children, closeModal, modalTitle, openModal }: ModalProps) => {

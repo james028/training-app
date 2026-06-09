@@ -1,52 +1,43 @@
-function transformIds(obj) {
-  // Null/undefined
-  if (obj === null || obj === undefined) {
-    return obj;
+const mongoose = require("mongoose");
+
+function transformIds(data) {
+  if (!data) return data;
+
+  if (data instanceof mongoose.Types.ObjectId) {
+    return data.toString();
   }
 
-  // ✅ Date - zwróć jako ISO string
-  if (obj instanceof Date) {
-    return obj.toISOString();
+  // Zamiana dokumentu Mongoose na czysty obiekt (kluczowe dla uniknięcia pętli)
+  if (typeof data.toObject === "function") {
+    data = data.toObject();
   }
 
-  // ✅ ObjectId - zwróć jako string
-  if (obj.constructor && obj.constructor.name === "ObjectId") {
-    return obj.toString();
+  if (Array.isArray(data)) {
+    return data.map(transformIds);
   }
 
-  // Array
-  if (Array.isArray(obj)) {
-    return obj.map((item) => transformIds(item));
-  }
-
-  // Object
-  if (typeof obj === "object") {
-    const result = {};
-
-    for (const [key, value] of Object.entries(obj)) {
-      if (key === "_id") {
-        result.id = value?.toString();
-      } else if (key === "__v") {
-        continue;
-      } else {
-        result[key] = transformIds(value);
-      }
+  if (typeof data === "object" && data !== null) {
+    // Zabezpieczenie przed obiektami typu Date
+    if (data instanceof Date) {
+      return data.toISOString();
     }
 
-    return result;
+    const newObj = {};
+    for (const key in data) {
+      // FILTR: Ignorujemy bebechy Mongoose'a
+      if (key.startsWith("$") || key.startsWith("__")) continue;
+      const newKey = key === "_id" ? "id" : key;
+      newObj[newKey] = transformIds(data[key]);
+    }
+    return newObj;
   }
-
-  // Primitive
-  return obj;
+  return data;
 }
 
+// Ten middleware sprawia, że res.json() w każdym kontrolerze
+// automatycznie użyje transformIds
 exports.transformResponse = (req, res, next) => {
   const originalJson = res.json.bind(res);
-
-  res.json = function (data) {
-    const transformed = transformIds(data);
-    return originalJson(transformed);
-  };
-
+  res.json = (data) => originalJson(transformIds(data));
   next();
 };

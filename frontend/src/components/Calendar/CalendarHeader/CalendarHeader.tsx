@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { DateTime, WeekdayNumbers } from "luxon";
@@ -58,25 +58,13 @@ const CalendarHeader = ({
     },
   ];
 
-  // **
-  // * Generuje posortowaną tablicę skróconych nazw dni tygodnia (np. "pon", "wt", "śr").
-  // * Kolejność jest zgodna ze standardem ISO (Poniedziałek = 1).
-  //   * @param locale Opcjonalny język (np. 'pl-PL', 'en-US'). Jeśli nie podano, używa systemowego.
-  //   * @returns Tablica nazw dni tygodnia.
-  //   */
   const generateWeekdayHeaders = (locale?: string): string[] => {
     const dayNames: string[] = [];
 
     // Zaczynamy od pierwszego dnia tygodnia ISO (poniedziałek, indeks 1)
     const ISO_WEEKDAYS: WeekdayNumbers[] = [1, 2, 3, 4, 5, 6, 7];
     for (const i of ISO_WEEKDAYS) {
-      // Tworzymy tymczasowy obiekt daty, ustawiając go na dzień tygodnia 'i'.
-      // Używamy DateTime.local() i ustawiamy jego dzień tygodnia na 'i'.
       const tempDay = DateTime.local().set({ weekday: i });
-
-      // Formatujemy dzień:
-      // "EEE" -> Skrócona nazwa dnia (np. Mon, Pon)
-      // "E" -> Najkrótsza nazwa (np. M, P)
       const dayName = tempDay.toFormat("EEE", { locale: locale });
 
       dayNames.push(dayName);
@@ -85,32 +73,7 @@ const CalendarHeader = ({
     return dayNames;
   };
 
-  //zrobic z context api //hmm
-  const days1: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const days: string[] = generateWeekdayHeaders();
-
-  //potem context
-  // const getCurrentDate = (): Record<string, string | number> => {
-  //   const currentDate = DateTime.now();
-  //   const { year } = currentDate.toObject();
-  //
-  //   //obecny miesiąc tu musy vtc
-  //   const date = DateTime.fromObject({
-  //     year,
-  //     month: monthIndex,
-  //     day: 1,
-  //   })
-  //     .toFormat("MMMM/yyyy")
-  //     .split("/");
-  //
-  //   return { month: date[0], year: date[1] };
-  // };
-  //
-  // useEffect(() => {
-  //   getCurrentDate();
-  // }, [monthIndex]);
-  //
-  // const { year, month } = getCurrentDate();
 
   return (
     <>

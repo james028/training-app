@@ -29,7 +29,7 @@ interface MutationVariables<
 
   // Poprawiamy typ do TParams
   paramsObject?: TParams | null;
-
+  customLink?: string;
   // Metadane
   successMessage?: string;
   errorMessage?: string;
@@ -68,12 +68,12 @@ const useSetResponseStatus = (): {
 };
 
 const usePostApi = <TBody, TData, TParams extends Record<string, any>>({
-  link,
+  link: baseLink,
   params,
   headers,
   invalidateKeys = [],
 }: {
-  link: string;
+  link?: string;
   params?: Record<string, any> | null;
   headers?: RawAxiosRequestHeaders;
   invalidateKeys?: (readonly unknown[])[];
@@ -95,11 +95,18 @@ const usePostApi = <TBody, TData, TParams extends Record<string, any>>({
   const createPost = async ({
     paramsObject,
     bodyData,
+    customLink,
   }: MutationVariables<TBody, TParams>): Promise<TData> => {
     setLoading();
 
+    const targetLink = customLink || baseLink || "";
+
+    if (!targetLink) {
+      throw new Error("Brak zdefiniowanego linku dla mutacji POST.");
+    }
+
     const result = await axios.post<TData>(
-      endpointWithParams(link, params, getParams(paramsObject)),
+      endpointWithParams(targetLink, params, getParams(paramsObject)),
       bodyData,
       { headers },
     );

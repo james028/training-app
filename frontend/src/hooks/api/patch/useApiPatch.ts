@@ -22,6 +22,7 @@ interface MutationVariables<
 > {
   bodyData?: TBody | null;
   paramsObject?: TParams | null;
+  customLink?: string;
   successMessage?: string;
   errorMessage?: string;
 }
@@ -31,12 +32,12 @@ const usePatchApi = <
   TBody extends Record<string, any>,
   TParams extends Record<string, any>,
 >({
-  link,
+  link: baseLink,
   params,
   headers,
   invalidateKeys = [],
 }: {
-  link: string;
+  link?: string;
   params?: Record<string, any> | null | undefined;
   headers?: RawAxiosRequestHeaders | undefined;
   invalidateKeys?: QueryKey[];
@@ -50,9 +51,16 @@ const usePatchApi = <
   const updatePatch = async ({
     paramsObject,
     bodyData,
+    customLink,
   }: MutationVariables<TBody, TParams>): Promise<TData> => {
+    const targetLink = customLink || baseLink || "";
+
+    if (!targetLink) {
+      throw new Error("Brak zdefiniowanego linku dla mutacji PATCH.");
+    }
+
     const result = await axios.patch<TData>(
-      endpointWithParams(link, params, getParams(paramsObject)),
+      endpointWithParams(targetLink, params, getParams(paramsObject)),
       bodyData,
       { headers },
     );

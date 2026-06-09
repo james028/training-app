@@ -1,122 +1,129 @@
-import React, { useState } from "react";
-import useGetApi from "../../hooks/api/get/useApiGet";
+import React from "react";
 import { API_ENDPOINTS, URL } from "../../constants";
-import { CHECKLIST_KEYS } from "../../constants/query-keys";
-import { useToastError } from "../../hooks/useToastError/useToastError";
-import { useAppContext } from "../../appContext/appContext";
-import usePatchApi from "../../hooks/api/patch/useApiPatch";
-import useDeleteApi from "../../hooks/api/delete/useApiDelete";
 import toast from "react-hot-toast";
-import usePostApi from "../../hooks/api/post/useApiPost";
+import { TodoSet, useChecklist } from "./hooks/useChecklist";
+import { useToastError } from "../../hooks/useToastError/useToastError";
+import { useForm } from "react-hook-form";
 
-export type TodoItemDto = {
-  id: string;
-  text: string;
-  completed: boolean;
-  userId: string;
-  order: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type GetTodosResponseDto = {
-  success: boolean;
-  items: TodoItemDto[];
-};
+interface FormValues {
+  newItemText: string;
+  selectedRadioId: string;
+}
 
 const SimpleCheckList = () => {
-  const [newItemText, setNewItemText] = useState("");
-  const [togglingId, setTogglingId] = useState<string | null>(null);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-
-  const { auth } = useAppContext();
-  const token = auth?.data?.accessToken ?? null;
+  const { register, handleSubmit, watch } = useForm<FormValues>({
+    defaultValues: {
+      newItemText: "",
+      selectedRadioId: "",
+    },
+  });
+  const selectedRadioId = watch("selectedRadioId");
+  const newItemText = watch("newItemText");
 
   const {
-    data: checkListData,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useGetApi<GetTodosResponseDto>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.LIST}`,
-    queryKey: CHECKLIST_KEYS.checkList(),
-    headers: { Authorization: `Bearer ${token}` },
-  });
+    checkListItems,
+    createSet,
+    createItem,
+    updateItem,
+    removeSet,
+    removeItem,
+    ...query
+  } = useChecklist();
+  const { isError, error, isLoading } = query;
   useToastError(isError, error);
 
-  const checkListItems = checkListData?.items ?? [];
-
-  const { mutateAsync: createMutate } = usePostApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE}`,
-    invalidateKeys: [CHECKLIST_KEYS.checkListCreate()],
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const { mutateAsync: editMutate } = usePatchApi<any, any, any>({
-    link: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(togglingId ?? "")}`,
-    //queryKey: CHECKLIST_KEYS.checkListToggle(togglingId ?? ""),
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const { mutateAsync: removeMutate } = useDeleteApi<any, any, any>(
-    `${URL}${API_ENDPOINTS.CHECKLIST.DELETE(removingId ?? "")}`,
-    [
-      CHECKLIST_KEYS.checkListDelete(removingId ?? ""),
-      CHECKLIST_KEYS.checkList(),
-    ],
-    null,
-    { Authorization: `Bearer ${token}` },
-  );
-
-  const handleAdd = async () => {
-    if (!newItemText.trim()) return;
+  const handleAddNewItemOnSubmit = async (data: FormValues) => {
     try {
-      await createMutate({ bodyData: { text: newItemText } });
+      await createItem.mutateAsync({
+        bodyData: { text: data.newItemText },
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_ITEM(data.selectedRadioId)}`,
+      });
       toast.success("Dodano!");
-      await refetch?.();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
-    } finally {
-      setNewItemText("");
     }
   };
 
-  const handleToggle = async (id: string) => {
+  const handleAddNewSet = async () => {
     try {
-      setTogglingId(id);
-      await editMutate({});
-      toast.success("Edytowanu!");
-      await refetch?.();
+      await createSet.mutateAsync({ bodyData: { setName: null } });
+      toast.success("Dodano nowy set!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
-    } finally {
-      setTogglingId(null);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleToggle = async (
+    setId: string,
+    itemId: string,
+    completed: boolean,
+  ) => {
     try {
-      setRemovingId(id);
-      await removeMutate({});
-      toast.success("Usunięto!");
-      await refetch?.();
+      await updateItem.mutateAsync({
+        bodyData: { completed },
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.UPDATE_ITEM(setId, itemId)}`,
+      });
+      toast.success("Edytowano!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
-    } finally {
-      setRemovingId(null);
     }
   };
 
-  const restCount = checkListItems.filter((item) => !item.completed).length;
-  const totalCount = checkListItems.length;
-  const width = `${(restCount / totalCount) * 100}`;
+  const handleDeleteSet = async (setId: string) => {
+    try {
+      await removeSet.mutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_SET(setId)}`,
+      });
+      toast.success("Usunięto set!");
+    } catch (error) {
+      let message = error instanceof Error ? error.message : "Błąd zapisu";
+      console.log(message);
+      toast.error(message);
+    }
+  };
+
+  const handleDelete = async (setId: string, itemId: string) => {
+    try {
+      await removeItem.mutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.DELETE_ITEM(setId, itemId)}`,
+      });
+      toast.success("Usunięto item!");
+    } catch (error) {
+      let message = error instanceof Error ? error.message : "Błąd zapisu";
+      console.log(message);
+      toast.error(message);
+    }
+  };
+
+  const addNewSetButton = () => {
+    return (
+      <button
+        onClick={handleAddNewSet}
+        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Dodaj nowy set
+      </button>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -126,6 +133,119 @@ const SimpleCheckList = () => {
     );
   }
 
+  if (checkListItems?.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        Brak zadań. Dodaj pierwsze!
+        {addNewSetButton()}
+      </div>
+    );
+  }
+
+  const renderSetItems = (data: TodoSet) => {
+    if (data.items.length === 0) {
+      return <p className="text-gray-600 text-sm mb-4">Brak danych w secie</p>;
+    } else {
+      return data.items.map((item) => (
+        <div
+          key={item.id}
+          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+        >
+          <label className="flex-shrink-0 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={item.completed ?? false}
+              onChange={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                handleToggle(data.id, item.id, event.target.checked);
+              }}
+              className="hidden peer"
+            />
+
+            <div
+              className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all
+              ${
+                item.completed
+                  ? "bg-green-500 border-green-500"
+                  : "border-gray-300 hover:border-green-400"
+              }
+              peer-focus:ring-2 peer-focus:ring-green-300
+            `}
+            >
+              {item.completed && (
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+            </div>
+          </label>
+          <span
+            className={`flex-1 ${
+              item.completed ? "text-gray-500 line-through" : "text-gray-900"
+            }`}
+          >
+            {item.text}
+          </span>
+          <button
+            onClick={() => handleDelete(data.id, item.id)}
+            className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
+      ));
+    }
+  };
+
+  const renderStatusBar = (data: TodoSet) => {
+    if (!data) return "Brak";
+    const { items } = data;
+    const restCount = items.filter((item) => !item.completed).length;
+    const totalCount = items.length;
+    const width = `${(restCount / totalCount) * 100}`;
+
+    return (
+      <>
+        <p className="text-gray-600">
+          Zostało: {restCount} z {totalCount}
+        </p>
+        {restCount > 0 && (
+          <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-green-500 h-full transition-all duration-300"
+              style={{
+                width: `${width}%`,
+              }}
+            />
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-2xl mx-auto">
@@ -134,110 +254,70 @@ const SimpleCheckList = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Moja Checklista
             </h1>
-            <p className="text-gray-600">
-              Zostało: {restCount} z {totalCount}
-            </p>
-            {restCount > 0 && (
-              <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-green-500 h-full transition-all duration-300"
-                  style={{
-                    width: `${width}%`,
-                  }}
-                />
-              </div>
-            )}
           </div>
-
-          <div className="mb-6 flex gap-2">
-            <input
-              type="text"
-              value={newItemText}
-              onChange={(e) => setNewItemText(e.target.value)}
-              //onKeyPress={(e) => e.key === "Enter" && handleAdd()}
-              placeholder="Dodaj nowy punkt..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={handleAdd}
-              disabled={!newItemText.trim()}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Dodaj
-            </button>
-          </div>
-
+          <form onSubmit={handleSubmit(handleAddNewItemOnSubmit)}>
+            <div className="mb-6 flex gap-2">
+              <input
+                type="text"
+                {...register("newItemText", { required: true })}
+                //onKeyPress={(e) => e.key === "Enter" && handleAdd()}
+                placeholder="Dodaj nowy punkt..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                disabled={!newItemText.trim() || !selectedRadioId}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                Dodaj
+              </button>
+            </div>
+          </form>
           <div className="space-y-2">
-            {checkListItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                Brak zadań. Dodaj pierwsze!
-              </div>
-            ) : (
-              checkListItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
-                >
-                  <button
-                    onClick={() => handleToggle(item.id)}
-                    className="flex-shrink-0"
-                  >
-                    <div
-                      className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
-                        item.completed
-                          ? "bg-green-500 border-green-500"
-                          : "border-gray-300 hover:border-green-400"
-                      }`}
-                    >
-                      {item.completed && (
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                  </button>
-
-                  <span
-                    className={`flex-1 ${
-                      item.completed
-                        ? "text-gray-500 line-through"
-                        : "text-gray-900"
-                    }`}
-                  >
-                    {item.text}
-                  </span>
-
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            {checkListItems.map((checklistItem) => {
+              return (
+                <div key={checklistItem.id}>
+                  {renderStatusBar(checklistItem)}
+                  <label className="flex items-center justify-between p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition group">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        id={checklistItem.id}
+                        value={checklistItem.id}
+                        {...register("selectedRadioId")}
                       />
-                    </svg>
-                  </button>
+                      <span className="text-sm text-gray-800">
+                        {checklistItem.name}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        handleDeleteSet(checklistItem.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition text-gray-400 hover:text-red-500"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 7h12M9 7v10m6-10v10M10 4h4"
+                        />
+                      </svg>
+                    </button>
+                  </label>
+                  <div>{renderSetItems(checklistItem)}</div>
                 </div>
-              ))
-            )}
+              );
+            })}
+            {addNewSetButton()}
           </div>
         </div>
       </div>
