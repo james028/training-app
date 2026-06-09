@@ -71,7 +71,6 @@ export const useChecklist = () => {
     },
   );
 
-  console.log(query, "query");
   return {
     ...query,
     checkListItems: query.data?.sets ?? [],

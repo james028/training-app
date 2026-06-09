@@ -1,6 +1,5 @@
 import usePostApi from "../api/post/useApiPost";
 import { API_ENDPOINTS, URL } from "../../constants";
-import useGetApi from "../api/get/useApiGet";
 import {
   convertObjectWithNumbersToString,
   createDateTime,
@@ -24,6 +23,8 @@ type CreateActivityDTO = {
 };
 
 type UpdateActivityDTO = Partial<CreateActivityDTO>;
+
+type ActionType = "add" | "edit";
 
 const mapFormDataToBody = (
   data: RegistrationFormFields,
@@ -75,27 +76,14 @@ export const useAddEditFormService = (
     toast.error("Brak id dla edycji");
   }
 
-  const { mutateAsync: addMutateAsync } = usePostApi({
+  const addActivity = usePostApi({
     link: `${URL}${API_ENDPOINTS.CALENDAR.CREATE_ACTIVITY}`,
-    invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
+    invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList({ year, month })],
     headers: { Authorization: `Bearer ${token}` },
   });
 
   const { mutateAsync: editMutateAsync } = usePatchApi<any, any, any>({
-    //link: `${URL}${linkEdit}`,
-    //link: ,
-    //invalidateKeys: [["editAddedTraining"]],
-    //invalidateKeys: [CALENDAR_KEYS.editCalendarActivity()],
-    invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList(dateObject)],
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const paramsFilters = { year, month };
-  //tu poprawić z tym refetchem
-  const { refetch: refetchCalendarData } = useGetApi<any>({
-    link: `${URL}${API_ENDPOINTS.CALENDAR.MONTHLY_LIST}`,
-    queryKey: CALENDAR_KEYS.calendarMonthlyList(paramsFilters),
-    paramsObject: paramsFilters,
+    invalidateKeys: [CALENDAR_KEYS.calendarMonthlyList({ year, month })],
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -112,20 +100,18 @@ export const useAddEditFormService = (
 
     try {
       const mutators = {
-        add: addMutateAsync({ bodyData }),
-        edit: editMutateAsync({
-          bodyData,
-          customLink: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id)}`,
-        }),
+        add: () => addActivity.mutateAsync({ bodyData }),
+        edit: () =>
+          editMutateAsync({
+            bodyData,
+            customLink: `${URL}${API_ENDPOINTS.CALENDAR.EDIT_ACTIVITY(id)}`,
+          }),
       };
-      // if (!currentMutate) {
-      //   //throw new Error(`Nieznany typ akcji formularza: ${type}`);
-      //   toast.error(`Nieznany typ akcji formularza: ${type}`);
-      // }
-      //const currentMutate = mutators[type];
-      await mutators[type];
-      //pokombinować jako invalide
-      await refetchCalendarData();
+      if (!mutators[type]) {
+        //throw new Error(`Nieznany typ akcji formularza: ${type}`);
+        toast.error(`Nieznany typ akcji formularza: ${type}`);
+      }
+      await mutators[type as ActionType]();
     } catch (error) {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       throw new Error(
@@ -138,9 +124,3 @@ export const useAddEditFormService = (
 
   return { handleSubmitForm };
 };
-
-//invalidate key
-//to w id w kalendarzu +
-//backend do edycji +
-//calendar - czy id number czy string - sugerowane string w id +
-//jesli edycja to typ aktywnosci wypełniony w select +
