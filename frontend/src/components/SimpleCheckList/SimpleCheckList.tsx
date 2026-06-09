@@ -1,38 +1,48 @@
-import React, { useState } from "react";
+import React from "react";
 import { API_ENDPOINTS, URL } from "../../constants";
 import toast from "react-hot-toast";
 import { TodoSet, useChecklist } from "./hooks/useChecklist";
+import { useToastError } from "../../hooks/useToastError/useToastError";
+import { useForm } from "react-hook-form";
+
+interface FormValues {
+  newItemText: string;
+  selectedRadioId: string;
+}
 
 const SimpleCheckList = () => {
-  const [newItemText, setNewItemText] = useState("");
-  const [selectedRadioId, setSelectedRadioId] = useState<string | null>(null);
+  const { register, handleSubmit, watch } = useForm<FormValues>({
+    defaultValues: {
+      newItemText: "",
+      selectedRadioId: "",
+    },
+  });
+  const selectedRadioId = watch("selectedRadioId");
+  const newItemText = watch("newItemText");
 
   const {
     checkListItems,
-    isLoading,
     createSet,
     createItem,
     updateItem,
     removeSet,
     removeItem,
+    ...query
   } = useChecklist();
+  const { isError, error, isLoading } = query;
+  useToastError(isError, error);
 
-  const handleAddNewItem = async () => {
-    if (!newItemText.trim()) return;
+  const handleAddNewItemOnSubmit = async (data: FormValues) => {
     try {
-      if (!selectedRadioId) return;
-
       await createItem.mutateAsync({
-        bodyData: { text: newItemText },
-        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE(selectedRadioId)}`,
+        bodyData: { text: data.newItemText },
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.CREATE_ITEM(data.selectedRadioId)}`,
       });
       toast.success("Dodano!");
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
-    } finally {
-      setNewItemText("");
     }
   };
 
@@ -55,7 +65,7 @@ const SimpleCheckList = () => {
     try {
       await updateItem.mutateAsync({
         bodyData: { completed },
-        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.TOGGLE(setId, itemId)}`,
+        customLink: `${URL}${API_ENDPOINTS.CHECKLIST.UPDATE_ITEM(setId, itemId)}`,
       });
       toast.success("Edytowano!");
     } catch (error) {
@@ -245,24 +255,23 @@ const SimpleCheckList = () => {
               Moja Checklista
             </h1>
           </div>
-          <div className="mb-6 flex gap-2">
-            <input
-              type="text"
-              value={newItemText}
-              onChange={(e) => setNewItemText(e.target.value)}
-              //onKeyPress={(e) => e.key === "Enter" && handleAdd()}
-              placeholder="Dodaj nowy punkt..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={handleAddNewItem}
-              disabled={!newItemText.trim() || !selectedRadioId}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Dodaj
-            </button>
-          </div>
-
+          <form onSubmit={handleSubmit(handleAddNewItemOnSubmit)}>
+            <div className="mb-6 flex gap-2">
+              <input
+                type="text"
+                {...register("newItemText", { required: true })}
+                //onKeyPress={(e) => e.key === "Enter" && handleAdd()}
+                placeholder="Dodaj nowy punkt..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                disabled={!newItemText.trim() || !selectedRadioId}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                Dodaj
+              </button>
+            </div>
+          </form>
           <div className="space-y-2">
             {checkListItems.map((checklistItem) => {
               return (
@@ -274,10 +283,7 @@ const SimpleCheckList = () => {
                         type="radio"
                         id={checklistItem.id}
                         value={checklistItem.id}
-                        checked={selectedRadioId === checklistItem.id}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>,
-                        ) => setSelectedRadioId(event.target.value)}
+                        {...register("selectedRadioId")}
                       />
                       <span className="text-sm text-gray-800">
                         {checklistItem.name}

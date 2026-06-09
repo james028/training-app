@@ -11,21 +11,17 @@ const {
 } = require("../UserRegisterLogin/middleware/auth.middleware");
 
 exports.routesConfig = function (app) {
-  app.get("/api/checklist/list", authMiddleware, getChecklistItems);
-  app.post(
-    "/api/checklist/set/create",
-    authMiddleware,
-    createNewSetInChecklist,
-  );
-  app.post("/api/checklist/create/:setId", authMiddleware, createChecklistItem);
+  app.get("/api/checklists", authMiddleware, getChecklistItems);
+  app.post("/api/checklists", authMiddleware, createNewSetInChecklist);
+  app.delete("/api/checklists/:setId", authMiddleware, deleteChecklistSet);
+  app.post("/api/checklists/:setId/items", authMiddleware, createChecklistItem);
   app.patch(
-    "/api/checklist/:setId/toggle-item/:itemId",
+    "/api/checklists/:setId/items/:itemId",
     authMiddleware,
     toggleChecklistItem,
   );
-  app.delete("/api/checklist/:setId", authMiddleware, deleteChecklistSet);
   app.delete(
-    "/api/checklist/:setId/item-remove/:itemId",
+    "/api/checklists/:setId/items/:itemId",
     authMiddleware,
     deleteChecklistItem,
   );

@@ -18,13 +18,13 @@ export const API_ENDPOINTS = {
     DELETE_ACTIVITY: (id: string) => `api/activities/delete/${id}`,
   },
   CHECKLIST: {
-    LIST: "api/checklist/list",
-    CREATE: (setId: string) => `api/checklist/create/${setId}`,
-    CREATE_SET: "api/checklist/set/create",
-    TOGGLE: (setId: string, itemId: string) =>
-      `api/checklist/${setId}/toggle-item/${itemId}`,
-    DELETE_SET: (setId: string) => `api/checklist/${setId}`,
+    LIST: "api/checklists",
+    CREATE_SET: "api/checklists",
+    DELETE_SET: (setId: string) => `api/checklists/${setId}`,
+    CREATE_ITEM: (setId: string) => `api/checklists/${setId}/items`,
+    UPDATE_ITEM: (setId: string, itemId: string) =>
+      `api/checklists/${setId}/items/${itemId}`,
     DELETE_ITEM: (setId: string, itemId: string) =>
-      `api/checklist/${setId}/item-remove/${itemId}`,
+      `api/checklists/${setId}/items/${itemId}`,
   },
 } as const;
