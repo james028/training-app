@@ -6,51 +6,42 @@ import useGetApi from "../../../hooks/api/get/useApiGet";
 
 import Loading from "../../shared/Loading/Loading";
 import { useAppContext } from "../../../appContext/appContext";
-import { URL } from "../../../constants";
+import { API_ENDPOINTS, URL } from "../../../constants";
+import { PLANK_KEYS } from "../../../constants/query-keys";
+import { useToastError } from "../../../hooks/useToastError/useToastError";
+import { TPlankData } from "../../../types";
 
 const PlankMonthList = () => {
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
 
-  const { data, status, isRefetching } = useGetApi({
-    link: `${URL}api/plank/list`,
-    queryKey: ["plankList"],
+  const { data, isLoading, error, isError } = useGetApi<TPlankData>({
+    link: `${URL}${API_ENDPOINTS.PLANK.LIST}`,
+    queryKey: PLANK_KEYS.plankList(),
     headers: { Authorization: `Bearer ${token}` },
   });
+  useToastError(isError, error);
+  const plankList = data?.data ?? [];
 
-  //zmienic
-  if (status === "loading" || isRefetching) {
+  if (isLoading) {
     return <Loading />;
   }
-
-  if (status === "error") {
-    return <div>Error...</div>;
-  }
-
-  const data1: any[] = [[]];
+  if (plankList.length === 0) return <div className="mt-3">Brak danych</div>;
 
   return (
     <>
-      {data1?.length > 0 ? (
-        data1.map((itemData: any, index: number) => {
-          console.log(itemData, "itemData", itemData);
-          return (
-            <StyledPlankSectionContainer key={index}>
-              {Object.keys(itemData).map((item: string, index: number) => {
-                return (
-                  <PlankMonthListItem
-                    key={index}
-                    itemData={itemData}
-                    item={item}
-                  />
-                );
-              })}
-            </StyledPlankSectionContainer>
-          );
-        })
-      ) : (
-        <div className="mt-3">Brak danych</div>
-      )}
+      {plankList.map((itemData, index: number) => {
+        //console.log(itemData, "itemData");
+        return (
+          <StyledPlankSectionContainer key={index}>
+            {Object.entries(itemData).map(([key, value]) => {
+              return (
+                <PlankMonthListItem key={key} itemData={itemData} item={key} />
+              );
+            })}
+          </StyledPlankSectionContainer>
+        );
+      })}
     </>
   );
 };

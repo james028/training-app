@@ -14,12 +14,15 @@ import { MONTH_NAMES_MAP } from "../../../constants";
 import { MonthIndex, TPlankDayData, TPlankMonthData } from "../../../types";
 
 interface PlankMonthListItem {
-  itemData: Record<string, TPlankMonthData[] | any[]>;
+  //itemData: TPlankMonthData;
+  itemData: any;
   item: string;
 }
 
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
+
+  console.log(itemData, "itemData 11111");
 
   const {
     toggleOpenFormPanelTraining,

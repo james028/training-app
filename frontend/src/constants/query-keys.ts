@@ -70,3 +70,8 @@ export const AUTH_KEYS = {
   all: ["auth"] as const,
   authMe: () => [...AUTH_KEYS.all, "authMe"] as const,
 };
+
+export const PLANK_KEYS = {
+  all: ["plank"] as const,
+  plankList: () => [...PLANK_KEYS.all, "list"] as const,
+};

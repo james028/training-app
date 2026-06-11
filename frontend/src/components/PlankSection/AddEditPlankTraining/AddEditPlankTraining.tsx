@@ -19,11 +19,13 @@ import {
   MonthObjectMap,
 } from "../../../types";
 import {
+  API_ENDPOINTS,
   MONTH_NAMES_MAP,
   RADIO_INPUT_DIFFERENT_TYPES_PLANK_VALUES,
   URL,
 } from "../../../constants";
 import toast from "react-hot-toast";
+import { PLANK_KEYS } from "../../../constants/query-keys";
 
 const AddEditPlankTraining = () => {
   const {
@@ -32,7 +34,7 @@ const AddEditPlankTraining = () => {
     objectData,
   } = usePlankSectionContext();
 
-  const { link, auth } = useAppContext();
+  const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
 
   const {
@@ -43,17 +45,13 @@ const AddEditPlankTraining = () => {
   } = useFormContext();
 
   const { mutateAsync } = usePostApi({
-    link: `${URL}api/plank/create`,
-    invalidateKeys: [["createPlank"]],
+    link: `${URL}${API_ENDPOINTS.PLANK.CREATE}`,
+    invalidateKeys: [PLANK_KEYS.plankList()],
     headers: { Authorization: `Bearer ${token}` },
   });
   const { mutateAsync: updateMutateAsync } = usePatchApi({
-    link: `${URL}${link}/update`,
-    invalidateKeys: [["updatePlank"]],
-  });
-  const { refetch: refetchList } = useGetApi({
-    link: `${URL}api/plank/list`,
-    queryKey: ["plankList"],
+    link: `${URL}${API_ENDPOINTS.PLANK.UPDATE}`,
+    invalidateKeys: [PLANK_KEYS.plankList()],
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -82,11 +80,9 @@ const AddEditPlankTraining = () => {
       }
       setToggleOpenFormPanelTraining(false);
       reset();
-      await refetchList?.();
     } catch (error) {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
-      //console.log((error && error?.message) || "");
     }
   });
 
