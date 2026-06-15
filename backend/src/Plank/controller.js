@@ -4,26 +4,29 @@ const PlankDataModel = require("./model");
 // @desc    Gets all plank trainings from every month
 // @route   GET /api/plank/list
 exports.getPlank = asyncHandler(async (req, res) => {
-  const { year } = req.query;
+  //const { year } = req.query;
+  const year = 2026;
   const userId = req.user.id;
 
   const query = { userId };
 
   if (year) {
-    query.year = {
-      date: {
-        $gte: new Date(`${year}-01-01`),
-        $lte: new Date(`${year}-12-31T23:59:59`),
-      },
+    // Naprawa: date musi być bezpośrednio w obiekcie query
+    query.date = {
+      $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+      $lte: new Date(`${year}-12-31T23:59:59.999Z`),
     };
   }
+
+  console.log(query);
 
   const sessions = await PlankDataModel.find(query).sort({ date: 1 });
 
   if (!sessions) {
-    res.status(404).json({ message: "ie znaleziono danych" });
+    res.status(404).json({ message: "nie znaleziono danych" });
   }
 
+  //await PlankDataModel.deleteMany({ userId });
   res.status(200).json({ data: sessions });
 });
 
@@ -33,9 +36,9 @@ exports.createPlank = asyncHandler(async (req, res) => {
   const { month, day, duration, isDifferentExercises } = req.body;
   const currentYear = new Date().getFullYear();
 
-  if (!id) {
-    res.status(401).json({ message: "Nie istnieje id użytkownika" });
-  }
+  // if (!id) {
+  //   res.status(401).json({ message: "Nie istnieje id użytkownika" });
+  // }
 
   if (!month || !day || !duration || isDifferentExercises === undefined) {
     return res
@@ -53,12 +56,10 @@ exports.createPlank = asyncHandler(async (req, res) => {
     isDifferentExercises,
   });
 
-  res.status(201).json(
-    json({
-      data: newSession,
-      message: `Rekord treningu utworzono dla userId: ${id}`,
-    }),
-  );
+  res.status(201).json({
+    data: newSession,
+    message: `Rekord treningu utworzono dla userId: ${req.user.id}`,
+  });
 });
 
 // @desc    Update exist training

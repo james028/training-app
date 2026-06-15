@@ -30,7 +30,7 @@ export const API_ENDPOINTS = {
   PLANK: {
     LIST: "api/plank/list",
     CREATE: "api/plank/create",
-    UPDATE: "api/plank/update",
-    DELETE: "api/plank/delete",
+    UPDATE: (id: string) => `api/plank/update/${id}`,
+    DELETE: (id: string) => `api/plank/delete/${id}`,
   },
 } as const;

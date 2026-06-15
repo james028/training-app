@@ -1,4 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("../common/mongoose.service");
+
+const Schema = mongoose.Schema;
 
 const PlankSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },

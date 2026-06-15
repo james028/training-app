@@ -34,6 +34,8 @@ const AddEditPlankTraining = () => {
     objectData,
   } = usePlankSectionContext();
 
+  console.log(objectData, "objectData");
+
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
 
@@ -50,7 +52,6 @@ const AddEditPlankTraining = () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   const { mutateAsync: updateMutateAsync } = usePatchApi({
-    link: `${URL}${API_ENDPOINTS.PLANK.UPDATE}`,
     invalidateKeys: [PLANK_KEYS.plankList()],
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -60,6 +61,7 @@ const AddEditPlankTraining = () => {
     let convertedBodyData = {
       ...data,
       duration: convertObjectWithNumbersToString(data.duration),
+      isDifferentExercises: data.isDifferentExercises === true,
     };
 
     try {
@@ -72,6 +74,7 @@ const AddEditPlankTraining = () => {
         };
         await updateMutateAsync({
           bodyData: editedData,
+          customLink: `${URL}${API_ENDPOINTS.PLANK.UPDATE("22")}`,
         });
       } else {
         await mutateAsync({
@@ -86,6 +89,7 @@ const AddEditPlankTraining = () => {
     }
   });
 
+  //ta cała logika do odzielnego kopmponentu
   const getDays = (year: number, month: number): number => {
     return DateTime.local(year, month).daysInMonth ?? 0;
   };
