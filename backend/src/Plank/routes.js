@@ -14,13 +14,30 @@ const {
 const {
   authMiddleware,
 } = require("../UserRegisterLogin/middleware/auth.middleware");
+const {
+  validateCreatePlank,
+  validateUpdatePlank,
+  validateObjectId,
+  validateYearQuery,
+} = require("./validators/plankValidators");
 
 exports.routesConfig = function (app) {
-  //app.get("/api/plank/list", authMiddleware, getPlank);
-  app.get("/api/plank/list", getPlank);
+  app.get("/api/plank/list", authMiddleware, validateYearQuery, getPlank);
   app.post("/api/plank/create", authMiddleware, createPlank);
-  app.patch("/api/plank/update", updatePlank);
-  app.delete("/api/plank/delete", deletePlank);
+  app.patch(
+    "/api/plank/update/:id",
+    authMiddleware,
+    validateObjectId,
+    validateCreatePlank,
+    updatePlank,
+  );
+  app.delete(
+    "/api/plank/delete/:id",
+    authMiddleware,
+    validateObjectId,
+    validateUpdatePlank,
+    deletePlank,
+  );
 
   app.get("/api/plank/test/list", getPlankTest);
   app.post("/api/plank/test/create", createPlankTest);
