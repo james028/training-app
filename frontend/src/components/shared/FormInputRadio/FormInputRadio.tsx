@@ -4,6 +4,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 import RadioInputs from "./RadioInputs/RadioInputs";
 import { get } from "../../../utils";
+import { StyledRadioOrCheckboxButtonContainer } from "./style";
 
 export type FormRadioInputProps<TFormValues extends FieldValues> = {
   id: string;
@@ -11,10 +12,11 @@ export type FormRadioInputProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
   radioOptions: any[];
   rules?: RegisterOptions;
-  //zmienic
+  //hmm ?
   errors?: any;
   className?: string;
   leftSideLabel?: boolean;
+  defaultValue?: string | boolean;
 };
 
 const FormInputRadio = <TFormValues extends Record<string, unknown>>({
@@ -26,6 +28,7 @@ const FormInputRadio = <TFormValues extends Record<string, unknown>>({
   errors,
   className,
   leftSideLabel,
+  defaultValue,
   ...props
 }: FormRadioInputProps<TFormValues>): JSX.Element => {
   // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
@@ -52,7 +55,6 @@ const FormInputRadio = <TFormValues extends Record<string, unknown>>({
       {/*</StyledRadioOrCheckboxButtonContainer>*/}
       <ErrorMessage
         errors={errors ?? {}}
-        // zmienic to any
         name={name as any}
         render={({ message }) => (
           <FormErrorMessage className="mt-1">{message}</FormErrorMessage>

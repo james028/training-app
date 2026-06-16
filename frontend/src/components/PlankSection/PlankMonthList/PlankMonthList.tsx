@@ -9,7 +9,8 @@ import { useAppContext } from "../../../appContext/appContext";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
-import { TPlankData } from "../../../types";
+import { TPlankData, TPlankMonthData } from "../../../types";
+import { dataPlank } from "../../../mock/plank-mock";
 
 const PlankMonthList = () => {
   const { auth } = useAppContext();
@@ -21,27 +22,42 @@ const PlankMonthList = () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   useToastError(isError, error);
-  const plankList = data?.data ?? [];
+  const plankListData = data?.data ?? [];
+
+  const initialAcc: Record<number, any[]> = {};
+  for (let i = 1; i <= 12; i++) {
+    initialAcc[i] = [];
+  }
+
+  const groupedData = plankListData?.reduce((acc, session: any) => {
+    const month = new Date(session.date).getMonth() + 1;
+    if (!acc[month]) acc[month] = [];
+    acc[month].push(session);
+    return acc;
+  }, initialAcc);
 
   if (isLoading) {
     return <Loading />;
   }
-  if (plankList.length === 0) return <div className="mt-3">Brak danych</div>;
+  if (plankListData.length === 0) {
+    return <div className="mt-3">Brak danych</div>;
+  }
+
+  console.log({ plankListData, groupedData, dataPlank });
 
   return (
     <>
-      {plankList.map((itemData, index: number) => {
-        //console.log(itemData, "itemData");
-        return (
-          <StyledPlankSectionContainer key={index}>
-            {Object.entries(itemData).map(([key, value]) => {
-              return (
-                <PlankMonthListItem key={key} itemData={itemData} item={key} />
-              );
-            })}
-          </StyledPlankSectionContainer>
-        );
-      })}
+      <StyledPlankSectionContainer>
+        {Object.entries(groupedData).map(([key, _]) => {
+          return (
+            <PlankMonthListItem
+              key={key}
+              itemData={groupedData[key as any] || []}
+              item={key}
+            />
+          );
+        })}
+      </StyledPlankSectionContainer>
     </>
   );
 };
