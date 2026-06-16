@@ -9,8 +9,24 @@ import { useAppContext } from "../../../appContext/appContext";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
-import { TPlankData, TPlankMonthData } from "../../../types";
-import { dataPlank } from "../../../mock/plank-mock";
+import { TPlankData } from "../../../types";
+import { DateTime } from "luxon";
+
+export type PlankSessionDTO = {
+  id: string;
+  month: string; // "01" - "12"
+  day: string; // "01" - "31"
+  duration: string; // "HH:mm:ss"
+  isDifferentExercises: boolean;
+};
+
+export type SessionDTO = {
+  id: string;
+  userId: string;
+  duration: string;
+  date: string;
+  isDifferentExercises: boolean;
+};
 
 const PlankMonthList = () => {
   const { auth } = useAppContext();
@@ -24,15 +40,27 @@ const PlankMonthList = () => {
   useToastError(isError, error);
   const plankListData = data?.data ?? [];
 
-  const initialAcc: Record<number, any[]> = {};
+  const initialAcc: Record<string, PlankSessionDTO[]> = {};
   for (let i = 1; i <= 12; i++) {
     initialAcc[i] = [];
   }
 
   const groupedData = plankListData?.reduce((acc, session: any) => {
-    const month = new Date(session.date).getMonth() + 1;
-    if (!acc[month]) acc[month] = [];
-    acc[month].push(session);
+    const dt = DateTime.fromISO(session.date, { zone: "utc" });
+    const monthIndex = DateTime.fromISO(session.date, { zone: "utc" }).month;
+    const month = dt.toFormat("MM");
+    const day = dt.toFormat("dd");
+
+    console.log(session, "session");
+
+    if (!acc[monthIndex]) acc[monthIndex] = [];
+    acc[monthIndex].push({
+      id: session.id,
+      month,
+      day,
+      duration: session.duration,
+      isDifferentExercises: session.isDifferentExercises,
+    });
     return acc;
   }, initialAcc);
 
@@ -42,8 +70,7 @@ const PlankMonthList = () => {
   if (plankListData.length === 0) {
     return <div className="mt-3">Brak danych</div>;
   }
-
-  console.log({ plankListData, groupedData, dataPlank });
+  console.log(groupedData);
 
   return (
     <>
@@ -52,7 +79,7 @@ const PlankMonthList = () => {
           return (
             <PlankMonthListItem
               key={key}
-              itemData={groupedData[key as any] || []}
+              itemData={groupedData[key] || []}
               item={key}
             />
           );

@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  DeepMap,
-  FieldError,
-  FieldValues,
-  Path,
-  RegisterOptions,
-} from "react-hook-form";
-import Select from "./Select/Select";
+import { FieldValues, Path, RegisterOptions } from "react-hook-form";
+import Select, { SelectOption } from "./Select/Select";
 import { ErrorMessage } from "@hookform/error-message";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 import { get } from "../../../utils";
@@ -16,10 +10,9 @@ export type FormInputSelectProps<TFormValues extends FieldValues> = {
   label: string;
   name: Path<TFormValues>;
   rules?: RegisterOptions;
-  errors?: Partial<DeepMap<TFormValues, FieldError>>;
-  className: string;
-  //tu zmienić
-  options: any[] | null;
+  errors?: any;
+  className?: string;
+  options: SelectOption[] | null;
 };
 
 const FormInputSelect = <TFormValues extends Record<string, unknown>>({
@@ -30,26 +23,23 @@ const FormInputSelect = <TFormValues extends Record<string, unknown>>({
   errors,
   className,
   options,
-  ...props
 }: FormInputSelectProps<TFormValues>): JSX.Element => {
-  // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
   const errorMessages = get(errors, name);
-  const hasError = !!(errors && errorMessages);
+  const hasError = !!errorMessages;
 
   return (
     <div className={className} aria-live="polite">
       <Select
         id={id}
-        label={label}
         name={name}
-        className={`${
-          hasError
-            ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
-            : ""
-        }`}
-        rules={rules}
+        label={label}
         options={options}
-        {...props}
+        rules={rules}
+        className={
+          hasError
+            ? "border-red-600 focus:border-red-600 focus:ring-red-600"
+            : ""
+        }
       />
       <ErrorMessage
         errors={errors ?? {}}

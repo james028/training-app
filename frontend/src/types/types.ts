@@ -58,7 +58,15 @@ export type TPlankDayData = {
   day: string;
   duration: string;
   month: string;
-  _id?: string;
+  id: string;
+};
+
+export type PlankSessionDTO = {
+  id: string;
+  userId: string;
+  duration: string; // "HH:mm:ss"
+  date: string; // ISO string
+  isDifferentExercises: boolean;
 };
 
 export type TButtons = {
@@ -90,6 +98,21 @@ export type MonthObjectMap = Record<MonthIndex, MonthName>;
 export type ConvertedMonthObjectMap = Record<MonthIndex, MonthNameLower>;
 export type MonthNameLower = Lowercase<MonthName>;
 export type MonthDaysMap = Record<MonthNameLower, number>;
+export type MonthKey =
+  | "01"
+  | "02"
+  | "03"
+  | "04"
+  | "05"
+  | "06"
+  | "07"
+  | "08"
+  | "09"
+  | "10"
+  | "11"
+  | "12";
+
+export type MonthDays = Record<MonthKey, string[]>;
 
 export interface Duration {
   hour: string;
@@ -107,7 +130,7 @@ export interface PlankFormData {
 
   //tutaj ogarnąć
   // Opcjonalne pole 'id' na wypadek edycji istniejącego wpisu.
-  _id?: string;
+  id: string;
 }
 
 /** Typ dla danych przechowywanych w 'objectData' - może to być PlankFormData lub undefined. */

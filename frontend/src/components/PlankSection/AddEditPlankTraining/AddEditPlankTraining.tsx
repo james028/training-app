@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
@@ -10,14 +10,6 @@ import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
 import { convertObjectWithNumbersToString } from "../../../utils";
 import {
-  ConvertedMonthObjectMap,
-  MonthDaysMap,
-  MonthIndex,
-  MonthName,
-  MonthNameLower,
-  MonthObjectMap,
-} from "../../../types";
-import {
   API_ENDPOINTS,
   MONTH_NAMES_MAP,
   RADIO_INPUT_DIFFERENT_TYPES_PLANK_VALUES,
@@ -27,6 +19,28 @@ import toast from "react-hot-toast";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { PlankFormInput } from "../PlankSectionWrapper/PlankSectionWrapper";
 import { useDisplayDaysByMonth } from "../utils/useDisplayDaysByMonth";
+
+type BuildDatePayloadParams = {
+  month: string; // "01" - "12"
+  day: string; // "01" - "31"
+  year?: number; // opcjonalnie
+};
+const buildPlankDate = ({
+  month,
+  day,
+  year,
+}: BuildDatePayloadParams): string => {
+  const nowYear = year ?? DateTime.now().year;
+
+  return DateTime.fromObject(
+    {
+      year: nowYear,
+      month: Number(month),
+      day: Number(day),
+    },
+    { zone: "utc" },
+  ).toISO()!;
+};
 
 const AddEditPlankTraining = () => {
   const {
@@ -55,33 +69,49 @@ const AddEditPlankTraining = () => {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  console.log(objectData, "objectData");
+
+  useEffect(() => {
+    if (!objectData) return;
+
+    reset({
+      month: objectData.month ?? "",
+      day: objectData.day ?? "",
+      duration: objectData.duration ?? {
+        hour: "00",
+        minutes: "00",
+        seconds: "00",
+      },
+      // @ts-ignore
+      isDifferentExercises: objectData.isDifferentExercises ?? false,
+    });
+  }, [objectData, reset]);
+
   const onSubmit: SubmitHandler<PlankFormInput> = async (data) => {
-    const convertedBodyData = {
+    const bodyData = {
       ...data,
       duration: convertObjectWithNumbersToString(data.duration),
+      date: buildPlankDate({
+        month: data.month,
+        day: data.day,
+      }),
     };
 
     try {
       const isEditing = Object.keys(objectData ?? {}).length > 0;
 
       if (isEditing) {
-        const editedData = {
-          ...convertedBodyData,
-          day: Number(convertedBodyData.day),
-          id: objectData?._id,
-        };
-
-        if (!objectData?._id) {
+        if (!objectData?.id) {
           //inaczej?
           return;
         }
         await updateMutateAsync({
-          bodyData: editedData,
-          customLink: `${URL}${API_ENDPOINTS.PLANK.UPDATE(objectData?._id)}`,
+          bodyData,
+          customLink: `${URL}${API_ENDPOINTS.PLANK.UPDATE(objectData?.id)}`,
         });
       } else {
         await mutateAsync({
-          bodyData: convertedBodyData,
+          bodyData,
         });
       }
 
@@ -93,11 +123,11 @@ const AddEditPlankTraining = () => {
     }
   };
 
-  console.log(errors, "errors");
-
-  //ta cała logika do odzielnego kopmponentu
   const { month: monthValue } = watch();
   const { getDaysByMonth } = useDisplayDaysByMonth(monthValue);
+
+  console.log(getDaysByMonth(), "month");
+  console.log(getDaysByMonth(), "month");
 
   const isEditing = Object.keys(objectData ?? {}).length > 0;
   return (
@@ -125,12 +155,6 @@ const AddEditPlankTraining = () => {
                   name: month,
                 }),
               )}
-              // @ts-ignore
-              defaultValue={
-                MONTH_NAMES_MAP[
-                  objectData?.month as unknown as keyof typeof MONTH_NAMES_MAP
-                ]
-              }
             />
             <FormInputSelect<any>
               id="day"
@@ -140,12 +164,6 @@ const AddEditPlankTraining = () => {
               errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               options={getDaysByMonth()}
-              // @ts-ignore
-              defaultValue={getDaysByMonth()?.find(
-                (day: { value: number; name: string }) =>
-                  // @ts-ignore
-                  day === objectData?.day,
-              )}
             />
             <FormInputDuration<any>
               id="duration"

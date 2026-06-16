@@ -38,14 +38,16 @@ export const useDisplayDaysByMonth = (monthValue: string) => {
       monthDays[keyLower] = getDays(year, i);
     }
 
+    console.log(monthDays, "days");
     return monthDays;
   };
 
-  const getDaysByMonth = (): { value: number; name: string }[] => {
+  const getDaysByMonth = (): { value: string; name: string }[] => {
     //const { month: monthValue } = watch();
     const monthKey = parseInt(monthValue, 10);
 
     const convertedObjectMonthDays = createObjectMonthDays();
+
     const convertedObjectToLowerCase =
       convertObjectToLowerCase(MONTH_NAMES_MAP);
 
@@ -53,8 +55,15 @@ export const useDisplayDaysByMonth = (monthValue: string) => {
       convertedObjectToLowerCase[
         monthKey as keyof typeof convertedObjectToLowerCase
       ];
+    console.log(
+      convertedObjectMonthDays,
+      convertedObjectMonthDays[monthName],
+      "converted",
+    );
 
     const days = monthValue ? convertedObjectMonthDays[monthName] : [];
+
+    console.log(days, "days");
 
     return days
       ? Array(days)
@@ -62,7 +71,7 @@ export const useDisplayDaysByMonth = (monthValue: string) => {
           .map((_: any, number: number) => {
             const value = number + 1;
             return {
-              value,
+              value: String(value).padStart(2, "0"),
               name: String(value),
             };
           })

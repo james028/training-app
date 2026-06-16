@@ -69,6 +69,8 @@ exports.updatePlank = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
 
+  console.log(updatedData);
+
   // --- ZABEZPIECZENIE ---
   // Usuwamy pola, których użytkownik nie ma prawa zmieniać samemu
   delete updatedData.userId;
@@ -86,6 +88,8 @@ exports.updatePlank = asyncHandler(async (req, res) => {
     { $set: updatedData },
     { new: true }, // Zwraca zaktualizowany dokument
   );
+
+  console.log(session, "sess");
 
   if (!session)
     return res.status(404).json({ message: "Sesja nie znaleziona" });

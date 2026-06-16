@@ -26,15 +26,15 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     setToggleOpenFormPanelTraining,
     setObjectData,
   } = usePlankSectionContext();
-
-  const validate = (time: number) => {
-    if (time > 59 || time < 0) {
-      throw new Error(
-        "Hours, minutes and seconds values have to be between 0 and 59.",
-      );
-    }
-    return time;
-  };
+  //
+  // const validate = (time: number) => {
+  //   if (time > 59 || time < 0) {
+  //     throw new Error(
+  //       "Hours, minutes and seconds values have to be between 0 and 59.",
+  //     );
+  //   }
+  //   return time;
+  // };
 
   /**
    * Konwertuje string czasu ("HH:MM:SS", "MM:SS" lub "SS") na całkowitą liczbę sekund.
@@ -127,18 +127,18 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
             </StyledColumnWidth10>
           </StyledPlankSectionListItem>
           {itemData.length === 0 ? <div>-</div> : null}
-          {itemData.map((t: any, index: number) => {
+          {itemData.map((t) => {
             return (
               //zmienić
-              <StyledPlankSectionListItem key={t?._id}>
+              <StyledPlankSectionListItem key={t.id}>
                 <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {String(t?.day).length === 1 ? `0${t?.day}` : t?.day}
+                  {String(Number(t.day))}
                 </StyledColumnWidth20>
                 <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t?.duration}
+                  {t.duration}
                 </StyledColumnWidth32>
                 <StyledColumnWidth10 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t?.isDifferentExercises === "differentYes" ? (
+                  {t.isDifferentExercises === "differentYes" ? (
                     <svg
                       className="w-6 h-6 text-emerald-600 dark:text-white"
                       aria-hidden="true"

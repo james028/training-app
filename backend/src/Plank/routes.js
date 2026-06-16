@@ -23,19 +23,22 @@ const {
 
 exports.routesConfig = function (app) {
   app.get("/api/plank/list", authMiddleware, validateYearQuery, getPlank);
-  app.post("/api/plank/create", authMiddleware, createPlank);
+  app.post(
+    "/api/plank/create",
+    authMiddleware,
+    validateCreatePlank,
+    createPlank,
+  );
   app.patch(
     "/api/plank/update/:id",
     authMiddleware,
     validateObjectId,
-    validateCreatePlank,
     updatePlank,
   );
   app.delete(
     "/api/plank/delete/:id",
     authMiddleware,
     validateObjectId,
-    validateUpdatePlank,
     deletePlank,
   );
 

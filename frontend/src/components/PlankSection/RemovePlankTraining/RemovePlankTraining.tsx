@@ -11,7 +11,7 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const { link } = useAppContext();
   const { objectData } = usePlankSectionContext();
   //do porawy te id
-  const { month, day, duration, _id: id } = objectData ?? {};
+  const { month, day, duration } = objectData ?? {};
 
   // const { mutateAsync } = useDeleteApi(
   //   `${URL}${link}/delete`,
