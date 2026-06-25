@@ -63,8 +63,6 @@ export const useDisplayDaysByMonth = (monthValue: string) => {
 
     const days = monthValue ? convertedObjectMonthDays[monthName] : [];
 
-    console.log(days, "days");
-
     return days
       ? Array(days)
           .fill(0)

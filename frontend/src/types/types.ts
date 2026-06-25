@@ -1,4 +1,5 @@
 import React from "react";
+import { PlankGroupedSession } from "../components/PlankSection/PlankMonthList/PlankMonthList";
 
 export type TCalendarData = {
   [key: string]: TYear[];
@@ -59,13 +60,14 @@ export type TPlankDayData = {
   duration: string;
   month: string;
   id: string;
+  isDifferentExercises: boolean;
 };
 
 export type PlankSessionDTO = {
   id: string;
   userId: string;
-  duration: string; // "HH:mm:ss"
-  date: string; // ISO string
+  duration: string;
+  date: string;
   isDifferentExercises: boolean;
 };
 
@@ -123,7 +125,8 @@ export interface Duration {
 export interface PlankFormData {
   month: string;
   day: string;
-  duration: Duration;
+  //duration: Duration;
+  duration: string;
   // Zmieniamy typ na 'boolean', co jest typowe dla checkboxów/przełączników.
   //to radiobox i dowiedzieć sie o nazewnictwo
   isDifferentExercises: string;
@@ -133,8 +136,8 @@ export interface PlankFormData {
   id: string;
 }
 
-/** Typ dla danych przechowywanych w 'objectData' - może to być PlankFormData lub undefined. */
-export type PlankTrainingObjectData = PlankFormData | undefined;
+//export type PlankTrainingObjectData = PlankFormData | undefined;
+export type PlankTrainingObjectData = PlankGroupedSession | undefined;
 
 export interface PlankSectionContextType {
   toggleOpenFormPanelTraining: boolean;

@@ -69,19 +69,14 @@ const AddEditPlankTraining = () => {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  console.log(objectData, "objectData");
-
   useEffect(() => {
     if (!objectData) return;
 
     reset({
       month: objectData.month ?? "",
       day: objectData.day ?? "",
-      duration: objectData.duration ?? {
-        hour: "00",
-        minutes: "00",
-        seconds: "00",
-      },
+      // @ts-ignore
+      duration: objectData.duration ?? "",
       // @ts-ignore
       isDifferentExercises: objectData.isDifferentExercises ?? false,
     });
@@ -102,7 +97,6 @@ const AddEditPlankTraining = () => {
 
       if (isEditing) {
         if (!objectData?.id) {
-          //inaczej?
           return;
         }
         await updateMutateAsync({
@@ -125,11 +119,8 @@ const AddEditPlankTraining = () => {
 
   const { month: monthValue } = watch();
   const { getDaysByMonth } = useDisplayDaysByMonth(monthValue);
-
-  console.log(getDaysByMonth(), "month");
-  console.log(getDaysByMonth(), "month");
-
   const isEditing = Object.keys(objectData ?? {}).length > 0;
+
   return (
     <>
       <button

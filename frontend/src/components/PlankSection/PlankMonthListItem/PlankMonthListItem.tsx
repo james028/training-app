@@ -12,10 +12,10 @@ import Modal from "../../shared/Modal/Modal";
 import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
 import { MONTH_NAMES_MAP } from "../../../constants";
 import { MonthIndex, TPlankDayData } from "../../../types";
+import { PlankGroupedSession } from "../PlankMonthList/PlankMonthList";
 
 interface PlankMonthListItem {
-  //otypowanie
-  itemData: any[];
+  itemData: PlankGroupedSession[];
   item: string;
 }
 
@@ -26,15 +26,6 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     setToggleOpenFormPanelTraining,
     setObjectData,
   } = usePlankSectionContext();
-  //
-  // const validate = (time: number) => {
-  //   if (time > 59 || time < 0) {
-  //     throw new Error(
-  //       "Hours, minutes and seconds values have to be between 0 and 59.",
-  //     );
-  //   }
-  //   return time;
-  // };
 
   /**
    * Konwertuje string czasu ("HH:MM:SS", "MM:SS" lub "SS") na całkowitą liczbę sekund.
@@ -80,7 +71,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     return secondsToTimeString(totalSeconds);
   };
 
-  const displaySumMinutes = (data: TPlankDayData[] | any[]): string => {
+  const displaySumMinutes = (data: TPlankDayData[]): string => {
     const durations = data.map((item: TPlankDayData) => item.duration);
     return durations.length > 0 ? sumTimeOptimized(durations) : "-";
   };
@@ -127,18 +118,18 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
             </StyledColumnWidth10>
           </StyledPlankSectionListItem>
           {itemData.length === 0 ? <div>-</div> : null}
-          {itemData.map((t) => {
+          {itemData.map((item) => {
             return (
               //zmienić
-              <StyledPlankSectionListItem key={t.id}>
+              <StyledPlankSectionListItem key={item.id}>
                 <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {String(Number(t.day))}
+                  {String(item.day)}
                 </StyledColumnWidth20>
                 <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t.duration}
+                  {item.duration}
                 </StyledColumnWidth32>
                 <StyledColumnWidth10 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t.isDifferentExercises === "differentYes" ? (
+                  {item.isDifferentExercises ? (
                     <svg
                       className="w-6 h-6 text-emerald-600 dark:text-white"
                       aria-hidden="true"
@@ -163,7 +154,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     if (!toggleOpenFormPanelTraining) {
                       setToggleOpenFormPanelTraining(true);
                     }
-                    setObjectData(t);
+                    setObjectData(item);
                   }}
                 >
                   <svg
@@ -187,7 +178,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 <div
                   onClick={() => {
                     setIsOpenRemoveModal((prev) => !prev);
-                    setObjectData(t);
+                    setObjectData(item);
                   }}
                 >
                   <svg
@@ -214,7 +205,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           <div>
             <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Liczba treningów:{" "}
-              <span className="font-bold">{itemData?.length}</span>
+              <span className="font-bold">{itemData.length}</span>
             </div>
             <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Suma czasu:{" "}
