@@ -34,11 +34,6 @@ exports.getPlank = asyncHandler(async (req, res) => {
 // @route   POST /api/plank/create
 exports.createPlank = asyncHandler(async (req, res) => {
   const { date: activityDate, duration, isDifferentExercises } = req.body;
-  //const currentYear = new Date().getFullYear();
-
-  // if (!id) {
-  //   res.status(401).json({ message: "Nie istnieje id użytkownika" });
-  // }
 
   if (!activityDate || !duration || isDifferentExercises === undefined) {
     return res
