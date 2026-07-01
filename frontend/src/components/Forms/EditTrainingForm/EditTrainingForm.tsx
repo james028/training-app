@@ -134,7 +134,6 @@ const EditTrainingForm = ({
                   label="Typ treningu"
                   placeholder="Typ treningu"
                   className="mb-2"
-                  errors={errors}
                   rules={{ required: "Pole jest wymagane" }}
                   // otypować
                   options={trainingDataType.map((item) => {
@@ -153,7 +152,7 @@ const EditTrainingForm = ({
               isEdit={isEdit}
               childrenInput={
                 <FormInputDuration<any>
-                  id="duration"
+                  // id="duration"
                   // @ts-ignore
                   type="number"
                   name="duration"

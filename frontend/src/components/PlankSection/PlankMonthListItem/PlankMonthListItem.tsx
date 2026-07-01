@@ -117,13 +117,12 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
               Rózne
             </StyledColumnWidth10>
           </StyledPlankSectionListItem>
-          {itemData.length === 0 ? <div>-</div> : null}
+          {itemData.length === 0 && <div>-</div>}
           {itemData.map((item) => {
             return (
-              //zmienić
               <StyledPlankSectionListItem key={item.id}>
                 <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {String(item.day)}
+                  {parseInt(item.day, 10)}
                 </StyledColumnWidth20>
                 <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
                   {item.duration}
@@ -154,7 +153,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     if (!toggleOpenFormPanelTraining) {
                       setToggleOpenFormPanelTraining(true);
                     }
-                    setObjectData(item);
+                    setObjectData({ ...item });
                   }}
                 >
                   <svg
@@ -178,7 +177,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 <div
                   onClick={() => {
                     setIsOpenRemoveModal((prev) => !prev);
-                    setObjectData(item);
+                    setObjectData({ ...item });
                   }}
                 >
                   <svg

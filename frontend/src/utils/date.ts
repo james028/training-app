@@ -1,5 +1,11 @@
 import { DateTime } from "luxon";
 
+type BuildDatePayloadParams = {
+  month: string; // "01" - "12"
+  day: string; // "01" - "31"
+  year?: number; // opcjonalnie
+};
+
 export const createDateTime = (
   year: number,
   month: number,
@@ -23,3 +29,20 @@ export const normalizeDate = (dateObject: {
   month: Number(dateObject.month),
   day: Number(dateObject.day),
 });
+
+export const buildPlankDate = ({
+  month,
+  day,
+  year,
+}: BuildDatePayloadParams): string => {
+  const nowYear = year ?? DateTime.now().year;
+
+  return DateTime.fromObject(
+    {
+      year: nowYear,
+      month: Number(month),
+      day: Number(day),
+    },
+    { zone: "utc" },
+  ).toISO()!;
+};

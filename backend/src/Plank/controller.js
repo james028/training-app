@@ -33,26 +33,21 @@ exports.getPlank = asyncHandler(async (req, res) => {
 // @desc    Create new plank training
 // @route   POST /api/plank/create
 exports.createPlank = asyncHandler(async (req, res) => {
-  const { month, day, duration, isDifferentExercises } = req.body;
-  const currentYear = new Date().getFullYear();
+  const { date: activityDate, duration, isDifferentExercises } = req.body;
 
-  // if (!id) {
-  //   res.status(401).json({ message: "Nie istnieje id użytkownika" });
-  // }
-
-  if (!month || !day || !duration || isDifferentExercises === undefined) {
+  if (!activityDate || !duration || isDifferentExercises === undefined) {
     return res
       .status(400)
       .json({ message: "Brakuje wymaganych danych treningu." });
   }
 
   // Tworzymy datę (month - 1, bo w JS styczeń to 0)
-  const date = new Date(currentYear, parseInt(month) - 1, parseInt(day));
+  //const date = new Date(currentYear, parseInt(month) - 1, parseInt(day));
 
   const newSession = await PlankDataModel.create({
     userId: req.user.id,
     duration,
-    date,
+    date: activityDate,
     isDifferentExercises,
   });
 

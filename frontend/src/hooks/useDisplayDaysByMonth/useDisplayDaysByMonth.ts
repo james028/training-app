@@ -6,8 +6,8 @@ import {
   MonthName,
   MonthNameLower,
   MonthObjectMap,
-} from "../../../types";
-import { MONTH_NAMES_MAP } from "../../../constants";
+} from "../../types";
+import { MONTH_NAMES_MAP } from "../../constants";
 
 export const useDisplayDaysByMonth = (monthValue: string) => {
   const getDays = (year: number, month: number): number => {

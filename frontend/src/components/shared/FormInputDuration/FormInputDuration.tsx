@@ -1,62 +1,43 @@
 import React from "react";
-import {
-  DeepMap,
-  FieldError,
-  FieldValues,
-  Path,
-  RegisterOptions,
-} from "react-hook-form";
 import Duration from "./Duration/Duration";
-import { InputType } from "../FormInput/Input/Input";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
 import { get } from "../../../utils";
+import { useFormContext } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 
-export type FormInputDurationProps<TFormValues extends FieldValues> = {
-  id: string;
-  name: Path<TFormValues>;
+type Props = {
+  name: string;
   label: string;
-  rules?: RegisterOptions;
-  errors?: Partial<DeepMap<TFormValues, FieldError>>;
-  className: string;
-  type: InputType;
+  className?: string;
 };
-const FormInputDuration = <TFormValues extends Record<string, unknown>>({
-  id,
-  name,
-  label,
-  rules,
-  errors,
-  className,
-  ...props
-}: FormInputDurationProps<TFormValues>): JSX.Element => {
-  // If the name is in a FieldArray, it will be 'fields.index.fieldName' and errors[name] won't return anything, so we are using lodash get
-  const errorMessages = get(errors, name);
-  const hasError = !!(errors && errorMessages);
-  const durationMessage = Object.values(errors?.[name] ?? {})[0] as Record<
-    string,
-    string
-  >;
+
+const FormInputDuration = <T,>({ name, label, className = "" }: Props) => {
+  const {
+    formState: { errors },
+  } = useFormContext();
+
+  const error = get(errors, name);
+  const hasError = !!error;
 
   return (
-    <div className={className} aria-live="polite">
-      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {label}
-      </label>
+    <div className={className}>
+      <label className="block mb-2 text-sm font-medium">{label}</label>
+
       <Duration
-        id={id}
         name={name}
         className={`${
           hasError
             ? "transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50 border-red-600 hover:border-red-600 focus:border-red-600 focus:ring-red-600"
             : ""
         }`}
-        rules={rules}
-        {...props}
       />
-      {/*to nie działa*/}
-      <FormErrorMessage className="mt-1">
-        {durationMessage?.message}
-      </FormErrorMessage>
+      <ErrorMessage
+        errors={errors ?? {}}
+        name={name}
+        render={({ message }) => (
+          <FormErrorMessage className="mt-1">{message}</FormErrorMessage>
+        )}
+      />
     </div>
   );
 };

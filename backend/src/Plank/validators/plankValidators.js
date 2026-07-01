@@ -1,13 +1,15 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
+//poprawić
 const plankSchema = Joi.object({
-  month: Joi.string()
-    .regex(/^\d{2}$/)
-    .required(), // "01"-"12"
-  day: Joi.string()
-    .regex(/^\d{2}$/)
-    .required(), // "01"-"31"
+  // month: Joi.string()
+  //   .regex(/^\d{2}$/)
+  //   .required(), // "01"-"12"
+  // day: Joi.string()
+  //   .regex(/^\d{2}$/)
+  //   .required(), // "01"-"31"
+  date: Joi.date().iso().required(),
   duration: Joi.string()
     .regex(/^\d{2}:\d{2}:\d{2}$/)
     .required(), // HH:MM:SS
