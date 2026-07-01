@@ -1,5 +1,10 @@
 import React from "react";
-import { FieldValues, Path, RegisterOptions } from "react-hook-form";
+import {
+  FieldValues,
+  Path,
+  RegisterOptions,
+  useFormContext,
+} from "react-hook-form";
 import Select, { SelectOption } from "./Select/Select";
 import { ErrorMessage } from "@hookform/error-message";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
@@ -10,7 +15,6 @@ export type FormInputSelectProps<TFormValues extends FieldValues> = {
   label: string;
   name: Path<TFormValues>;
   rules?: RegisterOptions;
-  errors?: any;
   className?: string;
   options: SelectOption[] | null;
 };
@@ -20,10 +24,13 @@ const FormInputSelect = <TFormValues extends Record<string, unknown>>({
   label,
   name,
   rules,
-  errors,
   className,
   options,
 }: FormInputSelectProps<TFormValues>): JSX.Element => {
+  const {
+    formState: { errors },
+  } = useFormContext();
+
   const errorMessages = get(errors, name);
   const hasError = !!errorMessages;
 

@@ -75,7 +75,6 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
               name="activity"
               label="Typ aktywności"
               className="mb-2"
-              errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               //do zrobienia
               options={trainingDataType.map((item: any) => {
@@ -85,28 +84,36 @@ const AddTrainingForm = ({ closeModal, day, trainingDataType }: any) => {
                 };
               })}
             />
-            <FormInputDuration<any>
-              id="duration"
-              type="number"
+            <FormInputDuration
+              //id="duration"
               name="duration"
               label="Długość treningu"
-              className="mb-2"
-              errors={errors}
-              rules={{
-                valueAsNumber: true,
-                required: "Pole jest wymagane",
-                maxLength: {
-                  value: 2,
-                  message: "Description cannot be longer than 100 characters",
-                },
-              }}
+              className="mb-2 w-2/5"
+              //errors={errors}
+              //touchedFields={touchedFields}
+              //rules={{ required: "Pole jest wymagane" }}
             />
+            {/*<FormInputDuration<any>*/}
+            {/*  id="duration"*/}
+            {/*  type="number"*/}
+            {/*  name="duration"*/}
+            {/*  label="Długość treningu"*/}
+            {/*  className="mb-2"*/}
+            {/*  errors={errors}*/}
+            {/*  rules={{*/}
+            {/*    valueAsNumber: true,*/}
+            {/*    required: "Pole jest wymagane",*/}
+            {/*    maxLength: {*/}
+            {/*      value: 2,*/}
+            {/*      message: "Description cannot be longer than 100 characters",*/}
+            {/*    },*/}
+            {/*  }}*/}
+            {/*/>*/}
             <FormInputSelect<any>
               id="bikeType"
               name="bikeType"
               label="Rodzaj roweru"
               className="mb-2"
-              errors={errors}
               rules={{}}
               options={[
                 { type: "road", name: "Road bike" },
