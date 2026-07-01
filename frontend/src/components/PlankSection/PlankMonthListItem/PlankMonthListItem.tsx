@@ -177,7 +177,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 <div
                   onClick={() => {
                     setIsOpenRemoveModal((prev) => !prev);
-                    setObjectData(item);
+                    setObjectData({ ...item });
                   }}
                 >
                   <svg

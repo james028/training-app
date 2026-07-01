@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const { link } = useAppContext();
   const { objectData } = usePlankSectionContext();
-  //do porawy te id
   const { month, day, duration } = objectData ?? {};
 
   // const { mutateAsync } = useDeleteApi(

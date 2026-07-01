@@ -17,7 +17,7 @@ import {
 import toast from "react-hot-toast";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { PlankFormInput } from "../PlankSectionWrapper/PlankSectionWrapper";
-import { useDisplayDaysByMonth } from "../utils/useDisplayDaysByMonth";
+import { useDisplayDaysByMonth } from "../../../hooks/useDisplayDaysByMonth/useDisplayDaysByMonth";
 
 const AddEditPlankTraining = () => {
   const {
@@ -97,6 +97,7 @@ const AddEditPlankTraining = () => {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
     } finally {
+      reset();
       setObjectData(undefined);
     }
   };
