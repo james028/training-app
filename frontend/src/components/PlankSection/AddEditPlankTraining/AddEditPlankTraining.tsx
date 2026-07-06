@@ -104,6 +104,7 @@ const AddEditPlankTraining = () => {
 
   const { month: monthValue } = watch();
   const { getDaysByMonth } = useDisplayDaysByMonth(monthValue);
+  const dayOptions = getDaysByMonth();
   const isEditing = Object.keys(objectData ?? {}).length > 0;
 
   return (
@@ -137,7 +138,7 @@ const AddEditPlankTraining = () => {
               label="Dzień"
               className="mb-2 w-2/5"
               rules={{ required: "Pole jest wymagane" }}
-              options={getDaysByMonth()}
+              options={dayOptions}
             />
             <FormInputDuration
               name="duration"

@@ -41,9 +41,6 @@ exports.createPlank = asyncHandler(async (req, res) => {
       .json({ message: "Brakuje wymaganych danych treningu." });
   }
 
-  // Tworzymy datę (month - 1, bo w JS styczeń to 0)
-  //const date = new Date(currentYear, parseInt(month) - 1, parseInt(day));
-
   const newSession = await PlankDataModel.create({
     userId: req.user.id,
     duration,
@@ -103,8 +100,8 @@ exports.deletePlank = asyncHandler(async (req, res) => {
   });
 
   if (!deleted) {
-    return res.status(404).json({ message: "Sesja nie znaleziona" });
+    return res.status(404).json({ message: "Aktywność nie znaleziona" });
   }
 
-  res.status(200).json({ message: "Sesja usunięta" });
+  res.status(200).json({ message: "Aktywność została usunięta" });
 });
