@@ -6,10 +6,16 @@ import {
   MonthName,
   MonthNameLower,
   MonthObjectMap,
-} from "../../../types";
-import { MONTH_NAMES_MAP } from "../../../constants";
+} from "../../types";
+import { MONTH_NAMES_MAP } from "../../constants";
 
-export const useDisplayDaysByMonth = (monthValue: string) => {
+type UseMonthDayPickerReturn = {
+  getDaysByMonth: () => { value: string; name: string }[];
+};
+
+export const useDisplayDaysByMonth = (
+  monthValue: string,
+): UseMonthDayPickerReturn => {
   const getDays = (year: number, month: number): number => {
     return DateTime.local(year, month).daysInMonth ?? 0;
   };
@@ -37,13 +43,10 @@ export const useDisplayDaysByMonth = (monthValue: string) => {
       const keyLower = monthName.toLowerCase() as MonthNameLower;
       monthDays[keyLower] = getDays(year, i);
     }
-
-    console.log(monthDays, "days");
     return monthDays;
   };
 
   const getDaysByMonth = (): { value: string; name: string }[] => {
-    //const { month: monthValue } = watch();
     const monthKey = parseInt(monthValue, 10);
 
     const convertedObjectMonthDays = createObjectMonthDays();
@@ -55,11 +58,6 @@ export const useDisplayDaysByMonth = (monthValue: string) => {
       convertedObjectToLowerCase[
         monthKey as keyof typeof convertedObjectToLowerCase
       ];
-    console.log(
-      convertedObjectMonthDays,
-      convertedObjectMonthDays[monthName],
-      "converted",
-    );
 
     const days = monthValue ? convertedObjectMonthDays[monthName] : [];
 

@@ -2,13 +2,12 @@ import React, { useEffect } from "react";
 import FormInputSelect from "../../shared/FormInputSelect/FormInputSelect";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import FormInputDuration from "../../shared/FormInputDuration/FormInputDuration";
-import { DateTime } from "luxon";
 import FormInputRadio from "../../shared/FormInputRadio/FormInputRadio";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import usePatchApi from "../../../hooks/api/patch/useApiPatch";
 import { useAppContext } from "../../../appContext/appContext";
 import usePostApi from "../../../hooks/api/post/useApiPost";
-import { convertObjectWithNumbersToString } from "../../../utils";
+import { buildPlankDate } from "../../../utils";
 import {
   API_ENDPOINTS,
   MONTH_NAMES_MAP,
@@ -18,35 +17,14 @@ import {
 import toast from "react-hot-toast";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { PlankFormInput } from "../PlankSectionWrapper/PlankSectionWrapper";
-import { useDisplayDaysByMonth } from "../utils/useDisplayDaysByMonth";
-
-type BuildDatePayloadParams = {
-  month: string; // "01" - "12"
-  day: string; // "01" - "31"
-  year?: number; // opcjonalnie
-};
-const buildPlankDate = ({
-  month,
-  day,
-  year,
-}: BuildDatePayloadParams): string => {
-  const nowYear = year ?? DateTime.now().year;
-
-  return DateTime.fromObject(
-    {
-      year: nowYear,
-      month: Number(month),
-      day: Number(day),
-    },
-    { zone: "utc" },
-  ).toISO()!;
-};
+import { useDisplayDaysByMonth } from "../../../hooks/useDisplayDaysByMonth/useDisplayDaysByMonth";
 
 const AddEditPlankTraining = () => {
   const {
     toggleOpenFormPanelTraining,
     setToggleOpenFormPanelTraining,
     objectData,
+    setObjectData,
   } = usePlankSectionContext();
 
   const { auth } = useAppContext();
@@ -70,25 +48,31 @@ const AddEditPlankTraining = () => {
   });
 
   useEffect(() => {
-    if (!objectData) return;
-
-    reset({
-      month: objectData.month ?? "",
-      day: objectData.day ?? "",
-      // @ts-ignore
-      duration: objectData.duration ?? "",
-      // @ts-ignore
-      isDifferentExercises: objectData.isDifferentExercises ?? false,
-    });
+    if (!objectData) {
+      reset({
+        month: "",
+        day: "",
+        duration: "00:00:00",
+        isDifferentExercises: false,
+      });
+    } else {
+      reset({
+        month: objectData.month,
+        day: objectData.day,
+        duration: objectData.duration,
+        isDifferentExercises: objectData.isDifferentExercises,
+      });
+    }
   }, [objectData, reset]);
 
   const onSubmit: SubmitHandler<PlankFormInput> = async (data) => {
+    const { isDifferentExercises, duration, month, day } = data;
     const bodyData = {
-      ...data,
-      duration: convertObjectWithNumbersToString(data.duration),
+      isDifferentExercises,
+      duration,
       date: buildPlankDate({
-        month: data.month,
-        day: data.day,
+        month,
+        day,
       }),
     };
 
@@ -108,17 +92,19 @@ const AddEditPlankTraining = () => {
           bodyData,
         });
       }
-
       setToggleOpenFormPanelTraining(false);
-      reset();
     } catch (error) {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
+    } finally {
+      reset();
+      setObjectData(undefined);
     }
   };
 
   const { month: monthValue } = watch();
   const { getDaysByMonth } = useDisplayDaysByMonth(monthValue);
+  const dayOptions = getDaysByMonth();
   const isEditing = Object.keys(objectData ?? {}).length > 0;
 
   return (
@@ -133,12 +119,11 @@ const AddEditPlankTraining = () => {
       {toggleOpenFormPanelTraining ? (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormInputSelect<any>
+            <FormInputSelect
               id="month"
               name="month"
               label="Miesiąc"
               className="mb-2 w-2/5"
-              errors={errors}
               rules={{ required: "Pole jest wymagane" }}
               options={Object.entries(MONTH_NAMES_MAP).map(
                 ([index, month]) => ({
@@ -147,26 +132,18 @@ const AddEditPlankTraining = () => {
                 }),
               )}
             />
-            <FormInputSelect<any>
+            <FormInputSelect
               id="day"
               name="day"
               label="Dzień"
               className="mb-2 w-2/5"
-              errors={errors}
               rules={{ required: "Pole jest wymagane" }}
-              options={getDaysByMonth()}
+              options={dayOptions}
             />
-            <FormInputDuration<any>
-              id="duration"
-              // @ts-ignore
-              type="number"
+            <FormInputDuration
               name="duration"
               label="Długość treningu"
               className="mb-2 w-2/5"
-              errors={errors}
-              rules={{ required: "Pole jest wymagane" }}
-              // @ts-ignore
-              defaultValue={objectData?.duration}
             />
             <FormInputRadio
               id="isDifferentExercises"
@@ -175,8 +152,8 @@ const AddEditPlankTraining = () => {
               radioOptions={RADIO_INPUT_DIFFERENT_TYPES_PLANK_VALUES}
               className="mb-2"
               errors={errors}
-              rules={{ required: "Pole jest wymagane" }}
-              defaultValue={objectData?.isDifferentExercises}
+              rules={{}}
+              //defaultValue={objectData?.isDifferentExercises}
               leftSideLabel={true}
             />
             <button
@@ -195,3 +172,4 @@ const AddEditPlankTraining = () => {
 export default AddEditPlankTraining;
 
 //templatka radio do zrobienia, przemysleć
+//remove

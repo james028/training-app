@@ -12,13 +12,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 export const plankFormSchema = z.object({
   month: z.string().min(1, "Wybierz miesiąc"),
   day: z.string().min(1, "Wybierz dzień"),
-  duration: z.object({
-    hour: z.string().regex(/^\d{0,2}$/),
-    minutes: z.string().regex(/^\d{0,2}$/),
-    seconds: z.string().regex(/^\d{0,2}$/),
-  }),
+  duration: z
+    .string()
+    .regex(/^\d{2}:\d{2}:\d{2}$/, "Niepoprawny format czasu")
+    .refine((value) => value !== "00:00:00", {
+      message: "Podaj czas treningu.",
+    }),
   isDifferentExercises: z.boolean(),
 });
+
 export type PlankFormInput = z.infer<typeof plankFormSchema>;
 
 const PlankSectionWrapper = ({ children }: PlankSectionWrapperProps) => {
@@ -32,7 +34,7 @@ const PlankSectionWrapper = ({ children }: PlankSectionWrapperProps) => {
     defaultValues: {
       month: "",
       day: "",
-      duration: { hour: "00", minutes: "00", seconds: "00" },
+      duration: "00:00:00",
       isDifferentExercises: false,
     },
   });
