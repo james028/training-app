@@ -6,10 +6,16 @@ import {
   MonthName,
   MonthNameLower,
   MonthObjectMap,
-} from "../../../types";
-import { MONTH_NAMES_MAP } from "../../../constants";
+} from "../../types";
+import { MONTH_NAMES_MAP } from "../../constants";
 
-export const useDisplayDaysByMonth = (monthValue: string) => {
+type UseMonthDayPickerReturn = {
+  getDaysByMonth: () => { value: string; name: string }[];
+};
+
+export const useDisplayDaysByMonth = (
+  monthValue: string,
+): UseMonthDayPickerReturn => {
   const getDays = (year: number, month: number): number => {
     return DateTime.local(year, month).daysInMonth ?? 0;
   };

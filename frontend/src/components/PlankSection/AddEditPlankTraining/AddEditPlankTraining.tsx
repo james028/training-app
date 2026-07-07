@@ -17,7 +17,7 @@ import {
 import toast from "react-hot-toast";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { PlankFormInput } from "../PlankSectionWrapper/PlankSectionWrapper";
-import { useDisplayDaysByMonth } from "../utils/useDisplayDaysByMonth";
+import { useDisplayDaysByMonth } from "../../../hooks/useDisplayDaysByMonth/useDisplayDaysByMonth";
 
 const AddEditPlankTraining = () => {
   const {
@@ -97,12 +97,14 @@ const AddEditPlankTraining = () => {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
     } finally {
+      reset();
       setObjectData(undefined);
     }
   };
 
   const { month: monthValue } = watch();
   const { getDaysByMonth } = useDisplayDaysByMonth(monthValue);
+  const dayOptions = getDaysByMonth();
   const isEditing = Object.keys(objectData ?? {}).length > 0;
 
   return (
@@ -136,7 +138,7 @@ const AddEditPlankTraining = () => {
               label="Dzień"
               className="mb-2 w-2/5"
               rules={{ required: "Pole jest wymagane" }}
-              options={getDaysByMonth()}
+              options={dayOptions}
             />
             <FormInputDuration
               name="duration"

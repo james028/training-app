@@ -34,20 +34,12 @@ exports.getPlank = asyncHandler(async (req, res) => {
 // @route   POST /api/plank/create
 exports.createPlank = asyncHandler(async (req, res) => {
   const { date: activityDate, duration, isDifferentExercises } = req.body;
-  //const currentYear = new Date().getFullYear();
-
-  // if (!id) {
-  //   res.status(401).json({ message: "Nie istnieje id użytkownika" });
-  // }
 
   if (!activityDate || !duration || isDifferentExercises === undefined) {
     return res
       .status(400)
       .json({ message: "Brakuje wymaganych danych treningu." });
   }
-
-  // Tworzymy datę (month - 1, bo w JS styczeń to 0)
-  //const date = new Date(currentYear, parseInt(month) - 1, parseInt(day));
 
   const newSession = await PlankDataModel.create({
     userId: req.user.id,
@@ -108,8 +100,8 @@ exports.deletePlank = asyncHandler(async (req, res) => {
   });
 
   if (!deleted) {
-    return res.status(404).json({ message: "Sesja nie znaleziona" });
+    return res.status(404).json({ message: "Aktywność nie znaleziona" });
   }
 
-  res.status(200).json({ message: "Sesja usunięta" });
+  res.status(200).json({ message: "Aktywność została usunięta" });
 });
