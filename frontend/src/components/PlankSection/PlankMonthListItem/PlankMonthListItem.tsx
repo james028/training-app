@@ -153,7 +153,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     if (!toggleOpenFormPanelTraining) {
                       setToggleOpenFormPanelTraining(true);
                     }
-                    setObjectData({ ...item });
+                    setObjectData({ mode: "edit", data: item });
                   }}
                 >
                   <svg
@@ -177,7 +177,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 <div
                   onClick={() => {
                     setIsOpenRemoveModal((prev) => !prev);
-                    setObjectData({ ...item });
+                    setObjectData({ mode: "remove", data: item });
                   }}
                 >
                   <svg

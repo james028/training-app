@@ -137,7 +137,11 @@ export interface PlankFormData {
 }
 
 //export type PlankTrainingObjectData = PlankFormData | undefined;
-export type PlankTrainingObjectData = PlankGroupedSession | undefined;
+//export type PlankTrainingObjectData = PlankGroupedSession | undefined;
+export type PlankTrainingObjectData = {
+  mode: "edit" | "remove" | null;
+  data: PlankGroupedSession | null;
+};
 
 export interface PlankSectionContextType {
   toggleOpenFormPanelTraining: boolean;

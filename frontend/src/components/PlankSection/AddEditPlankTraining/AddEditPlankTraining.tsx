@@ -27,6 +27,8 @@ const AddEditPlankTraining = () => {
     setObjectData,
   } = usePlankSectionContext();
 
+  const { data: objectData1 } = objectData;
+
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
 
@@ -56,14 +58,16 @@ const AddEditPlankTraining = () => {
         isDifferentExercises: false,
       });
     } else {
-      reset({
-        month: objectData.month,
-        day: objectData.day,
-        duration: objectData.duration,
-        isDifferentExercises: objectData.isDifferentExercises,
-      });
+      if (objectData?.mode === "edit") {
+        reset({
+          month: objectData1?.month,
+          day: objectData1?.day,
+          duration: objectData1?.duration,
+          isDifferentExercises: objectData1?.isDifferentExercises,
+        });
+      }
     }
-  }, [objectData, reset]);
+  }, [objectData1, reset]);
 
   const onSubmit: SubmitHandler<PlankFormInput> = async (data) => {
     const { isDifferentExercises, duration, month, day } = data;
@@ -80,12 +84,12 @@ const AddEditPlankTraining = () => {
       const isEditing = Object.keys(objectData ?? {}).length > 0;
 
       if (isEditing) {
-        if (!objectData?.id) {
+        if (!objectData1?.id) {
           return;
         }
         await updateMutateAsync({
           bodyData,
-          customLink: `${URL}${API_ENDPOINTS.PLANK.UPDATE(objectData?.id)}`,
+          customLink: `${URL}${API_ENDPOINTS.PLANK.UPDATE(objectData1?.id)}`,
         });
       } else {
         await mutateAsync({
@@ -98,7 +102,7 @@ const AddEditPlankTraining = () => {
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
     } finally {
       reset();
-      setObjectData(undefined);
+      setObjectData({ mode: null, data: null });
     }
   };
 

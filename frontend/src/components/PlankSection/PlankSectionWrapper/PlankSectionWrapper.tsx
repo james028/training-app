@@ -26,8 +26,10 @@ export type PlankFormInput = z.infer<typeof plankFormSchema>;
 const PlankSectionWrapper = ({ children }: PlankSectionWrapperProps) => {
   const [toggleOpenFormPanelTraining, setToggleOpenFormPanelTraining] =
     useState(true);
-  const [objectData, setObjectData] =
-    useState<PlankTrainingObjectData>(undefined);
+  const [objectData, setObjectData] = useState<PlankTrainingObjectData>({
+    mode: null,
+    data: null,
+  });
 
   const form = useForm<PlankFormInput>({
     resolver: zodResolver(plankFormSchema),

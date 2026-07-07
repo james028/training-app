@@ -11,8 +11,9 @@ import { PLANK_KEYS } from "../../../constants/query-keys";
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
-  const { objectData } = usePlankSectionContext();
-  const { month, day, duration, id } = objectData ?? {};
+  const { objectData, setObjectData } = usePlankSectionContext();
+  const { data: objectData1 } = objectData;
+  const { month, day, duration, id } = objectData1 ?? {};
 
   const { mutateAsync: removeMutateAsync } = useDeleteApi(
     [PLANK_KEYS.plankList()],
@@ -34,6 +35,8 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
+    } finally {
+      setObjectData({ mode: null, data: null });
     }
   };
 
@@ -58,3 +61,5 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
 };
 
 export default RemovePlankTraining;
+
+//zrobić tak ze jak klikm w ikonke usuń to to cos z tymi danymi
