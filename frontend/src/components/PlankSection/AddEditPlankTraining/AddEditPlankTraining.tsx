@@ -32,12 +32,7 @@ const AddEditPlankTraining = () => {
   const { auth } = useAppContext();
   const token = auth?.data?.accessToken;
 
-  const {
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useFormContext<PlankFormInput>();
+  const { handleSubmit, watch, reset } = useFormContext<PlankFormInput>();
 
   const { mutateAsync } = usePostApi({
     link: `${URL}${API_ENDPOINTS.PLANK.CREATE}`,
@@ -81,7 +76,7 @@ const AddEditPlankTraining = () => {
     };
 
     try {
-      const isEditing = Object.keys(objectData ?? {}).length > 0;
+      const isEditing = Object.keys(objectData?.data ?? {}).length > 0;
 
       if (isEditing) {
         if (!objectData1?.id) {
@@ -108,7 +103,9 @@ const AddEditPlankTraining = () => {
   const { month: monthValue } = watch();
   const { getDaysByMonth } = useDisplayDaysByMonth(monthValue);
   const dayOptions = getDaysByMonth();
-  const isEditing = Object.keys(objectData ?? {}).length > 0;
+  const isEditing = Object.keys(objectData?.data ?? {}).length > 0;
+
+  console.log(isEditing);
 
   return (
     <>
