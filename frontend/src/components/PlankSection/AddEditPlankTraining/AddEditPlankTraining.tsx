@@ -50,12 +50,12 @@ const AddEditPlankTraining = () => {
   });
 
   useEffect(() => {
-    if (!objectData) {
+    if (!objectData.data) {
       reset({
         month: "",
         day: "",
         duration: "00:00:00",
-        isDifferentExercises: false,
+        isDifferentExercises: undefined,
       });
     } else {
       if (objectData?.mode === "edit") {
@@ -67,7 +67,7 @@ const AddEditPlankTraining = () => {
         });
       }
     }
-  }, [objectData1, reset]);
+  }, [objectData, reset]);
 
   const onSubmit: SubmitHandler<PlankFormInput> = async (data) => {
     const { isDifferentExercises, duration, month, day } = data;
@@ -101,7 +101,6 @@ const AddEditPlankTraining = () => {
       console.log(error instanceof Error ? error.message : "Błąd zapisu");
       toast.error(error instanceof Error ? error.message : "Błąd zapisu");
     } finally {
-      reset();
       setObjectData({ mode: null, data: null });
     }
   };
@@ -150,14 +149,10 @@ const AddEditPlankTraining = () => {
               className="mb-2 w-2/5"
             />
             <FormInputRadio
-              id="isDifferentExercises"
               name="isDifferentExercises"
               label="Czy plank był róznorodny, ze zmienionymi ćwiczeniami?"
               radioOptions={RADIO_INPUT_DIFFERENT_TYPES_PLANK_VALUES}
               className="mb-2"
-              errors={errors}
-              rules={{}}
-              //defaultValue={objectData?.isDifferentExercises}
               leftSideLabel={true}
             />
             <button
@@ -174,6 +169,3 @@ const AddEditPlankTraining = () => {
 };
 
 export default AddEditPlankTraining;
-
-//templatka radio do zrobienia, przemysleć
-//remove

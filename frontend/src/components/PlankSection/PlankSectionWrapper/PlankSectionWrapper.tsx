@@ -18,7 +18,9 @@ export const plankFormSchema = z.object({
     .refine((value) => value !== "00:00:00", {
       message: "Podaj czas treningu.",
     }),
-  isDifferentExercises: z.boolean(),
+  isDifferentExercises: z.boolean({
+    message: "Wybierz odpowiedź",
+  }),
 });
 
 export type PlankFormInput = z.infer<typeof plankFormSchema>;
@@ -37,7 +39,7 @@ const PlankSectionWrapper = ({ children }: PlankSectionWrapperProps) => {
       month: "",
       day: "",
       duration: "00:00:00",
-      isDifferentExercises: false,
+      isDifferentExercises: undefined,
     },
   });
 

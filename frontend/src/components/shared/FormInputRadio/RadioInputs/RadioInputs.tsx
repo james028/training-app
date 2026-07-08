@@ -1,112 +1,67 @@
-import React, { FC } from "react";
-import { useFormContext } from "react-hook-form";
+import {
+  ControllerRenderProps,
+  FieldError,
+  FieldValues,
+  Path,
+} from "react-hook-form";
+import { RadioOption } from "../../../../constants";
 
-type RadioInputsProps = {
-  id: string;
+type RadioInputsProps<TFormValues extends FieldValues> = {
   name: string;
   label: string;
-  radioOptions: any[];
+  radioOptions: RadioOption[];
+  field: ControllerRenderProps<TFormValues, Path<TFormValues>>;
+  error: FieldError | undefined;
   className?: string;
-  rules: any;
-  //defaultValue?: boolean | string;
 };
 
-const RadioInputs: FC<RadioInputsProps> = ({
-  id,
+export const RadioInputs = <TFormValues extends FieldValues>({
   name,
   label,
   radioOptions,
-  rules,
-  className = "",
-}) => {
-  const { register } = useFormContext();
+  field,
+  error,
+}: RadioInputsProps<TFormValues>): JSX.Element => {
+  // RHF trzyma boolean | undefined w polu — do inputa musimy mieć string
+  const stringValue =
+    field.value === undefined || field.value === null
+      ? ""
+      : String(field.value);
 
   return (
     <>
-      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {label}
-      </label>
+      <label className="text-sm font-medium text-gray-700">{label}</label>
 
-      {radioOptions.map((option) => {
-        const optionId = `${id}-${String(option.value)}`;
+      <div className="flex gap-4">
+        {radioOptions.map((option) => {
+          const optionValue = String(option.value);
+          const inputId = `${name}-${optionValue}`;
 
-        return (
-          <div key={optionId} className="flex items-center">
-            <input
-              id={optionId}
-              type="radio"
-              value={String(option.value)}
-              className={`w-4 h-4 ${className}`}
-              {...register(name, {
-                ...rules,
-                setValueAs: (v) => v === "true",
-              })}
-            />
-
-            <label htmlFor={optionId} className="ml-2 text-sm text-gray-900">
-              {option.label}
+          return (
+            <label
+              key={optionValue}
+              htmlFor={inputId}
+              className="flex items-center gap-2 cursor-pointer select-none"
+            >
+              <input
+                id={inputId}
+                type="radio"
+                name={field.name}
+                value={optionValue}
+                checked={stringValue === optionValue}
+                onChange={() => field.onChange(option.value)} // zapisujemy realny boolean
+                onBlur={field.onBlur}
+                className={`h-4 w-4 text-blue-600 focus:ring-blue-500 ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              <span className="text-sm text-gray-700">{option.label}</span>
             </label>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </>
   );
 };
 
-// const RadioInputs: FC<RadioInputsProps> = ({
-//   id,
-//   name,
-//   label,
-//   radioOptions,
-//   className = "",
-//   rules,
-//   //defaultValue,
-//   //...props
-// }) => {
-//   const { register } = useFormContext();
-//
-//   //zmienić typowanie
-//   //const { defaultValue } = props as any;
-//
-//   // useEffect(() => {
-//   //   if (defaultValue !== undefined) {
-//   //     setValue(id, defaultValue, { shouldDirty: true });
-//   //   }
-//   // }, [defaultValue, setValue, id]);
-//
-//   return (
-//     <>
-//       <span className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-//         {label}
-//       </span>
-//       {radioOptions.map(({ label, value }) => {
-//         const optionId = `${id}-${value}`;
-//
-//         return (
-//           <div key={optionId} className="flex items-center">
-//             <input
-//               id={optionId}
-//               type="radio"
-//               value={String(value)}
-//               className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 ${className}`}
-//               aria-label={label}
-//               {...register(name, {
-//                 ...rules,
-//                 setValueAs: (v) => v === "true",
-//               })}
-//             />
-//
-//             <label
-//               htmlFor={optionId}
-//               className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-//             >
-//               {label}
-//             </label>
-//           </div>
-//         );
-//       })}
-//     </>
-//   );
-// };
-//
 export default RadioInputs;
