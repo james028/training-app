@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import PlankMonthListItem from "../PlankMonthListItem/PlankMonthListItem";
 import { StyledPlankSectionContainer } from "./style";
@@ -9,7 +9,7 @@ import { useAppContext } from "../../../appContext/appContext";
 import { API_ENDPOINTS, URL } from "../../../constants";
 import { PLANK_KEYS } from "../../../constants/query-keys";
 import { useToastError } from "../../../hooks/useToastError/useToastError";
-import { DateTime } from "luxon";
+import { usePlankConvertedData } from "../utils/usePlankConvertedData";
 
 type TPlankData = {
   [key: string]: SessionDTO[];
@@ -50,65 +50,7 @@ const PlankMonthList = () => {
   useToastError(isError, error);
   const plankListData = data?.data ?? [];
 
-  const usePlankConvertedData = (sessions: SessionDTO[] = []): PlankItems => {
-    return useMemo(() => {
-      const calendar: PlankItems = Array.from({ length: 12 }, (_, i) => ({
-        month: String(i + 1).padStart(2, "0"),
-        items: [],
-      }));
-
-      for (const session of sessions) {
-        const dt = DateTime.fromISO(session.date, { zone: "utc" });
-
-        const month = dt.toFormat("MM");
-        const day = dt.toFormat("dd");
-
-        const group = calendar.find((m) => m.month === month);
-
-        if (group) {
-          group.items.push({
-            id: session.id,
-            month,
-            day,
-            duration: session.duration,
-            isDifferentExercises: session.isDifferentExercises,
-          });
-        }
-      }
-
-      return calendar;
-    }, [sessions]);
-  };
-
   const plankItems = usePlankConvertedData(plankListData);
-
-  const initialAcc: Record<string, PlankGroupedSession[]> = {};
-  for (let i = 1; i <= 12; i++) {
-    const index = String(i).padStart(2, "0");
-    initialAcc[index] = [];
-  }
-
-  const groupedData = plankListData.reduce<
-    Record<string, PlankGroupedSession[]>
-  >((acc, session) => {
-    const dt = DateTime.fromISO(session.date, { zone: "utc" });
-
-    const month = dt.toFormat("MM");
-    const day = dt.toFormat("dd");
-
-    if (!acc[month]) {
-      acc[month] = [];
-    }
-    acc[month].push({
-      id: session.id,
-      month,
-      day,
-      duration: session.duration,
-      isDifferentExercises: session.isDifferentExercises,
-    });
-
-    return acc;
-  }, initialAcc);
 
   if (isLoading) {
     return <Loading />;
@@ -117,23 +59,9 @@ const PlankMonthList = () => {
     return <div className="mt-3">Brak danych</div>;
   }
 
-  // const sorteredGroupedData = Object.entries(groupedData).sort(
-  //   ([a], [b]) => Number(a) - Number(b),
-  // );
-
   return (
     <>
       <StyledPlankSectionContainer>
-        {/*{sorteredGroupedData.map(([key, _]) => {*/}
-        {/*  console.log(key, "key");*/}
-        {/*  return (*/}
-        {/*    <PlankMonthListItem*/}
-        {/*      key={key}*/}
-        {/*      itemData={groupedData[key] || []}*/}
-        {/*      item={key}*/}
-        {/*    />*/}
-        {/*  );*/}
-        {/*})}*/}
         {plankItems.map((monthGroup) => (
           <PlankMonthListItem
             key={monthGroup.month}
