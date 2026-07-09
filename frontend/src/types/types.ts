@@ -1,4 +1,5 @@
 import React from "react";
+import { PlankGroupedSession } from "../components/PlankSection/PlankMonthList/PlankMonthList";
 
 export type TCalendarData = {
   [key: string]: TYear[];
@@ -58,7 +59,16 @@ export type TPlankDayData = {
   day: string;
   duration: string;
   month: string;
-  _id?: string;
+  id: string;
+  isDifferentExercises: boolean;
+};
+
+export type PlankSessionDTO = {
+  id: string;
+  userId: string;
+  duration: string;
+  date: string;
+  isDifferentExercises: boolean;
 };
 
 export type TButtons = {
@@ -90,6 +100,21 @@ export type MonthObjectMap = Record<MonthIndex, MonthName>;
 export type ConvertedMonthObjectMap = Record<MonthIndex, MonthNameLower>;
 export type MonthNameLower = Lowercase<MonthName>;
 export type MonthDaysMap = Record<MonthNameLower, number>;
+export type MonthKey =
+  | "01"
+  | "02"
+  | "03"
+  | "04"
+  | "05"
+  | "06"
+  | "07"
+  | "08"
+  | "09"
+  | "10"
+  | "11"
+  | "12";
+
+export type MonthDays = Record<MonthKey, string[]>;
 
 export interface Duration {
   hour: string;
@@ -100,18 +125,23 @@ export interface Duration {
 export interface PlankFormData {
   month: string;
   day: string;
-  duration: Duration;
+  //duration: Duration;
+  duration: string;
   // Zmieniamy typ na 'boolean', co jest typowe dla checkboxów/przełączników.
   //to radiobox i dowiedzieć sie o nazewnictwo
   isDifferentExercises: string;
 
   //tutaj ogarnąć
   // Opcjonalne pole 'id' na wypadek edycji istniejącego wpisu.
-  _id?: string;
+  id: string;
 }
 
-/** Typ dla danych przechowywanych w 'objectData' - może to być PlankFormData lub undefined. */
-export type PlankTrainingObjectData = PlankFormData | undefined;
+//export type PlankTrainingObjectData = PlankFormData | undefined;
+//export type PlankTrainingObjectData = PlankGroupedSession | undefined;
+export type PlankTrainingObjectData = {
+  mode: "edit" | "remove" | null;
+  data: PlankGroupedSession | null;
+};
 
 export interface PlankSectionContextType {
   toggleOpenFormPanelTraining: boolean;

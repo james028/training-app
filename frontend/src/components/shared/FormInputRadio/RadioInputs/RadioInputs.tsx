@@ -1,66 +1,65 @@
-import React, { FC, useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import {
+  ControllerRenderProps,
+  FieldError,
+  FieldValues,
+  Path,
+} from "react-hook-form";
+import { RadioOption } from "../../../../constants";
 
-type RadioInputsProps = {
-  id: string;
+type RadioInputsProps<TFormValues extends FieldValues> = {
   name: string;
   label: string;
-  radioOptions: any[];
+  radioOptions: RadioOption[];
+  field: ControllerRenderProps<TFormValues, Path<TFormValues>>;
+  error: FieldError | undefined;
   className?: string;
-  rules: any;
 };
 
-const RadioInputs: FC<RadioInputsProps> = ({
-  id,
+export const RadioInputs = <TFormValues extends FieldValues>({
   name,
   label,
   radioOptions,
-  className = "",
-  rules,
-  ...props
-}) => {
-  const { register, setValue } = useFormContext();
-
-  //zmienić typowanie
-  const { defaultValue } = props as any;
-
-  useEffect(() => {
-    if (defaultValue) {
-      setValue(id, defaultValue, { shouldDirty: true });
-    }
-  }, [defaultValue, setValue, id]);
+  field,
+  error,
+}: RadioInputsProps<TFormValues>): JSX.Element => {
+  // RHF trzyma boolean | undefined w polu — do inputa musimy mieć string
+  const stringValue =
+    field.value === undefined || field.value === null
+      ? ""
+      : String(field.value);
 
   return (
     <>
-      <label
-        htmlFor="link-radio"
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        {label}
-      </label>
-      {/*tutaj dać moze w innej miejsce*/}
-      {radioOptions.map(
-        ({ label, value }: { label: string; value: string }) => {
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+
+      <div className="flex gap-4">
+        {radioOptions.map((option) => {
+          const optionValue = String(option.value);
+          const inputId = `${name}-${optionValue}`;
+
           return (
-            <div key={value}>
+            <label
+              key={optionValue}
+              htmlFor={inputId}
+              className="flex items-center gap-2 cursor-pointer select-none"
+            >
               <input
-                id={`link-radio-${value}`}
-                className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 ${className}`}
-                aria-label={label}
-                value={value}
-                {...(register && register(name, rules))}
-                {...props}
+                id={inputId}
+                type="radio"
+                name={field.name}
+                value={optionValue}
+                checked={stringValue === optionValue}
+                onChange={() => field.onChange(option.value)} // zapisujemy realny boolean
+                onBlur={field.onBlur}
+                className={`h-4 w-4 text-blue-600 focus:ring-blue-500 ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
               />
-              <label
-                htmlFor="horizontal-list-radio-license"
-                className="w-full py-3 ms-2 mr-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                {label}
-              </label>
-            </div>
+              <span className="text-sm text-gray-700">{option.label}</span>
+            </label>
           );
-        },
-      )}
+        })}
+      </div>
     </>
   );
 };

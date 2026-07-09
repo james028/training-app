@@ -11,30 +11,21 @@ import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionConte
 import Modal from "../../shared/Modal/Modal";
 import RemovePlankTraining from "../RemovePlankTraining/RemovePlankTraining";
 import { MONTH_NAMES_MAP } from "../../../constants";
-import { MonthIndex, TPlankDayData, TPlankMonthData } from "../../../types";
+import { MonthIndex, TPlankDayData } from "../../../types";
+import { PlankGroupedSession } from "../PlankMonthList/PlankMonthList";
 
 interface PlankMonthListItem {
-  itemData: Record<string, TPlankMonthData[] | any[]>;
+  itemData: PlankGroupedSession[];
   item: string;
 }
 
 const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState(false);
-
   const {
     toggleOpenFormPanelTraining,
     setToggleOpenFormPanelTraining,
     setObjectData,
   } = usePlankSectionContext();
-
-  const validate = (time: number) => {
-    if (time > 59 || time < 0) {
-      throw new Error(
-        "Hours, minutes and seconds values have to be between 0 and 59.",
-      );
-    }
-    return time;
-  };
 
   /**
    * Konwertuje string czasu ("HH:MM:SS", "MM:SS" lub "SS") na całkowitą liczbę sekund.
@@ -80,7 +71,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     return secondsToTimeString(totalSeconds);
   };
 
-  const displaySumMinutes = (data: TPlankDayData[] | any[]): string => {
+  const displaySumMinutes = (data: TPlankDayData[]): string => {
     const durations = data.map((item: TPlankDayData) => item.duration);
     return durations.length > 0 ? sumTimeOptimized(durations) : "-";
   };
@@ -108,10 +99,6 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
     return referenceMonth <= checkMonth;
   };
 
-  const monthData: TPlankDayData[] | any[] = itemData[item];
-
-  //plank monthItem do innego komp
-
   return (
     <StyledPlankSectionListItemContainer>
       <div className="mb-2 mt-3 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -130,20 +117,18 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
               Rózne
             </StyledColumnWidth10>
           </StyledPlankSectionListItem>
-          {monthData.length === 0 ? <div>-</div> : null}
-          {monthData.map((t, index) => {
-            //console.log(t, "t");
+          {itemData.length === 0 && <div>-</div>}
+          {itemData.map((item) => {
             return (
-              //zmienić
-              <StyledPlankSectionListItem key={t._id}>
+              <StyledPlankSectionListItem key={item.id}>
                 <StyledColumnWidth20 className="max-w-md mr-5 space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {String(t.day).length === 1 ? `0${t.day}` : t.day}
+                  {parseInt(item.day, 10)}
                 </StyledColumnWidth20>
                 <StyledColumnWidth32 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t.duration}
+                  {item.duration}
                 </StyledColumnWidth32>
                 <StyledColumnWidth10 className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                  {t.isDifferentExercises === "differentYes" ? (
+                  {item.isDifferentExercises ? (
                     <svg
                       className="w-6 h-6 text-emerald-600 dark:text-white"
                       aria-hidden="true"
@@ -168,7 +153,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                     if (!toggleOpenFormPanelTraining) {
                       setToggleOpenFormPanelTraining(true);
                     }
-                    setObjectData(t);
+                    setObjectData({ mode: "edit", data: item });
                   }}
                 >
                   <svg
@@ -192,7 +177,7 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
                 <div
                   onClick={() => {
                     setIsOpenRemoveModal((prev) => !prev);
-                    setObjectData(t);
+                    setObjectData({ mode: "remove", data: item });
                   }}
                 >
                   <svg
@@ -219,12 +204,12 @@ const PlankMonthListItem = ({ itemData, item }: PlankMonthListItem) => {
           <div>
             <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Liczba treningów:{" "}
-              <span className="font-bold">{monthData?.length}</span>
+              <span className="font-bold">{itemData.length}</span>
             </div>
             <div className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
               Suma czasu:{" "}
-              <span className="font-bold">{displaySumMinutes(monthData)}</span>
-              {monthData?.length ? <span className="ml-1">h:min:s</span> : null}
+              <span className="font-bold">{displaySumMinutes(itemData)}</span>
+              {itemData?.length ? <span className="ml-1">h:min:s</span> : null}
             </div>
           </div>
         </>

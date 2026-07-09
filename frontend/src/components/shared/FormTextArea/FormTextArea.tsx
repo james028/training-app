@@ -5,8 +5,6 @@ import {
   FieldValues,
   Path,
   RegisterOptions,
-  set,
-  UseFormRegister,
 } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import FormErrorMessage from "../FormErrorMessage/FormErrorMessage";
@@ -55,7 +53,7 @@ const FormTextArea = <TFormValues extends Record<string, unknown>>({
       />
       <ErrorMessage
         errors={errors ?? {}}
-        name={name as any}
+        name={name}
         render={({ message }) => (
           <FormErrorMessage className="mt-1">{message}</FormErrorMessage>
         )}

@@ -1,43 +1,42 @@
 import React from "react";
 import { usePlankSectionContext } from "../PlankSectionContext/PlankSectionContext";
 import SubmitButtons from "../../Forms/SubmitButtons/SubmitButtons";
-import useGetApi from "../../../hooks/api/get/useApiGet";
 import { useAppContext } from "../../../appContext/appContext";
-import { MONTH_NAMES_MAP, URL } from "../../../constants";
+import { API_ENDPOINTS, MONTH_NAMES_MAP, URL } from "../../../constants";
 import { RemovePlankTrainingProps } from "../../../types";
 import toast from "react-hot-toast";
+import useDeleteApi from "../../../hooks/api/delete/useApiDelete";
+import { PLANK_KEYS } from "../../../constants/query-keys";
 
 const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
-  const { link } = useAppContext();
-  const { objectData } = usePlankSectionContext();
-  //do porawy te id
-  const { month, day, duration, _id: id } = objectData ?? {};
+  const { auth } = useAppContext();
+  const token = auth?.data?.accessToken;
+  const { objectData, setObjectData } = usePlankSectionContext();
+  const { data: objectData1 } = objectData;
+  const { month, day, duration, id } = objectData1 ?? {};
 
-  // const { mutateAsync } = useDeleteApi(
-  //   `${URL}${link}/delete`,
-  //   ["deletePlank"],
-  //   undefined,
-  // );
-
-  const { refetch: refetchList } = useGetApi({
-    link: `${URL}${link}/list`,
-    queryKey: ["plankList"],
-  });
+  const { mutateAsync: removeMutateAsync } = useDeleteApi(
+    [PLANK_KEYS.plankList()],
+    undefined,
+    null,
+    { Authorization: `Bearer ${token}` },
+  );
 
   const submitDeleteRequest = async (): Promise<void> => {
-    // const paramsObject = {
-    //   id,
-    //   month,
-    // };
-
     try {
-      //await mutateAsync({ paramsObject });
-      await refetchList?.();
+      if (!id) {
+        return;
+      }
+      await removeMutateAsync({
+        customLink: `${URL}${API_ENDPOINTS.PLANK.DELETE(id)}`,
+      });
       closeModal();
     } catch (error) {
       let message = error instanceof Error ? error.message : "Błąd zapisu";
       console.log(message);
       toast.error(message);
+    } finally {
+      setObjectData({ mode: null, data: null });
     }
   };
 
@@ -62,3 +61,5 @@ const RemovePlankTraining = ({ closeModal }: RemovePlankTrainingProps) => {
 };
 
 export default RemovePlankTraining;
+
+//zrobić tak ze jak klikm w ikonke usuń to to cos z tymi danymi

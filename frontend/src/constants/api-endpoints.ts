@@ -27,4 +27,10 @@ export const API_ENDPOINTS = {
     DELETE_ITEM: (setId: string, itemId: string) =>
       `api/checklists/${setId}/items/${itemId}`,
   },
+  PLANK: {
+    LIST: "api/plank/list",
+    CREATE: "api/plank/create",
+    UPDATE: (id: string) => `api/plank/update/${id}`,
+    DELETE: (id: string) => `api/plank/delete/${id}`,
+  },
 } as const;

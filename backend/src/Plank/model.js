@@ -1,45 +1,13 @@
-const mongoose = require("../common/mongoose.service.js");
+const mongoose = require("../common/mongoose.service");
 
 const Schema = mongoose.Schema;
 
-const RecordSchema = new Schema(
-  {
-    duration: { type: String, required: true },
-    month: { type: String, required: true },
-    day: { type: Number, required: true },
-    isDifferentExercises: { type: String, required: true },
-  },
-  { timestamps: true },
-);
+const PlankSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  duration: { type: String, required: true },
+  date: { type: Date, required: true },
+  isDifferentExercises: { type: Boolean, required: true, default: false },
+});
 
-const omitPrivate = (doc, obj) => {
-  delete obj.__v;
-  delete obj._id;
-  return obj;
-};
-
-let options = {
-  toJSON: {
-    transform: omitPrivate,
-  },
-};
-
-const MainSchema = new Schema(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      index: true,
-    },
-  },
-  options,
-);
-
-for (let i = 1; i <= 12; i++) {
-  MainSchema.add({ [`${i}`]: [RecordSchema] });
-}
-
-const PlankDataModel = mongoose.model("plank-data", MainSchema);
-
+const PlankDataModel = mongoose.model("plank-exercises", PlankSchema);
 module.exports = PlankDataModel;

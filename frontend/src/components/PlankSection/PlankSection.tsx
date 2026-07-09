@@ -11,7 +11,7 @@ const PlankSection = () => {
       Plank Section
       <PlankSectionWrapper>
         <div>
-          {/*<AddEditPlankTraining />*/}
+          <AddEditPlankTraining />
           <PlankMonthList />
           {/*<OptimizedSearch />*/}
         </div>
